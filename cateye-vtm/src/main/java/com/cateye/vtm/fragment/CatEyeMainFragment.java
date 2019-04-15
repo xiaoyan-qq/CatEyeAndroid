@@ -169,6 +169,7 @@ public class CatEyeMainFragment extends BaseFragment {
     private ImageView img_change_contour_color;//修改等高线地图显示颜色的按钮
     private ImageView img_select_project;//选择当前项目的按钮
     private ImageView img_chk_draw_airplan/*绘制航区*/, img_chk_set_airplan/*设置航区*/;
+    private ImageView img_download_tile;//下载tile文件
     private List<ImageView> chkDrawPointLinePolygonList;
     private FrameLayout layer_fragment;//用来显示fragment的布局文件
 //    private java.util.Map<String, MapSourceFromNet.DataBean> netDataSourceMap;//用来记录用户勾选了哪些网络数据显示
@@ -202,6 +203,9 @@ public class CatEyeMainFragment extends BaseFragment {
         img_chk_set_airplan = rootView.findViewById(R.id.chk_set_airplan);
 
         img_select_project = rootView.findViewById(R.id.img_project);
+
+        img_download_tile=rootView.findViewById(R.id.img_download_tile);
+
         chkDrawPointLinePolygonList = new ArrayList<>();
         chkDrawPointLinePolygonList.add(chk_draw_point);
         chkDrawPointLinePolygonList.add(chk_draw_line);
@@ -279,6 +283,14 @@ public class CatEyeMainFragment extends BaseFragment {
                         });
                 AlertDialog colorPickerDialog = colorDialogBuilder.create();
                 colorPickerDialog.show();
+            }
+        });
+
+        //用户点击下载tile文件，开启新的fragment，由用户绘制下载的矩形区域
+        img_download_tile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadRootFragment(R.id.layer_main_cateye_main,);
             }
         });
     }
