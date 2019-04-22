@@ -3,6 +3,7 @@ package com.cateye.vtm.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -53,8 +54,10 @@ import com.vondear.rxui.view.dialog.RxDialog;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.layers.GeoJsonLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
+import com.vtm.library.layers.PolygonLayer;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
+import com.vtm.library.tools.TileDownloader;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -71,6 +74,7 @@ import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapElement;
 import org.oscim.core.MapPosition;
+import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tag;
 import org.oscim.core.Tile;
 import org.oscim.event.Gesture;
@@ -89,6 +93,7 @@ import org.oscim.layers.tile.buildings.BuildingLayer;
 import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.layers.vector.geometries.PolygonDrawable;
 import org.oscim.map.Map;
 import org.oscim.renderer.BitmapRenderer;
 import org.oscim.renderer.GLViewport;
@@ -204,7 +209,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
         img_select_project = rootView.findViewById(R.id.img_project);
 
-        img_download_tile=rootView.findViewById(R.id.img_download_tile);
+        img_download_tile = rootView.findViewById(R.id.img_download_tile);
 
         chkDrawPointLinePolygonList = new ArrayList<>();
         chkDrawPointLinePolygonList.add(chk_draw_point);
@@ -290,7 +295,7 @@ public class CatEyeMainFragment extends BaseFragment {
         img_download_tile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadRootFragment(R.id.layer_main_cateye_main,);
+                loadRootFragment(R.id.layer_main_cateye_main, DrawDownloadTileFragment.newInstance(null));
             }
         });
     }
@@ -522,7 +527,7 @@ public class CatEyeMainFragment extends BaseFragment {
                                     RxToast.info("海拔数据不能为空");
                                     return;
                                 }
-                                String currentTime=RxTimeTool.getCurTimeString();
+                                String currentTime = RxTimeTool.getCurTimeString();
 
                                 String name = edt_name.getText().toString();
                                 if (Check.isEmpty(name)) {
@@ -553,14 +558,14 @@ public class CatEyeMainFragment extends BaseFragment {
 
                                 //保存数据到指定目录
                                 File textFile = new File(SystemConstant.AIR_PLAN_PATH + File.separator + name + ".json");
-                                if (!textFile.getParentFile().exists()){
+                                if (!textFile.getParentFile().exists()) {
                                     textFile.getParentFile().mkdirs();
                                 }
                                 try {
 
-                                    IOUtils.write(JSONObject.toJSONString(airPlanEntity),new FileOutputStream(textFile),"UTF-8");
+                                    IOUtils.write(JSONObject.toJSONString(airPlanEntity), new FileOutputStream(textFile), "UTF-8");
                                 } catch (Exception ee) {
-                                    return ;
+                                    return;
                                 }
                             }
                         }).show();
@@ -684,16 +689,16 @@ public class CatEyeMainFragment extends BaseFragment {
                 for (MapSourceFromNet.DataBean dataBean : dataBeanList) {
                     boolean isShow = dataBean.isShow();
                     if (isShow) {//设置为选中可显示状态
-                        if (dataBean.getMaps().get(0).getHref().startsWith("http")&&dataBean.getMaps().get(0).getExtension().contains("json")) {
+                        if (dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
                             ContourGeojsonTileSource mTileSource = ContourGeojsonTileSource.builder()
                                     .url(dataBean.getMaps().get(0).getHref()).tilePath("/{X}/{Y}/{Z}.json" /*+ stringDataBeanMap.get(key).getExtension()*/)
                                     .zoomMax(18).build();
                             mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
                             createGeoJsonTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
-                        } else if (!dataBean.getMaps().get(0).getHref().startsWith("http")&&dataBean.getMaps().get(0).getExtension().contains(".map")) {
+                        } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".map")) {
                             addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
-                        }else if (!dataBean.getMaps().get(0).getHref().startsWith("http")&&dataBean.getMaps().get(0).getExtension().contains("json")) {
-                            File geoJsonFile=new File(dataBean.getMaps().get(0).getHref());
+                        } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
+                            File geoJsonFile = new File(dataBean.getMaps().get(0).getHref());
                             loadJson(geoJsonFile);
                         } else {
                             BitmapTileSource mTileSource = BitmapTileSource.builder()
@@ -815,12 +820,12 @@ public class CatEyeMainFragment extends BaseFragment {
                     String fileName = mapFile.getName();
                     String suffix = fileName.substring(fileName.lastIndexOf("."));
                     mapFileDataBean.setExtension(suffix);
-                    if (suffix!=null){
+                    if (suffix != null) {
                         MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
-                        if (suffix.toLowerCase().endsWith("map")){
+                        if (suffix.toLowerCase().endsWith("map")) {
                             mapFileDataBean.setGroup(LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
                             localDataBean.setGroup(LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                        }else if (suffix.toLowerCase().endsWith("json")){
+                        } else if (suffix.toLowerCase().endsWith("json")) {
                             mapFileDataBean.setGroup(LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
                             localDataBean.setGroup(LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
                         }
@@ -870,7 +875,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
             }
             mMap.setTheme(externalRenderTheme);
-        }  else if (requestCode == SELECT_CONTOUR_FILE) {
+        } else if (requestCode == SELECT_CONTOUR_FILE) {
             try {
                 if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                     return;
@@ -982,7 +987,7 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceAll("/", "-");
 
             RxLogTool.i("use bitmap cache {}", cacheFile);
-            TileCache mCache = new TileCache(mContext, null, cacheFile);
+            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
         }
@@ -1007,7 +1012,7 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceAll("/", "-");
 
             RxLogTool.i("use geoJson cache {}", cacheFile);
-            TileCache mCache = new TileCache(mContext, null, cacheFile);
+            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
         }
@@ -1058,7 +1063,7 @@ public class CatEyeMainFragment extends BaseFragment {
                         .fontSize(16 * CanvasAdapter.getScale()).color(Color.BLACK)
                         .strokeWidth(2.2f * CanvasAdapter.getScale()).strokeColor(Color.WHITE)
                         .build();
-                GeoJsonLayer jeoVectorLayer = new GeoJsonLayer(mMap, data, style,textStyle);
+                GeoJsonLayer jeoVectorLayer = new GeoJsonLayer(mMap, data, style, textStyle);
                 mMap.layers().add(jeoVectorLayer, LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
 
                 RxToast.info("data ready");
@@ -1203,6 +1208,43 @@ public class CatEyeMainFragment extends BaseFragment {
                 int dataBeanId = msg.arg1;
                 int mapLayerIndex = msg.arg2;
                 replaceMultiLayerIndex(dataBeanId, mapLayerIndex);
+                break;
+            case SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_START:
+                hideOrShowButtonArea(false, BUTTON_AREA.ALL);
+                break;
+            case SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH:
+                hideOrShowButtonArea(true, BUTTON_AREA.ALL);
+                if (msg.obj!=null){
+                    Rect rect= (Rect) msg.obj;
+                    org.oscim.layers.vector.geometries.Style polygonStyle = org.oscim.layers.vector.geometries.Style.builder()
+                            .stippleColor(Color.RED)
+                            .stipple(24)
+                            .stippleWidth(1)
+                            .strokeWidth(2)
+                            .strokeColor(Color.RED).fillColor(Color.RED).fillAlpha(0.5f)
+                            .fixed(true)
+                            .randomOffset(false)
+                            .build();
+                    PolygonLayer polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), polygonStyle);
+                    mMap.layers().add(polygonOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+                    polygonOverlay.setName(SystemConstant.DRAW_TILE_RECT);
+
+                    List<GeoPoint> polygonPointList=new ArrayList<>();
+                    polygonPointList.add(mMap.viewport().fromScreenPoint(rect.left,rect.top));
+                    polygonPointList.add(mMap.viewport().fromScreenPoint(rect.left,rect.bottom));
+                    polygonPointList.add(mMap.viewport().fromScreenPoint(rect.right,rect.bottom));
+                    polygonPointList.add(mMap.viewport().fromScreenPoint(rect.right,rect.top));
+
+                    PolygonDrawable polygonDrawable=new PolygonDrawable(polygonPointList);
+                    polygonOverlay.add(polygonDrawable);
+                    mMap.updateMap(true);
+                    //根据polygon的数据计算需要下载的tile列表
+                    TileDownloader tileDownloader=new TileDownloader();
+                    List<Tile> tileList=tileDownloader.getRectLatitudeArray(mMap,rect,(byte)1,(byte)16);
+                    if (tileList!=null&&!tileList.isEmpty()){
+                        tileDownloader.openDownloadTileDialog(getActivity(),tileList,mMap.layers());
+                    }
+                }
                 break;
         }
     }

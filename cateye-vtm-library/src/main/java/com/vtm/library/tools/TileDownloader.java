@@ -4,16 +4,25 @@ import android.app.Activity;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapProgressBar;
+import com.beardedhen.androidbootstrap.BootstrapProgressBarGroup;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
 import com.example.cateye_vtm_library.R;
 
+import org.oscim.backend.CanvasAdapter;
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tile;
+import org.oscim.layers.Layer;
+import org.oscim.layers.tile.TileLayer;
+import org.oscim.layers.tile.bitmap.BitmapTileLayer;
+import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.map.Map;
 import org.oscim.tiling.ITileCache;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.LwHttp;
@@ -36,62 +45,58 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class TileDownloader {
-    private UrlTileSource mUrlTileSource;
-    private ITileCache mTileCache;
-    private HttpEngine mHttpEngine;
 
-    public TileDownloader(UrlTileSource mUrlTileSource, ITileCache mTileCache) {
-        this.mUrlTileSource = mUrlTileSource;
-        this.mTileCache = mTileCache;
-        this.mHttpEngine = new LwHttp.LwHttpFactory().create(mUrlTileSource);
+    public TileDownloader() {
     }
 
     /**
      * 下载指定的tile文件
      */
-    public boolean download(Tile mTile) {
-        ITileCache.TileReader c = mTileCache.getTile(mTile);
-        if (c != null) {
-            return true;
-        }
-        ITileCache.TileWriter cacheWriter = null;
-        try {
-            mHttpEngine.sendRequest(mTile);
-            cacheWriter = mTileCache.writeTile(mTile);
-            mHttpEngine.setCache(cacheWriter.getOutputStream());
-            mHttpEngine.read();
-        } catch (SocketException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (cacheWriter != null) {
-                cacheWriter.complete(true);
+    public boolean download(Tile mTile,UrlTileSource mUrlTileSource,HttpEngine mHttpEngine) {
+        if (mUrlTileSource!=null){
+            ITileCache mTileCache=mUrlTileSource.tileCache;
+            ITileCache.TileReader c = mTileCache.getTile(mTile);
+            if (c != null) {
+                return true;
             }
-            mHttpEngine.requestCompleted(true);
+            ITileCache.TileWriter cacheWriter = null;
+            try {
+                mHttpEngine.sendRequest(mTile);
+                InputStream is =mHttpEngine.read();
+                cacheWriter = mTileCache.writeTile(mTile);
+                mHttpEngine.setCache(cacheWriter.getOutputStream());
+
+                CanvasAdapter.decodeBitmap(is);
+            } catch (SocketException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                if (cacheWriter != null) {
+                    cacheWriter.complete(true);
+                }
+                mHttpEngine.requestCompleted(true);
+            }
         }
-        return true;
+        return false;
     }
 
     /**
      * 根据屏幕中的rect坐标计算需要下载的tile的集合
      */
-    public List<Tile> getRectLatitudeArray(Rect rect, byte currentZoomLevel, byte startZoomLevel, byte endZoomLevel) {
+    public List<Tile> getRectLatitudeArray(Map mMap,Rect rect, byte startZoomLevel, byte endZoomLevel) {
         List<Tile> tileList = new ArrayList<>();
-        long mapSize = MercatorProjection.getMapSize(currentZoomLevel);
         if (rect != null) {
-            double longitudeLeft = MercatorProjection.pixelXToLongitude(rect.left, mapSize);
-            double longitudeRight = MercatorProjection.pixelXToLongitude(rect.right, mapSize);
-            double latitudeTop = MercatorProjection.pixelYToLatitude(rect.top, mapSize);
-            double latitudeBottom = MercatorProjection.pixelYToLatitude(rect.bottom, mapSize);
+            GeoPoint leftTopGeoPoint=mMap.viewport().fromScreenPoint(rect.left,rect.top);
+            GeoPoint rightBottomGeoPoint=mMap.viewport().fromScreenPoint(rect.right,rect.bottom);
 
             for (byte i = startZoomLevel; i <= endZoomLevel; i++) {
-                int tileNumLeft = MercatorProjection.longitudeToTileX(longitudeLeft, i);
-                int tileNumRight = MercatorProjection.longitudeToTileX(longitudeRight, i);
-                int tileNumTop = MercatorProjection.latitudeToTileY(latitudeTop, i);
-                int tileNumBottom = MercatorProjection.latitudeToTileY(latitudeBottom, i);
+                int tileNumLeft = MercatorProjection.longitudeToTileX(leftTopGeoPoint.getLongitude(), i);
+                int tileNumRight = MercatorProjection.longitudeToTileX(rightBottomGeoPoint.getLongitude(), i);
+                int tileNumTop = MercatorProjection.latitudeToTileY(leftTopGeoPoint.getLatitude(), i);
+                int tileNumBottom = MercatorProjection.latitudeToTileY(rightBottomGeoPoint.getLatitude(), i);
 
                 int currentMaxXY = 2 << i;
                 if (tileNumRight < tileNumLeft) {
@@ -112,39 +117,57 @@ public class TileDownloader {
     }
 
 
-    public void downloadTile(Tile tile) {
-
-    }
-
     /**
      * 打开下载tile的对话框
      */
-    public void openDownloadTileDialog(final Activity mContext, final List<Tile> tileList) {
+    public void openDownloadTileDialog(final Activity mContext, final List<Tile> tileList, final List<Layer> mapLayerList) {
         View downloadProgressView = LayoutInflater.from(mContext).inflate(R.layout.layer_tile_download_progress, null);
         final CanDialog dialog = new CanDialog.Builder(mContext).setCancelable(false).setView(downloadProgressView).show();
-        final BootstrapProgressBar bpb_download = downloadProgressView.findViewById(R.id.bpb_tile_download);
+        final ProgressBar pb_download = downloadProgressView.findViewById(R.id.pb_tile_download);
         final TextView tv_download = downloadProgressView.findViewById(R.id.tv_tile_download);
         final BootstrapButton bbtn_cancel = downloadProgressView.findViewById(R.id.bbtn_tile_download_cancel);
         final BootstrapButton bbtn_ok = downloadProgressView.findViewById(R.id.bbtn_tile_download_ok);
 
-        Observable.fromIterable(tileList).map(new Function<Tile, Tile>() {
-
+        final List<UrlTileSource> urlTileSourceList=new ArrayList<>();
+        Observable.create(new ObservableOnSubscribe<Tile>() {
             @Override
-            public Tile apply(Tile tile) throws Exception {
-                download(tile);
-                return tile;
+            public void subscribe(ObservableEmitter<Tile> emitter) throws Exception {
+                if (urlTileSourceList!=null&&!urlTileSourceList.isEmpty()){
+                    for (UrlTileSource mUrlTileSource:urlTileSourceList){
+                        HttpEngine httpEngine=mUrlTileSource.getHttpEngine();
+                        for (Tile tile:tileList){
+                            download(tile,mUrlTileSource,httpEngine);
+                            emitter.onNext(tile);
+                        }
+                    }
+                }
+                emitter.onComplete();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Tile>() {
             @Override
             public void onSubscribe(Disposable d) {
-                bpb_download.setMaxProgress(tileList.size());
-                bpb_download.setProgress(0);
+                if (mapLayerList!=null&&!mapLayerList.isEmpty()){
+                    for (Layer layer:mapLayerList){
+
+                        if (layer instanceof BitmapTileLayer&&((BitmapTileLayer)layer).getTileSource() instanceof UrlTileSource){
+                            urlTileSourceList.add((UrlTileSource) ((BitmapTileLayer)layer).getTileSource());
+                        }
+                        if (layer instanceof VectorTileLayer &&((VectorTileLayer)layer).getTileSource() instanceof UrlTileSource){
+                            urlTileSourceList.add((UrlTileSource) ((VectorTileLayer)layer).getTileSource());
+                        }
+                    }
+                }
+                pb_download.setMax(tileList.size()*urlTileSourceList.size());
+                pb_download.setProgress(0);
+                bbtn_cancel.setEnabled(false);
+                bbtn_ok.setEnabled(false);
             }
 
             @Override
             public void onNext(Tile tile) {
-                bpb_download.setProgress(bpb_download.getProgress() + 1);
-                tv_download.setText(bpb_download + "/" + bpb_download.getMaxProgress());
+                System.out.println("进度:"+pb_download.getProgress() + "/" + pb_download.getMax());
+                pb_download.setProgress(pb_download.getProgress()+1<=pb_download.getMax()?pb_download.getProgress()+1:pb_download.getMax());
+                tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
             }
 
             @Override

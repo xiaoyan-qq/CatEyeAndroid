@@ -1,7 +1,5 @@
 package com.cateye.android.vtm;
 
-import com.cateye.vtm.util.TileDownloadTools;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
