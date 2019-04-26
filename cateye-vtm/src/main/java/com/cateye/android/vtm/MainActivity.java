@@ -154,6 +154,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
     public static class ContourFilePicker extends FilePicker {
         public ContourFilePicker() {
             setFileDisplayFilter(new FilterByFileExtension(".json"));
+            setFileDisplayFilter(new FilterByFileExtension(".geojson"));
         }
     }
 

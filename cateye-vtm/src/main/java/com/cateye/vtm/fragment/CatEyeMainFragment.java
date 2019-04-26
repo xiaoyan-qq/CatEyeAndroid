@@ -295,6 +295,7 @@ public class CatEyeMainFragment extends BaseFragment {
         img_download_tile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RxToast.info("请在地图上滑动绘制需要缓存的矩形区域");
                 loadRootFragment(R.id.layer_main_cateye_main, DrawDownloadTileFragment.newInstance(null));
             }
         });
