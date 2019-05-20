@@ -19,7 +19,7 @@
             android:padding="@dimen/button_padding_default"
             android:scaleType="fitCenter"
             android:background="@drawable/ripple_bg_drawable"
-            android:src="@drawable/icon_back_ripple" />
+            android:src="@drawable/selector_back" />
 
     </RelativeLayout>
 
