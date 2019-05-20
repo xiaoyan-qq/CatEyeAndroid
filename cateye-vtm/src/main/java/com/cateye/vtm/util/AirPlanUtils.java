@@ -39,16 +39,16 @@ public class AirPlanUtils {
     private BaseFragment mainFragment;
     private Map mMap;
     private static AirPlanUtils instance;
-    private ImageView img_chk_set_airplan;
+    private View img_chk_set_airplan;
 
-    public static AirPlanUtils getInstance(BaseFragment mainFragment, Map mMap, ImageView img_chk_set_airplan) {
+    public static AirPlanUtils getInstance(BaseFragment mainFragment, Map mMap, View img_chk_set_airplan) {
         if (instance == null) {
             instance = new AirPlanUtils(mainFragment, mMap, img_chk_set_airplan);
         }
         return instance;
     }
 
-    private AirPlanUtils(BaseFragment mainFragment, Map mMap, ImageView img_chk_set_airplan) {
+    private AirPlanUtils(BaseFragment mainFragment, Map mMap, View img_chk_set_airplan) {
         this.mainFragment = mainFragment;
         this.mMap = mMap;
         this.img_chk_set_airplan = img_chk_set_airplan;

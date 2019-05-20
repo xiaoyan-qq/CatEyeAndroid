@@ -150,9 +150,14 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         }).start();
 
         TencentLocationRequest request = TencentLocationRequest.create();
+        request.setAllowCache(true);
+        request.setInterval(3000);
         TencentLocationManager locationManager = TencentLocationManager.getInstance(this);
         locationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_WGS84);//使用wgs84坐标系
         int error = locationManager.requestLocationUpdates(request, this);
+        if (error!=0){
+            RxToast.warning("注意！无法获取位置信息！");
+        }
 
 //        //处理ActionBar
 //        RxBarTool.transparencyBar(this);
@@ -181,6 +186,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
     public static class ContourFilePicker extends FilePicker {
         public ContourFilePicker() {
             setFileDisplayFilter(new FilterByFileExtension(".json"));
+            setFileDisplayFilter(new FilterByFileExtension(".geojson"));
         }
     }
 

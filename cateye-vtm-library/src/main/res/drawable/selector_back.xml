@@ -4,5 +4,5 @@
     <item android:drawable="@drawable/icon_back_press" android:state_selected="true" />
     <item android:drawable="@drawable/icon_back_press" android:state_checked="true" />
     <item android:drawable="@drawable/icon_back_disable" android:state_enabled="false" />
-    <item android:drawable="@drawable/icon_back_normal" />
+    <item android:drawable="@drawable/icon_back" />
 </selector>

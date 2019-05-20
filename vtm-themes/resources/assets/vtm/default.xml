@@ -134,7 +134,7 @@
     <!--等高线显示-->
     <style-line id="contour" use="residential" width="-0.6" stroke="#ff0000" fade="0" outline="0"/>
     <!--六盘水自定义线-->
-    <style-line id="liupanshui" use="residential" width="-0.6" stroke="#00ff00" fade="80" outline="0"/>
+    <style-line id="liupanshui" use="residential" width="16" stroke="#00ff00" fade="80" outline="0"/>
     <!--自定义线-->
     <style-line id="customer" use="residential" width="-0.6" stroke="#CD00CD" fade="0" outline="0"/>
 

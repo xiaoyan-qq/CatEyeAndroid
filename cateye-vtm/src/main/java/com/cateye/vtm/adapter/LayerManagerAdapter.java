@@ -157,6 +157,10 @@ public class LayerManagerAdapter extends BaseExpandableListAdapter {
                 dataBeanMap.get(group).add(dataBean);
             }
         }
+        if (keyList!=null){
+            keyList.clear();
+            keyList.addAll(dataBeanMap.keySet());
+        }
         return dataBeanMap;
     }
 
