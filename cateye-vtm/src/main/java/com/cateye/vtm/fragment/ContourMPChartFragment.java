@@ -249,7 +249,7 @@ public class ContourMPChartFragment extends BaseDrawFragment {
             dataSet.setValueTextColor(getResources().getColor(R.color.primary_text)); // styling, ...
             dataSet.setFillColor(getResources().getColor(R.color.color_blue_alpha_200));
             dataSet.setHighlightEnabled(true);
-            dataSet.setHighLightColor(getResources().getColor(R.color.ERROR_COLOR));
+            dataSet.setHighLightColor(getResources().getColor(R.color.red));
             dataSet.setHighlightLineWidth(1f);
             dataSet.setCircleRadius(1.5f);
             dataSet.setCircleColor(getResources().getColor(R.color.colorPrimaryLight));

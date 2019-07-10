@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-aspectjx'
+//apply plugin: 'android-aspectjx'
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -10,7 +10,7 @@ android {
         versionName "1.1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled = true
+        multiDexEnabled true
 
         ndk {
             abiFilters "armeabi-v7a", "armeabi"
@@ -40,7 +40,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

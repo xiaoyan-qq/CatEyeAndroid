@@ -41,11 +41,11 @@ public class MainApplication extends Application {
         Fragmentation.builder()
                 // 显示悬浮球 ; 其他Mode:SHAKE: 摇一摇唤出   NONE：隐藏
                 .stackViewMode(Fragmentation.NONE)
-                .debug(BuildConfig.DEBUG)
+//                .debug(BuildConfig.DEBUG)
                 .install();
 
         //Okhttp的配置
-        OkGo.getInstance().init(this);
+//        OkGo.getInstance().init(this);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
         //log打印级别，决定了log显示的详细程度
