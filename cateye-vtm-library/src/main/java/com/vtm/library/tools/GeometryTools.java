@@ -3,7 +3,6 @@ package com.vtm.library.tools;
 import android.graphics.Point;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSONObject;
 import com.litesuits.common.assist.Check;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -14,11 +13,13 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.io.geojson.GeoJsonWriter;
 import com.vividsolutions.jts.operation.linemerge.LineMerger;
 
 import org.json.JSONException;
+import org.locationtech.jts.io.ParseException;
 import org.oscim.core.GeoPoint;
+import org.wololo.geojson.GeoJSON;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -1295,19 +1296,22 @@ public class GeometryTools {
         return null;
     }
 
-    private static GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+    private static GeoJSONWriter geoJsonWriter = new GeoJSONWriter();
+    private static org.locationtech.jts.io.WKTReader wktReader = new org.locationtech.jts.io.WKTReader();
 
-    public static String getGeoJsonStr(Geometry geometry) {
-        geoJsonWriter.setEncodeCRS(false);
-        String geoJSONObject = geoJsonWriter.write(geometry);
-        return geoJSONObject;
+    public static String getGeoJsonStr(Geometry geometry) throws ParseException {
+        GeoJSON geoJSONObject = geoJsonWriter.write(wktReader.read(geometry.toString()));
+        return geoJSONObject.toString();
     }
 
-    public static JSONObject getGeoJson(Geometry geometry) throws JSONException {
-        geoJsonWriter.setEncodeCRS(false);
-        String geoJSONObject = geoJsonWriter.write(geometry);
-        Object obj= JSONObject.parse(geoJSONObject);
-        return (JSONObject) obj;
+    public static GeoJSON getGeoJson(Geometry geometry){
+        try {
+            GeoJSON geoJSONObject = geoJsonWriter.write(wktReader.read(geometry.toString()));
+            return geoJSONObject;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static GeoPoint createOSCGeoPoint(com.vividsolutions.jts.geom.Point point) {

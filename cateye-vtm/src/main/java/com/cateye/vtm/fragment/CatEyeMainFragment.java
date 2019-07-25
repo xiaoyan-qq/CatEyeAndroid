@@ -643,12 +643,7 @@ public class CatEyeMainFragment extends BaseFragment {
                                         properties.setSeqnum(i + 1);
                                         properties.setAlt_ai(0);
                                         feature.setProperties(properties);
-                                        try {
-                                            feature.setGeometry(GeometryTools.getGeoJson(polygonList.get(i)).toString());
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-
+                                        feature.setGeometry(GeometryTools.getGeoJson(polygonList.get(i)).toString());
                                         airPlanFeatureList.add(feature);
                                     }
                                 }

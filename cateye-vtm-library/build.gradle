@@ -56,25 +56,25 @@ dependencies {
     api "org.slf4j:slf4j-android:$slf4jVersion"
     api project(':vtm-android-gdx')
     api project(':vtm-gdx')
-    api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-    api 'org.mapsforge:mapsforge-poi-android:master-SNAPSHOT'
-    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-armeabi'
-    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-armeabi-v7a'
-    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-x86'
-//    compile 'com.android.support:appcompat-v7:27.0.3'
-    compile 'com.android.support:support-v4:27.0.3'
+//    api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//    api 'org.mapsforge:mapsforge-poi-android:master-SNAPSHOT'
+//    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-armeabi'
+//    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-armeabi-v7a'
+//    api 'org.mapsforge:spatialite-android:master-SNAPSHOT:natives-x86'
+    compile 'com.android.support:appcompat-v7:27.0.3'
+//    compile 'com.android.support:support-v4:27.0.3'
 
     //基础工具库  https://github.com/vondear/RxTool
-    compile 'com.github.vondear.RxTool:RxKit:v2.0.4'
+    compile 'com.github.vondear.RxTool:RxKit:v2.3.9'
 
     //UI库
-    compile 'com.github.vondear.RxTool:RxUI:v2.0.4'
+    compile 'com.github.vondear.RxTool:RxUI:v2.3.9'
     //功能库（Zxing扫描与生成二维码条形码 支付宝 微信）
     //implementation "com.github.vondear.RxTool:RxFeature:v2.0.4"
     //ArcGis For Android工具库（API：100.1以上版本）
     //    compile "com.github.vondear.RxTool:RxArcGisKit:v2.0.4"
 
-    //常用android工具类https://github.com/ReactiveX/RxAndroid
+    //常用android工具类 https://github.com/ReactiveX/RxAndroid
     compile 'io.reactivex.rxjava2:rxandroid:2.0.2'
     compile 'io.reactivex.rxjava2:rxjava:2.x.x'
 
@@ -104,8 +104,11 @@ dependencies {
     // Your EventBus's version
     compile 'org.greenrobot:eventbus:3.1.1'
 
-    //https://github.com/rey5137/Material
-    compile 'com.github.rey5137:material:1.2.5'
+//    //https://github.com/rey5137/Material
+//    compile  ('com.github.rey5137:material:1.2.5',{
+//        exclude group: 'com.android.support'
+//    })
+
     compile 'com.alibaba:fastjson:1.1.68.android'
 
     //对话框样式 https://github.com/canyinghao/CanDialog
@@ -115,14 +118,18 @@ dependencies {
     //绘制图表的开源库 https://github.com/PhilJay/MPAndroidChart
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
-    //https://github.com/locationtech/jts/blob/master/USING.md gis的java工具库
-    implementation 'com.vividsolutions:jts-core:1.14.0'
-    implementation 'com.vividsolutions:jts-io:1.14.0'
-    implementation files('libs/spatial4j-0.7.jar')
-    implementation files('libs/spatial4j-0.7-javadoc.jar')
+//    //https://github.com/locationtech/jts/blob/master/USING.md gis的java工具库
+//    implementation 'com.vividsolutions:jts:1.13'
+////    implementation 'com.vividsolutions:jts-io:1.14.0'
+//    implementation files('libs/spatial4j-0.7.jar')
+//    implementation files('libs/spatial4j-0.7-javadoc.jar')
+
+
+    //https://github.com/bjornharrtell/jts2geojson
+    api files('libs/jts2geojson-0.14.0.jar')
 
     //spatialite的实现 https://github.com/sevar83/android-spatialite
-    compile 'com.github.sevar83:android-spatialite:2.0.0'
+//    compile 'com.github.sevar83:android-spatialite:2.0.0'
 
     //友盟日志记录
     compile 'com.umeng.sdk:common:1.5.0'
@@ -157,5 +164,5 @@ dependencies {
 
     //实现水波纹效果的库 https://github.com/desmond1121/RippleCompat
     compile 'com.github.desmond1121:ripplecompat:0.4.1'
-
+    compile 'com.android.support:multidex:1.0.2'
 }

@@ -6,10 +6,10 @@ import com.litesuits.common.utils.SdCardUtil;
 import java.io.File;
 
 public class SystemConstant {
-    public static final int DB_VERSION=1;
+    public static final int DB_VERSION = 1;
     public static final String APP_ROOT_DATA_PATH = SdCardUtil.getSDCardPath() + File.separator + "CatEye";
     public static final String AIR_PLAN_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan";
-    public static final String AIR_PLAN_OUTPUT_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan"+ File.separator+"Output";
+    public static final String AIR_PLAN_OUTPUT_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan" + File.separator + "Output";
     public static final String CACHE_FILE_PATH = APP_ROOT_DATA_PATH + File.separator + "Cache";
 
     public static final int MSG_WHAT_DRAW_POINT_LINE_POLYGON_DESTROY = 0x1001;//绘制点线面
@@ -21,7 +21,7 @@ public class SystemConstant {
     public static final int MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_START = 0x1007;//开始绘制地图下载的rect，自动隐藏地图上的其他按钮控件
     public static final int MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH = 0x1008;//完成绘制地图下载的rect，重新显示地图上的其他按钮控件
 
-    public static final String BASE_URL = "http://111.202.109.210:8080";
+    public static final String BASE_URL = "http://111.202.109.211:8080";
     public static final String USER_ID = "{userId}";
     public static final String URL_MAP_SOURCE_NET = BASE_URL + "/projects/" + USER_ID + "/datasets";//获取数据源的url
     public static final String URL_CONTOUR_CALCULATE = BASE_URL + "/dem/contour";//等高线获取的url
@@ -51,5 +51,10 @@ public class SystemConstant {
 
     public static final String AIR_PLAN_MARKER_PARAM = "AIR_PLAN_MARKER_PARAM";//航区规划参数设计对应的选择无人机机场的点击操作
     public static final String AIR_PLAN_MULTI_POLYGON_PARAM_EVENT = "AIR_PLAN_MULTI_POLYGON_PARAM_EVENT";//航区规划参数设计对应的操作overlayer的名称
+
+
+    public static final String SP_LOGIN_USERNAME = "SP_LOGIN_USERNAME";
+    public static final String SP_LOGIN_PWD = "SP_LOGIN_PWD";
+    public static final String PWD_KEY = "PWD_KEY";
 
 }

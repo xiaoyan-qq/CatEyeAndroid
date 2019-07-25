@@ -1,6 +1,8 @@
 package com.cateye.android.vtm;
 
 import android.app.Application;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.cateye.vtm.util.SystemConstant;
@@ -26,10 +28,11 @@ import okhttp3.OkHttpClient;
  * Created by xiaoxiao on 2018/3/21.
  */
 
-public class MainApplication extends Application {
+public class MainApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
 
         //加载航飞轨迹生成的so
         System.loadLibrary("geos");

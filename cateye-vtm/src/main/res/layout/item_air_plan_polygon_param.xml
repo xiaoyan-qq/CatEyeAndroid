@@ -22,7 +22,7 @@
         app:showOutline="false" />
 
 
-    <com.rey.material.widget.TextView
+    <TextView
         android:id="@+id/tv_polygon_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete" />
 
-    <com.rey.material.widget.TextView
+    <TextView
         android:id="@+id/tv_polygon_updatetime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

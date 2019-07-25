@@ -20,14 +20,14 @@
         app:roundedCorners="true"
         app:showOutline="false" />
 
-    <com.rey.material.widget.CheckBox
+    <CheckBox
         android:id="@+id/chk_polygon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/lv_font_main_text"
         app:layout_constraintLeft_toLeftOf="parent" />
 
-    <com.rey.material.widget.TextView
+    <TextView
         android:id="@+id/tv_polygon_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete"
         app:layout_constraintHorizontal_chainStyle="spread"/>
 
-    <com.rey.material.widget.TextView
+    <TextView
         android:id="@+id/tv_polygon_updatetime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

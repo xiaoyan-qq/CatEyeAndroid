@@ -45,6 +45,7 @@ import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
+import org.wololo.geojson.GeoJSON;
 import org.xutils.DbManager;
 
 import java.io.File;
@@ -205,7 +206,7 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                                         Vector<Double> flightHeightVector = new Vector<>();
                                         if (listData!=null&&!listData.isEmpty()){
                                             for (AirPlanDBEntity dbEntity:listData){
-                                                flightRegionList.add(GeometryTools.getGeoJson(GeometryTools.createGeometry(dbEntity.getGeometry())));
+                                                flightRegionList.add(JSONObject.parseObject(GeometryTools.getGeoJson(GeometryTools.createGeometry(dbEntity.getGeometry())).toString()));
                                                 flightHeightVector.add((double)dbEntity.getAltitude());
                                             }
                                         }
@@ -214,7 +215,7 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                                         //设置机场参数
                                         GeoPoint airPlanStartPoint = ((MarkerItem) markerLayer.getItemList().get(0)).getPoint();
                                         Airport airport = new Airport();
-                                        airport.setGeoJson(GeometryTools.getGeoJson(GeometryTools.createGeometry(airPlanStartPoint)));
+                                        airport.setGeoJson(JSONObject.parseObject(GeometryTools.getGeoJson(GeometryTools.createGeometry(airPlanStartPoint)).toString()));
                                         airport.setAltitude(StringUtils.isBlank(baseLineStr) ? 0 : Double.parseDouble(baseLineStr));
                                         parameter.setAirport(airport);
 
@@ -260,7 +261,7 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                                             dialog.dismiss();
                                         }
                                     }
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }finally {
 
