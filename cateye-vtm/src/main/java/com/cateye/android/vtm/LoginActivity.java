@@ -60,13 +60,12 @@ public class LoginActivity extends Activity {
         String pwdStr = RxSPTool.getContent(LoginActivity.this, SystemConstant.SP_LOGIN_PWD);
         if (!RxDataTool.isEmpty(pwdStr)) {
             try {
-                byte[] pwdDecodeByteArray = RxEncryptTool.decryptHexString3DES(pwdStr, SystemConstant.PWD_KEY.getBytes("utf-8"));
-                String pwd = new String(pwdDecodeByteArray, "utf-8");
-                edt_pwd.setText(pwd);
-            } catch (UnsupportedEncodingException e) {
+                edt_pwd.setText(pwdStr);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        chk_remember_pwd.setChecked(RxSPTool.getBoolean(LoginActivity.this,SystemConstant.SP_LOGIN_PWD_IS_REMEMBER));
 
         //动画加载logo
 //        RxAnimationTool.popup(img_logo, 1200);
@@ -104,7 +103,7 @@ public class LoginActivity extends Activity {
                                     String pwdStr = edt_pwd.getText().toString();
                                     if (!RxDataTool.isEmpty(pwdStr)) {
                                         try {
-                                            RxSPTool.putContent(LoginActivity.this, SystemConstant.SP_LOGIN_PWD, RxEncryptTool.encryptDES2HexString(pwdStr.getBytes("utf-8"), SystemConstant.PWD_KEY.getBytes("utf-8")));
+                                            RxSPTool.putContent(LoginActivity.this, SystemConstant.SP_LOGIN_PWD, pwdStr);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -112,6 +111,8 @@ public class LoginActivity extends Activity {
                                 } else {
                                     RxSPTool.remove(LoginActivity.this, SystemConstant.SP_LOGIN_PWD);
                                 }
+
+                                RxSPTool.putBoolean(LoginActivity.this,SystemConstant.SP_LOGIN_PWD_IS_REMEMBER,chk_remember_pwd.isChecked());//记录密码的勾选框是否选中的缓存
 
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(mainIntent);

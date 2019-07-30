@@ -55,6 +55,7 @@ public class SystemConstant {
 
     public static final String SP_LOGIN_USERNAME = "SP_LOGIN_USERNAME";
     public static final String SP_LOGIN_PWD = "SP_LOGIN_PWD";
+    public static final String SP_LOGIN_PWD_IS_REMEMBER = "SP_LOGIN_PWD_IS_REMEMBER";
     public static final String PWD_KEY = "PWD_KEY";
 
 }
