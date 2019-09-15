@@ -86,7 +86,7 @@ public class MultiPathLayer extends PathLayer {
         removePolygonDrawable(path);
     }
 
-    public void removePolygonDrawable(String pathStr) {
+    public void removePathDrawable(String pathStr) {
         LineString path = (LineString) GeometryTools.createGeometry(pathStr);
         removePolygonDrawable(path);
     }
@@ -102,6 +102,7 @@ public class MultiPathLayer extends PathLayer {
                     break;
                 }
             }
+            mWorker.submit(0);
             update();
         }
     }
@@ -157,4 +158,16 @@ public class MultiPathLayer extends PathLayer {
         this.pathDrawableList = pathDrawableList;
     }
 
+    public void removeAllPathDrawable(){
+        if (pathDrawableList != null && !pathDrawableList.isEmpty()) {
+            Iterator iterator = pathDrawableList.iterator();
+            while (iterator.hasNext()) {
+                LineDrawable lineDrawable = (LineDrawable) iterator.next();
+                remove(lineDrawable);
+                iterator.remove();
+            }
+            mWorker.submit(0);
+            update();
+        }
+    }
 }

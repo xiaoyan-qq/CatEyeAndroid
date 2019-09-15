@@ -12,6 +12,7 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.CatEyeMapManager;
+import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -124,8 +125,8 @@ public class ContourMPChartFragment extends BaseDrawFragment {
         initPolylineOverlayer();
         //初始化绘制当前图表中正在显示的线型
         initCurrentPolylineOverlayer();
-        //自动添加绘制marker的overlayer，当用户滑动折线图时，自动定位到折线图上对应的点位
-        initMarkerOverlayer();
+//        //自动添加绘制marker的overlayer，当用户滑动折线图时，自动定位到折线图上对应的点位
+//        initMarkerOverlayer();
 
         //添加一个操作图层，监听用户在地图上的点击事件
         mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap());
@@ -215,19 +216,19 @@ public class ContourMPChartFragment extends BaseDrawFragment {
         CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().add(currentChartLine, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
     }
 
-    /**
-     * @param :
-     * @return :
-     * @method : initMarkerOverlayer
-     * @Author : xiaoxiao
-     * @Describe : 初始化线的点击layer
-     * @Date : 2018/5/24
-     */
-    private void initMarkerOverlayer() {
-        //重置默认的marker图标，新增marker时以当前设置的marker显示
-        Bitmap bitmapPoi = drawableToBitmap(getResources().getDrawable(R.drawable.marker_poi));
-        defaultMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
-    }
+//    /**
+//     * @param :
+//     * @return :
+//     * @method : initMarkerOverlayer
+//     * @Author : xiaoxiao
+//     * @Describe : 初始化线的点击layer
+//     * @Date : 2018/5/24
+//     */
+//    private void initMarkerOverlayer() {
+//        //重置默认的marker图标，新增marker时以当前设置的marker显示
+//        Bitmap bitmapPoi = drawableToBitmap(getResources().getDrawable(R.drawable.marker_poi));
+//        defaultMarkerSymbol = LayerStyle.getDefaultMarkerSymbol(getActivity());
+//    }
 
 
     /**

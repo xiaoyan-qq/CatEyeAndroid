@@ -1,6 +1,8 @@
 package com.cateye.android.vtm;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -19,7 +21,6 @@ import com.cateye.vtm.fragment.CatEyeMainFragment;
 import com.cateye.vtm.fragment.MultiTimeLayerSelectFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.SystemConstant;
-import com.desmond.ripple.RippleCompat;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
@@ -35,7 +36,10 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.umeng.analytics.MobclickAgent;
+import com.vondear.rxtool.RxFileTool;
+import com.vondear.rxtool.RxImageTool;
 import com.vondear.rxtool.RxLogTool;
+import com.vondear.rxtool.RxPhotoTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vondear.rxui.view.dialog.RxDialogSure;
@@ -56,6 +60,7 @@ import org.xutils.x;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -104,13 +109,11 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RippleCompat.init(this);
-
         //启动fragment，显示地图界面
         mainFragment = CatEyeMainFragment.newInstance(new Bundle());
         loadRootFragment(R.id.fragment_main_container, mainFragment);
         //申请所需要的权限
-        AndPermission.with(this).permission(Permission.Group.LOCATION/*定位权限*/, Permission.Group.STORAGE/*存储权限*/ /*, Permission.Group.PHONE*//*电话相关权限*//*, Permission.Group.MICROPHONE*//*录音权限*/)
+        AndPermission.with(this).permission(Permission.Group.LOCATION/*定位权限*/, Permission.Group.STORAGE/*存储权限*/, Permission.Group.CAMERA /*, Permission.Group.PHONE*//*电话相关权限*//*, Permission.Group.MICROPHONE*//*录音权限*/)
                 .onGranted(new Action() {//用户允许
                     @Override
                     public void onAction(List<String> permissions) {
@@ -315,6 +318,10 @@ public class MainActivity extends SupportActivity implements TencentLocationList
                             @Override
                             public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
                                 if (SystemConstant.CURRENT_PROJECTS_ID != projectList.get(checkItem).getId()) {
+                                    if (SystemConstant.CURRENT_PROJECTS_ID != -1) {
+                                        RxToast.info("切换项目，自动清除当前地图所有图层");
+                                    }
+                                    SystemConstant.CURRENT_PROJECTS_ID = projectList.get(checkItem).getId();
                                     //清空map中的layer
                                     if (mainFragment != null) {
                                         mainFragment.clearAllMapLayers();
@@ -331,12 +338,9 @@ public class MainActivity extends SupportActivity implements TencentLocationList
                                             mainFragment.popToChild(MultiTimeLayerSelectFragment.class, true);
                                         }
 
+                                        //自动加载该项目对应的图层
+                                        mainFragment.getMapDataSourceFromNet(true);
                                     }
-
-                                    if (SystemConstant.CURRENT_PROJECTS_ID != -1) {
-                                        RxToast.info("切换项目，自动清除当前地图所有图层");
-                                    }
-                                    SystemConstant.CURRENT_PROJECTS_ID = projectList.get(checkItem).getId();
                                 } else {
                                     RxToast.info("未切换项目，仍保持当前项目继续作业");
                                 }
@@ -434,5 +438,23 @@ public class MainActivity extends SupportActivity implements TencentLocationList
             popTo(CatEyeMainFragment.class,false);
         }
         slidingDrawer.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RxPhotoTool.GET_IMAGE_BY_CAMERA) { //获取用户拍摄的照片
+            String imgPath=RxPhotoTool.getImageAbsolutePath(this, RxPhotoTool.imageUriFromCamera);
+            File photoFile = new File(SystemConstant.CACHE_PHOTO_PATH+File.separator+UUID.randomUUID().toString().replace("-","")+".jpg");
+            if (!photoFile.getParentFile().exists() || !photoFile.getParentFile().isDirectory()){
+                photoFile.getParentFile().mkdirs();
+            }
+            if (RxFileTool.copyOrMoveFile(imgPath, photoFile.getAbsolutePath(),true)){
+                Message msg = Message.obtain();
+                msg.what = SystemConstant.MSG_WHAT_DRAW_PHOTO_FINISH;
+                msg.obj=photoFile.getAbsolutePath();
+                EventBus.getDefault().post(msg);
+            }
+        }
     }
 }

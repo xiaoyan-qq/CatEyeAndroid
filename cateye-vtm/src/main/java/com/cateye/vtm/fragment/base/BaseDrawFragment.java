@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.util.CatEyeMapManager;
+import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.layers.PolygonLayer;
 
@@ -47,9 +48,6 @@ public class BaseDrawFragment extends BaseFragment {
     protected ItemizedLayer<MarkerItem> markerLayer;
     protected PathLayer polylineOverlay;
     protected PolygonLayer polygonOverlay;
-    protected MarkerSymbol defaultMarkerSymbol;
-
-    protected Style lineStyle, polygonStyle;
 
     @Override
     public int getFragmentLayoutId() {
@@ -71,38 +69,18 @@ public class BaseDrawFragment extends BaseFragment {
     public void initDrawLayers() {
         if (markerLayer == null) {
             //打开该fragment，则自动向地图中添加marker的overlay
-            Bitmap bitmapPoi = drawableToBitmap(getResources().getDrawable(R.drawable.marker_poi));
-            defaultMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
-            markerLayer = new ItemizedLayer<MarkerItem>(mMap, defaultMarkerSymbol);
+            markerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()));
             mMap.layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 
         if (polylineOverlay == null) {
             //自动添加pathLayer
-            lineStyle = Style.builder()
-                    .stippleColor(Color.RED)
-                    .stipple(24)
-                    .stippleWidth(1)
-                    .strokeWidth(2)
-                    .strokeColor(Color.RED)
-                    .fixed(true)
-                    .randomOffset(false)
-                    .build();
-            polylineOverlay = new PathLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), lineStyle);
+            polylineOverlay = new PathLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), LayerStyle.getDefaultLineStyle());
             mMap.layers().add(polylineOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 
         if (polygonOverlay == null) {
-            polygonStyle = Style.builder()
-                    .stippleColor(Color.RED)
-                    .stipple(24)
-                    .stippleWidth(1)
-                    .strokeWidth(2)
-                    .strokeColor(Color.RED).fillColor(Color.RED).fillAlpha(0.5f)
-                    .fixed(true)
-                    .randomOffset(false)
-                    .build();
-            polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), polygonStyle);
+            polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), LayerStyle.getDefaultPolygonStyle());
             mMap.layers().add(polygonOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
     }
@@ -179,9 +157,11 @@ public class BaseDrawFragment extends BaseFragment {
                 polygonOverlay.removeCurrentPolygonDrawable();
                 polygonOverlay.setLineString(getPointArray(polygonOverlay.getPoints()));
             } else if (polygonOverlay.getPoints() != null && polygonOverlay.getPoints().size() == 1) {
+                polygonOverlay.removeCurrentPolygonDrawable();
                 polygonOverlay.removeCurrentPolylineDrawable();
-                polygonOverlay.update();
             } else {
+                polygonOverlay.removeCurrentPolygonDrawable();
+                polygonOverlay.removeCurrentPolylineDrawable();
                 polygonOverlay.clearPath();
             }
             polygonOverlay.update();
@@ -215,14 +195,8 @@ public class BaseDrawFragment extends BaseFragment {
      */
     protected MarkerItem obtainMarker(Object uid, String title, String des, GeoPoint geoPoint) {
         MarkerItem markerItem = new MarkerItem(uid, title, des, geoPoint);
-        if (defaultMarkerSymbol != null) {
-            markerItem.setMarker(defaultMarkerSymbol);
-        }
+        markerItem.setMarker(LayerStyle.getDefaultMarkerSymbol(getActivity()));
         return markerItem;
-    }
-
-    protected void setDefaultMarkerSymbol(MarkerSymbol defaultMarkerSymbol) {
-        this.defaultMarkerSymbol = defaultMarkerSymbol;
     }
 
     /**
@@ -283,6 +257,12 @@ public class BaseDrawFragment extends BaseFragment {
                         redrawPolygon(polygonOverlay);
                     }
                     markerLayer.map().updateMap(true);
+                    if (currentDrawState == DRAW_STATE.DRAW_POINT) { // 如果当前正在绘制点
+                        Message msg=Message.obtain();
+                        msg.what = SystemConstant.MSG_WHAT_DRAW_POINT;
+                        msg.obj=p;
+                        EventBus.getDefault().post(msg);
+                    }
                     return true;
                 }
             }

@@ -24,8 +24,6 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanMultiPolygonLayer;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerUtils;
-import com.desmond.ripple.RippleCompat;
-import com.desmond.ripple.RippleConfig;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
@@ -137,11 +135,6 @@ public class AirPlanSelectPolygonListFragment extends BaseDrawFragment {
         }
 
         img_back = (ImageView) findViewById(R.id.tv_air_plan_list_back);
-//        RippleConfig config = new RippleConfig();
-//        config.setIsEnablePalette(true);
-//        config.setIsFull(true);
-//        config.setIsSpin(true);
-//        RippleCompat.apply(img_back, config);
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,9 +234,6 @@ public class AirPlanSelectPolygonListFragment extends BaseDrawFragment {
                 tv_updateTime = itemView.findViewById(R.id.tv_polygon_updatetime);
                 tv_polygonName = itemView.findViewById(R.id.tv_polygon_name);
                 btn_delete = itemView.findViewById(R.id.btn_polygon_delete);
-
-                RippleCompat.apply(btn_delete, R.color.gray);
-                RippleCompat.apply(itemView, R.color.gray);
             }
         }
     }

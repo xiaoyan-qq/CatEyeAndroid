@@ -11,6 +11,7 @@ public class SystemConstant {
     public static final String AIR_PLAN_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan";
     public static final String AIR_PLAN_OUTPUT_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan" + File.separator + "Output";
     public static final String CACHE_FILE_PATH = APP_ROOT_DATA_PATH + File.separator + "Cache";
+    public static final String CACHE_PHOTO_PATH = APP_ROOT_DATA_PATH + File.separator + "Photo";
 
     public static final int MSG_WHAT_DRAW_POINT_LINE_POLYGON_DESTROY = 0x1001;//绘制点线面
     public static final int MSG_WHAT_LOCATION_UPDATE = 0x1002;//位置更新
@@ -20,6 +21,21 @@ public class SystemConstant {
     public static final int MSG_WHAT_DRAW_LAYER_TIME_SELECT = 0x1006;//某些图层存在多时序，用户拖动时序选择控件切换图层显示
     public static final int MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_START = 0x1007;//开始绘制地图下载的rect，自动隐藏地图上的其他按钮控件
     public static final int MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH = 0x1008;//完成绘制地图下载的rect，重新显示地图上的其他按钮控件
+    public static final int MSG_WHAT_DRAW_PHOTO_FINISH = 0x1009;//完成绘制地图下载的rect，重新显示地图上的其他按钮控件
+
+    public static final int MSG_WHAT_DRAW_POINT = 0x1011;//用户绘制点结束
+    public static final int MSG_WHAT_DRAW_LINE = 0x1012;//用户绘制线结束
+    public static final int MSG_WHAT_DRAW_POLYGON = 0x1013;//用户绘制面结束
+
+    public static final int MSG_WHAT_DELETE_DRAW_DATA = 0x1014;//用户删除绘制的元素
+
+    public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
+    public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称
+    public static final String LAYER_NAME_DRAW_POLYGON = "LAYER_NAME_DRAW_POLYGON";//显示用户绘制面图层的名称
+
+    public static final String LAYER_NAME_DRAW_POINT_HIGHLIGHT = "LAYER_NAME_DRAW_POINT";//高亮显示用户绘制的点图层的名称
+    public static final String LAYER_NAME_DRAW_LINE_HIGHLIGHT = "LAYER_NAME_DRAW_LINE";//高亮显示用户绘制线图层的名称
+    public static final String LAYER_NAME_DRAW_POLYGON_HIGHLIGHT = "LAYER_NAME_DRAW_POLYGON";//高亮显示用户绘制面图层的名称
 
     public static final String BASE_URL = "http://111.202.109.211:8080";
     public static final String USER_ID = "{userId}";
@@ -57,5 +73,7 @@ public class SystemConstant {
     public static final String SP_LOGIN_PWD = "SP_LOGIN_PWD";
     public static final String SP_LOGIN_PWD_IS_REMEMBER = "SP_LOGIN_PWD_IS_REMEMBER";
     public static final String PWD_KEY = "PWD_KEY";
+
+    public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
 
 }

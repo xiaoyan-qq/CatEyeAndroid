@@ -118,6 +118,7 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
                     redrawPolyline(polylineOverlay);
                 } else if (currentDrawState == DRAW_STATE.DRAW_POLYGON) {
                     polygonOverlay.getPoints().clear();
+                    polygonOverlay.removeCurrentPolygonDrawable();
                     redrawPolygon(polygonOverlay);
                 }
 
@@ -135,11 +136,38 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
                     }
                     drawBundle.putSerializable(SystemConstant.DRAW_POINT_LIST, (Serializable) geoPointList);
                 }
+
                 Message msg = Message.obtain();
-                msg.what = SystemConstant.MSG_WHAT_DRAW_RESULT;
-                msg.obj = geoPointList;
-                msg.arg1 = drawUsage;
-                EventBus.getDefault().post(msg);
+                if (drawUsage == SystemConstant.DRAW_CONTOUR_LINE) { // 如果当前正在绘制等高线
+                    msg.what = SystemConstant.MSG_WHAT_DRAW_RESULT;
+                    msg.obj = geoPointList;
+                    msg.arg1 = drawUsage;
+                } else {
+//                    if (getCurrentDrawState() == DRAW_STATE.DRAW_POINT) {
+//                        List<MarkerItem> itemList=markerLayer.getItemList();
+//                        if (itemList!=null&&!itemList.isEmpty()){
+//                            msg.what = SystemConstant.MSG_WHAT_DRAW_POINT;
+//                            List<GeoPoint> pointList = new ArrayList<>();
+//                            for (MarkerItem item:itemList) {
+//                                pointList.add(item.geoPoint);
+//                            }
+//                            msg.obj = pointList;
+//                            EventBus.getDefault().post(msg);
+//                        }
+//                    } else
+                        if (getCurrentDrawState() == DRAW_STATE.DRAW_LINE) {
+                        msg.what = SystemConstant.MSG_WHAT_DRAW_LINE;
+                        msg.obj = polylineOverlay.getPoints();
+                        EventBus.getDefault().post(msg);
+                    } else if (getCurrentDrawState() == DRAW_STATE.DRAW_POLYGON) {
+                        msg.what = SystemConstant.MSG_WHAT_DRAW_POLYGON;
+                        msg.obj = polygonOverlay.getPoints();
+                        EventBus.getDefault().post(msg);
+                    }
+                }
+
+                //清空绘制图层
+                clearDrawLayers();
                 pop();//退出当前界面
             }
         });

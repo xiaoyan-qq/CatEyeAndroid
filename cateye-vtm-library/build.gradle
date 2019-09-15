@@ -162,7 +162,5 @@ dependencies {
     //https://github.com/scwang90/SmartRefreshLayout?utm_medium=email&utm_source=gank.io
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
 
-    //实现水波纹效果的库 https://github.com/desmond1121/RippleCompat
-    compile 'com.github.desmond1121:ripplecompat:0.4.1'
     compile 'com.android.support:multidex:1.0.2'
 }

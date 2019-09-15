@@ -1,5 +1,6 @@
 package com.cateye.vtm.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -28,9 +30,11 @@ import com.cateye.android.entity.AirPlanFeature;
 import com.cateye.android.entity.AirPlanProperties;
 import com.cateye.android.entity.ContourFromNet;
 import com.cateye.android.entity.ContourMPData;
+import com.cateye.android.entity.DrawPointLinePolygonEntity;
 import com.cateye.android.entity.MapSourceFromNet;
 import com.cateye.android.entity.TravelLocation;
 import com.cateye.android.entity.TravelRecord;
+import com.cateye.android.vtm.LoginActivity;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.MainActivity.LAYER_GROUP_ENUM;
 import com.cateye.android.vtm.R;
@@ -39,6 +43,7 @@ import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanUtils;
 import com.cateye.vtm.util.CatEyeMapManager;
+import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.TimeUtils;
 import com.larswerkman.holocolorpicker.ColorPicker;
@@ -51,17 +56,21 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.adapter.ObservableResponse;
 import com.tencent.map.geolocation.TencentLocation;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vondear.rxtool.RxFileTool;
 import com.vondear.rxtool.RxLogTool;
+import com.vondear.rxtool.RxSPTool;
 import com.vondear.rxtool.RxTimeTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialog;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.layers.GeoJsonLayer;
+import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.layers.PolygonLayer;
+import com.vtm.library.tools.DrawLayerUtils;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
 import com.vtm.library.tools.TileDownloader;
@@ -95,12 +104,16 @@ import org.oscim.layers.LocationLayer;
 import org.oscim.layers.MapEventLayer;
 import org.oscim.layers.MapEventLayer2;
 import org.oscim.layers.OSMIndoorLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerInterface;
+import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.MapTile;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.layers.tile.buildings.BuildingLayer;
 import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.layers.vector.PathLayer;
 import org.oscim.layers.vector.geometries.PolygonDrawable;
 import org.oscim.map.Map;
 import org.oscim.renderer.BitmapRenderer;
@@ -127,6 +140,8 @@ import org.oscim.tiling.source.geojson.ContourGeojsonTileSource;
 import org.oscim.tiling.source.geojson.GeojsonTileSource;
 import org.oscim.tiling.source.mapfile.MapFileTileSource;
 import org.oscim.tiling.source.mapfile.MapInfo;
+import org.xutils.db.sqlite.SqlInfo;
+import org.xutils.db.sqlite.SqlInfoBuilder;
 import org.xutils.ex.DbException;
 
 import java.io.File;
@@ -181,7 +196,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
 //    private List<TileSource> mTileSourceList;//当前正在显示的tileSource的集合
 
-    private ImageView img_location/*获取当前位置的按钮*/;
+    private ImageView img_location/*获取当前位置的按钮*/, img_exit_app/*退出程序*/;
     private TextView chk_draw_point, chk_draw_line, chk_draw_polygon;//绘制点线面
     private TextView img_map_source_selector;
     private TextView img_contour_selector;//加载等高线数据的按钮
@@ -189,11 +204,15 @@ public class CatEyeMainFragment extends BaseFragment {
     private TextView img_select_project/*选择当前项目的按钮*/, img_download_tile/*下载tile文件*/;
     private TextView img_chk_draw_airplan/*绘制航区*/, img_chk_set_airplan/*设置航区*/, img_chk_open_airplan/*打开航区文件*/, img_chk_save_airplan/*保存航区文件*/;
     private TextView tv_switch_track/*轨迹开关*/, img_trail_record/*轨迹列表*/;
+    private TextView tv_draw_recorder/*绘制轨迹*/;
     private List<View> chkDrawPointLinePolygonList;
     private FrameLayout layer_fragment;//用来显示fragment的布局文件
 //    private java.util.Map<String, MapSourceFromNet.DataBean> netDataSourceMap;//用来记录用户勾选了哪些网络数据显示
 
     private LocationLayer locationLayer;//显示当前位置的图层
+    private ItemizedLayer<MarkerItem> markerLayer;
+    private MultiPathLayer multiPathLayer;
+    private MultiPolygonLayer multiPolygonLayer;
     private final MapPosition mapPosition = new MapPosition();//更新地图位置
     private boolean isMapCenterFollowLocation = true;//地图中心是否需要跟随当前定位位置
 
@@ -241,6 +260,8 @@ public class CatEyeMainFragment extends BaseFragment {
         tv_switch_track = rootView.findViewById(R.id.tv_switch_track);
         img_trail_record = rootView.findViewById(R.id.img_trail_record);
 
+        tv_draw_recorder = rootView.findViewById(R.id.img_draw_record);
+
         chkDrawPointLinePolygonList = new ArrayList<>();
         chkDrawPointLinePolygonList.add(chk_draw_point);
         chkDrawPointLinePolygonList.add(chk_draw_line);
@@ -252,6 +273,7 @@ public class CatEyeMainFragment extends BaseFragment {
         img_contour_selector = rootView.findViewById(R.id.img_contour_select);
         img_change_contour_color = rootView.findViewById(R.id.img_change_contour_color);
         img_location = rootView.findViewById(R.id.img_location);
+        img_exit_app = rootView.findViewById(R.id.img_exit_app);
 
         initData();
         initScaleBar();
@@ -420,6 +442,8 @@ public class CatEyeMainFragment extends BaseFragment {
         chk_draw_line.setOnClickListener(mainFragmentClickListener);
         chk_draw_polygon.setOnClickListener(mainFragmentClickListener);
 
+        tv_draw_recorder.setOnClickListener(mainFragmentClickListener);
+
         //航区规划相关的设置
         AirPlanUtils airPlanUtils = AirPlanUtils.getInstance(this, mMap, img_chk_set_airplan);
         img_chk_draw_airplan.setOnClickListener(airPlanUtils.airplanClickListener);
@@ -435,6 +459,48 @@ public class CatEyeMainFragment extends BaseFragment {
         locationLayer.setEnabled(false);
         mMap.layers().add(locationLayer, LAYER_GROUP_ENUM.LOCATION_GROUP.orderIndex);
 
+        //初始化点线面的显示图层
+        if (markerLayer == null) {
+            //打开该fragment，则自动向地图中添加marker的overlay
+            markerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_DRAW_POINT);
+            mMap.layers().add(markerLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+
+        }
+
+        if (multiPathLayer == null) {
+            //自动添加pathLayer
+            multiPathLayer = new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), SystemConstant.LAYER_NAME_DRAW_LINE);
+            mMap.layers().add(multiPathLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        }
+
+        if (multiPolygonLayer == null) {
+            multiPolygonLayer = new MultiPolygonLayer(mMap, LayerStyle.getDefaultPolygonStyle(), SystemConstant.LAYER_NAME_DRAW_POLYGON);
+            mMap.layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        }
+
+        //读取数据库中当前用户存储的点数据，添加到图层上
+        try {
+            String currentUserName=RxSPTool.getContent(getActivity(), SystemConstant.SP_LOGIN_USERNAME);
+            List<DrawPointLinePolygonEntity> entityList=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("userName","=", currentUserName).findAll();
+            if (entityList!=null&&!entityList.isEmpty()){
+                for (DrawPointLinePolygonEntity entity:entityList) {
+                    if (entity.getGeometry()!=null){
+                        String geometryType = GeometryTools.createGeometry(entity.getGeometry()).getGeometryType();
+                        if (geometryType == "Point"){
+                            MarkerItem markerItem=new MarkerItem(entity.getName(),entity.getRemark(),GeometryTools.createGeoPoint(entity.getGeometry()));
+                            markerLayer.addItem(markerItem);
+                        } else if (geometryType == "LineString"){
+                            multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
+                        } else if (geometryType == "Polygon"){
+                            multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
+                        }
+                    }
+                }
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
         img_location.setOnClickListener(new View.OnClickListener() {//定位到当前位置
             @Override
             public void onClick(View view) {
@@ -447,6 +513,16 @@ public class CatEyeMainFragment extends BaseFragment {
                 } else {
                     RxToast.info("无法获取到定位信息!");
                 }
+            }
+        });
+
+        img_exit_app.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //退出当前程序
+                Intent exitIntent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(exitIntent);
+                getActivity().finish();
             }
         });
     }
@@ -514,7 +590,7 @@ public class CatEyeMainFragment extends BaseFragment {
                     if (SystemConstant.CURRENT_PROJECTS_ID < 0) {//没有获取到当前作业的项目ID，提示用户
                         RxToast.info("无法获取当前作业项目，请检查您的网络设置");
                     } else {
-                        getMapDataSourceFromNet();
+                        getMapDataSourceFromNet(false);
                     }
                 }
             } else if (view.getId() == R.id.img_contour_select) {//选择等高线文件
@@ -673,13 +749,17 @@ public class CatEyeMainFragment extends BaseFragment {
                 TrailRecordListFragment trailRecordListFragment = (TrailRecordListFragment) TrailRecordListFragment.newInstance(new Bundle());
                 ((MainActivity) getActivity()).showSlidingLayout(0.4f, trailRecordListFragment);
             }
+            else if (view.getId() == R.id.img_draw_record) {
+                DrawPointLinePolygonListFragment drawPointLinePolygonListFragment = (DrawPointLinePolygonListFragment) DrawPointLinePolygonListFragment.newInstance(new Bundle());
+                ((MainActivity) getActivity()).showSlidingLayout(0.4f, drawPointLinePolygonListFragment);
+            }
         }
     };
 
     /**
      * 从网络获取地图资源
      */
-    private void getMapDataSourceFromNet() {
+    public void getMapDataSourceFromNet(final boolean isChangeProject /*标识是否为切换项目时自动获取资源，如果是，则自动将所有图层都勾选并显示*/) {
         final RxDialogLoading rxDialogLoading = new RxDialogLoading(getContext());
         OkGo.<String>get(URL_MAP_SOURCE_NET.replace(SystemConstant.USER_ID, SystemConstant.CURRENT_PROJECTS_ID + "")).tag(this).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -711,6 +791,13 @@ public class CatEyeMainFragment extends BaseFragment {
                             @Override
                             public void accept(List<MapSourceFromNet.DataBean> dataBeanList) throws Exception {
                                 if (dataBeanList != null) {
+                                    if (isChangeProject) {
+                                        for (MapSourceFromNet.DataBean db:dataBeanList) {
+                                            db.setShow(true);
+                                        }
+                                        //调用显示选中图层的功能
+                                        refreshAllLayers(dataBeanList);
+                                    }
                                     layerDataBeanList = dataBeanList;
                                     showLayerManagerDialog(dataBeanList);
                                 } else {
@@ -783,41 +870,45 @@ public class CatEyeMainFragment extends BaseFragment {
         new CanDialog.Builder(getActivity()).setView(layerManagerRootView).setNegativeButton("取消", true, null).setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
             @Override
             public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
-                clearAllMapLayers();
-                //清空多图层列表list数据，重新筛选获取
-                multiTimeLayerList.clear();
-                //根据当前的资源选择，显示对应的图层
-                for (MapSourceFromNet.DataBean dataBean : dataBeanList) {
-                    boolean isShow = dataBean.isShow();
-                    if (isShow) {//设置为选中可显示状态
-                        if (dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
-                            ContourGeojsonTileSource mTileSource = ContourGeojsonTileSource.builder()
-                                    .url(dataBean.getMaps().get(0).getHref()).tilePath("/{X}/{Y}/{Z}.json" /*+ stringDataBeanMap.get(key).getExtension()*/)
-                                    .zoomMax(18).build();
-                            mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
-                            createGeoJsonTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
-                        } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".map")) {
-                            addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
-                        } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
-                            File geoJsonFile = new File(dataBean.getMaps().get(0).getHref());
-                            loadJson(geoJsonFile);
-                        } else {
-                            BitmapTileSource mTileSource = BitmapTileSource.builder()
-                                    .url(dataBean.getMaps().get(0).getHref()).tilePath("/{X}/{Y}/{Z}." + dataBean.getMaps().get(0).getExtension())
-                                    .zoomMax(18).build();
-                            createBitmapTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
-                            mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
-                        }
-
-                        if (dataBean.getMaps() != null && dataBean.getMaps().size() > 1) {
-                            multiTimeLayerList.add(dataBean);
-                        }
-                    }
-                }
-                showMultiTimeLayerSelectFragment(multiTimeLayerList);
-                mMap.clearMap();
+                refreshAllLayers(dataBeanList);
             }
         }).show();
+    }
+
+    private void refreshAllLayers(List<MapSourceFromNet.DataBean> dataBeanList) { // 根据勾选的图层，重新切换地图上的图层显示
+        clearAllMapLayers();
+        //清空多图层列表list数据，重新筛选获取
+        multiTimeLayerList.clear();
+        //根据当前的资源选择，显示对应的图层
+        for (MapSourceFromNet.DataBean dataBean : dataBeanList) {
+            boolean isShow = dataBean.isShow();
+            if (isShow) {//设置为选中可显示状态
+                if (dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
+                    ContourGeojsonTileSource mTileSource = ContourGeojsonTileSource.builder()
+                            .url(dataBean.getMaps().get(0).getHref()).tilePath("/{X}/{Y}/{Z}.json" /*+ stringDataBeanMap.get(key).getExtension()*/)
+                            .zoomMax(18).build();
+                    mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
+                    createGeoJsonTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
+                } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".map")) {
+                    addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
+                } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
+                    File geoJsonFile = new File(dataBean.getMaps().get(0).getHref());
+                    loadJson(geoJsonFile);
+                } else {
+                    BitmapTileSource mTileSource = BitmapTileSource.builder()
+                            .url(dataBean.getMaps().get(0).getHref()).tilePath("/{X}/{Y}/{Z}." + dataBean.getMaps().get(0).getExtension())
+                            .zoomMax(18).build();
+                    createBitmapTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
+                    mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
+                }
+
+                if (dataBean.getMaps() != null && dataBean.getMaps().size() > 1) {
+                    multiTimeLayerList.add(dataBean);
+                }
+            }
+        }
+        showMultiTimeLayerSelectFragment(multiTimeLayerList);
+        mMap.clearMap();
     }
 
     /**
@@ -1363,6 +1454,62 @@ public class CatEyeMainFragment extends BaseFragment {
                     }
                 }
                 break;
+            case SystemConstant.MSG_WHAT_DRAW_POINT:
+                if (msg.obj!=null){ //弹出对话框，提示用户输入内容
+                    GeoPoint point= (GeoPoint) msg.obj;
+                    markerLayer.addItem(new MarkerItem(null, null, point));
+                    mMap.updateMap(true);
+
+                    DrawPointLinePolygonEntity pointEntity=new DrawPointLinePolygonEntity();
+                    pointEntity.setGeometry(GeometryTools.createGeometry(point).toString());
+                    DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_POINT, pointEntity);
+                }
+                break;
+            case SystemConstant.MSG_WHAT_DRAW_LINE:
+                List<GeoPoint> lineGeoPointList = (List<GeoPoint>) msg.obj;
+                if (lineGeoPointList!=null&&lineGeoPointList.size()>=2){
+                    if (lineGeoPointList!=null&&!lineGeoPointList.isEmpty()){
+                        multiPathLayer.addPathDrawable(GeometryTools.getLineStrinGeo(lineGeoPointList));
+                    }
+                    mMap.updateMap(true);
+
+                    DrawPointLinePolygonEntity lineEntity=new DrawPointLinePolygonEntity();
+                    lineEntity.setGeometry(GeometryTools.getLineStrinGeo(lineGeoPointList).toString());
+                    DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_LINE, lineEntity);
+                }
+                break;
+            case SystemConstant.MSG_WHAT_DRAW_POLYGON:
+                List<GeoPoint> polygonGeoPointList = (List<GeoPoint>) msg.obj;
+                if (polygonGeoPointList!=null&&polygonGeoPointList.size()>=3){
+                    if (polygonGeoPointList!=null&&!polygonGeoPointList.isEmpty()){
+                        multiPolygonLayer.addPolygonDrawable(polygonGeoPointList);
+                    }
+                    mMap.updateMap(true);
+
+                    DrawPointLinePolygonEntity polygonEntity=new DrawPointLinePolygonEntity();
+                    polygonEntity.setGeometry(GeometryTools.getPolygonString(polygonGeoPointList));
+                    DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_POLYGON, polygonEntity);
+                }
+                break;
+            case SystemConstant.MSG_WHAT_DELETE_DRAW_DATA:
+                if (msg.obj!=null){
+                   Geometry removeGeometry = GeometryTools.createGeometry(msg.obj.toString());
+                   if (GeometryTools.POINT_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
+                       DrawLayerUtils.getInstance().removeItemFromList(GeometryTools.createGeoPoint(msg.obj.toString()),markerLayer.getItemList());
+                       markerLayer.populate();
+                       markerLayer.update();
+                   } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
+//                        DrawLayerUtils.getInstance().removeGeoPointListFromMultiPath(GeometryTools.getGeoPoints(msg.obj.toString()),multiPathLayer.getAllPathGeoPointList());
+                       multiPathLayer.removePathDrawable(msg.obj.toString());
+                       multiPathLayer.update();
+                   } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
+//                       DrawLayerUtils.getInstance().removeGeoPointListFromMultiPath(GeometryTools.getGeoPoints(msg.obj.toString()),multiPolygonLayer.getAllPolygonGeoPointList());
+                       multiPolygonLayer.removePolygonDrawable(msg.obj.toString());
+                       multiPolygonLayer.update();
+                   }
+                   mMap.updateMap(true);
+                }
+                break;
         }
     }
 
@@ -1462,7 +1609,9 @@ public class CatEyeMainFragment extends BaseFragment {
             Iterator mapLayerIterator = mMap.layers().iterator();
             while (mapLayerIterator.hasNext()) {
                 Layer layer = (Layer) mapLayerIterator.next();
-                if (!(layer instanceof MapEventLayer) && !(layer instanceof MapEventLayer2) && !(layer instanceof LocationLayer) && !(layer instanceof MapScaleBarLayer)) {
+                if (!(layer instanceof MapEventLayer) && !(layer instanceof MapEventLayer2) && !(layer instanceof LocationLayer) && !(layer instanceof MapScaleBarLayer)
+                        && (!SystemConstant.LAYER_NAME_DRAW_POINT.equals(layer.getName())) && (!SystemConstant.LAYER_NAME_DRAW_LINE.equals(layer.getName()))
+                        && (!SystemConstant.LAYER_NAME_DRAW_POLYGON.equals(layer.getName()))) {
                     mapLayerIterator.remove();
                 }
             }

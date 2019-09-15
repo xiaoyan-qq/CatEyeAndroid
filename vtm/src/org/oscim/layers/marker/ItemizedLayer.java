@@ -51,6 +51,11 @@ public class ItemizedLayer<Item extends MarkerInterface> extends MarkerLayer<Ite
         this(map, new ArrayList<Item>(), defaultMarker, null);
     }
 
+    public ItemizedLayer(Map map, MarkerSymbol defaultMarker, String name) {
+        this(map, defaultMarker);
+        this.mName = name;
+    }
+
     public ItemizedLayer(Map map, List<Item> list,
                          MarkerSymbol defaultMarker,
                          OnItemGestureListener<Item> listener) {

@@ -23,17 +23,14 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.AirPlanMultiPolygonLayer;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerUtils;
 import com.cateye.vtm.util.SystemConstant;
 import com.cateye.vtm.util.TrailRecordMultiPathLayer;
-import com.desmond.ripple.RippleCompat;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialogShapeLoading;
@@ -314,9 +311,6 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                 tv_updateTime = itemView.findViewById(R.id.tv_polygon_updatetime);
                 tv_polygonName = itemView.findViewById(R.id.tv_polygon_name);
                 btn_delete = itemView.findViewById(R.id.btn_polygon_delete);
-
-                RippleCompat.apply(btn_delete, R.color.gray);
-                RippleCompat.apply(itemView, R.color.gray);
             }
         }
     }

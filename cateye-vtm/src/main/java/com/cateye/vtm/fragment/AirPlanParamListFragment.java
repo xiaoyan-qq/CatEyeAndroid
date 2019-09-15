@@ -31,7 +31,6 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerUtils;
 import com.cateye.vtm.util.SystemConstant;
-import com.desmond.ripple.RippleCompat;
 import com.github.lazylibrary.util.StringUtils;
 import com.vondear.rxtool.view.RxToast;
 import com.vtm.library.layers.MultiPolygonLayer;
@@ -116,7 +115,6 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
         });
 
         img_back = (ImageView) findViewById(R.id.tv_air_plan_list_back);
-//        RippleCompat.apply(img_back, R.color.gray);
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -361,8 +359,6 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                 tv_updateTime = itemView.findViewById(R.id.tv_polygon_updatetime);
                 tv_polygonName = itemView.findViewById(R.id.tv_polygon_name);
                 btn_delete = itemView.findViewById(R.id.btn_polygon_delete);
-
-                RippleCompat.apply(btn_delete, R.color.gray);
             }
         }
     }

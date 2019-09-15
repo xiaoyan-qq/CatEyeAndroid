@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:padding="@dimen/button_padding_default"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxHeight="75dp"
+        android:maxWidth="75dp"
+        android:src="@drawable/selector_map_add"
+        android:id="@+id/img_draw_photo"
+        android:scaleType="fitCenter"/>
+
+    <ImageView
+        android:id="@+id/img_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/button_padding_default"
+        android:scaleType="fitCenter"
+        android:layout_gravity="right|top"
+        android:src="@drawable/file_select_close"/>
+</FrameLayout>

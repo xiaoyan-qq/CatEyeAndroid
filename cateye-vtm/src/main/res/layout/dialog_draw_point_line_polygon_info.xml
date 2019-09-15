@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:background="@color/white_66"
+        android:padding="@dimen/bootstrap_badge_default_size">
+
+        <LinearLayout
+            style="@style/rowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.beardedhen.androidbootstrap.BootstrapLabel
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                android:padding="@dimen/button_padding_default"
+                android:text="名称"
+                app:bootstrapSize="md" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/edt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="info"
+                app:bootstrapSize="md"
+                app:roundedCorners="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/rowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.beardedhen.androidbootstrap.BootstrapLabel
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                android:padding="@dimen/button_padding_default"
+                android:text="备注"
+                app:bootstrapSize="md" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/edt_remark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="3"
+                android:gravity="top"
+                app:bootstrapSize="md"
+                app:roundedCorners="true" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/draw_photo_layer"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_addImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="增加照片"/>
+            <!--用來展示用戶拍的照片-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rcv_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:padding="@dimen/button_padding_default"
+            android:layout_height="wrap_content">
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="regular"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                app:bootstrapText="取消"/>
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="primary"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                app:bootstrapText="保存"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -36,6 +36,8 @@ public class GeometryTools {
     static final double PI = 3.14159216;
     private static volatile GeometryTools mInstance;
 
+    public static String POINT_GEOMETRY_TYPE="Point", LINE_GEOMETRY_TYPE="LineString", POLYGON_GEOMETRY_TYPE="Polygon";
+
     public static GeometryTools getInstance() {
 
         if (mInstance == null) {
