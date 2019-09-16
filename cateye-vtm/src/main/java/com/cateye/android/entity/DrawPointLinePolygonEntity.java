@@ -8,8 +8,8 @@ import java.util.List;
 
 @Table(name = "DrawPointLinePolygonEntity")
 public class DrawPointLinePolygonEntity {
-    @Column(name = "_id", isId = true, autoGen = true)
-    private int _id;
+    @Column(name = "_id", isId = true)
+    private String _id;
     @Column(name = "name")
     private String name;
     @Column(name = "remark")
@@ -17,19 +17,19 @@ public class DrawPointLinePolygonEntity {
     @Column(name = "userName")
     private String userName;
     @Column(name = "projectId")
-    private String projectId;
+    private int projectId;
     @Column(name = "imgUrlListStr")
     private String imgUrlListStr;
     @Column(name = "isUpload")
-    private boolean isUpload;
+    private boolean isUpload = false;
     @Column(name = "geometry")
     private String geometry;
 
-    public int get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 
@@ -57,11 +57,11 @@ public class DrawPointLinePolygonEntity {
         this.userName = userName;
     }
 
-    public String getProjectId() {
+    public int getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(String projectId) {
+    public void setProjectId(int projectId) {
         this.projectId = projectId;
     }
 
@@ -91,6 +91,7 @@ public class DrawPointLinePolygonEntity {
         }else {
             this.imgUrlListStr = null;
         }
+        this.isUpload = false; // 用户修改照片数据，则数据被修改，将当前数据状态重置为未上传
     }
 
     public String getImgUrlListStr() {

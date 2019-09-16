@@ -43,6 +43,7 @@ import org.xutils.x;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DrawPointLinePolygonDialog {
     private RxDialog currentDialog;
@@ -121,7 +122,7 @@ public class DrawPointLinePolygonDialog {
             @Override
             public void onClick(View v) {
                 DrawPointLinePolygonDialog.this.currentDialog.dismiss();
-                if (instance.currentEntity!=null&&instance.currentEntity.getGeometry()!=null&&instance.currentEntity.get_id() <= 0 /*id小于0，说明是新增过程*/){
+                if (instance.currentEntity!=null&&instance.currentEntity.getGeometry()!=null&&instance.currentEntity.get_id() == null /*id为null，说明是新增过程*/){
                     // 通知主界面，从地图上删除指定的元素
                     Message msg = Message.obtain();
                     msg.what= SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
@@ -141,9 +142,12 @@ public class DrawPointLinePolygonDialog {
                 if (instance.currentEntity == null) {
                     instance.currentEntity=new DrawPointLinePolygonEntity();
                 }
+                if (instance.currentEntity.get_id() == null){
+                    instance.currentEntity.set_id(UUID.randomUUID().toString().replace("-",""));
+                }
                 instance.currentEntity.setName(edt_name.getText().toString().trim());
                 instance.currentEntity.setRemark(edt_remark.getText().toString().trim());
-                instance.currentEntity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID+"");
+                instance.currentEntity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
                 if (instance.rcv_img.isShown()){
                     instance.currentEntity.setImgUrlList(DrawPointLinePolygonDialog.this.imgUrlList);
                 }else {

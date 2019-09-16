@@ -43,6 +43,7 @@ public class SystemConstant {
     public static final String URL_CONTOUR_CALCULATE = BASE_URL + "/dem/contour";//等高线获取的url
     public static final String URL_PROJECTS_LIST = BASE_URL + "/projects";//获取项目列表的url
     public static final String URL_LOGIN = BASE_URL + "/auth/login";//获取项目列表的url
+    public static final String IMG_UPLOAD = BASE_URL + "/data/imgUpload";//用户上传图片文件的url
     public static int CURRENT_PROJECTS_ID = -1;//当前正在作业的项目id，默认为1
 
     public static final String DATA_CONTOUR_CHART = "DATA_CONTOUR_CHART";
@@ -73,6 +74,8 @@ public class SystemConstant {
     public static final String SP_LOGIN_PWD = "SP_LOGIN_PWD";
     public static final String SP_LOGIN_PWD_IS_REMEMBER = "SP_LOGIN_PWD_IS_REMEMBER";
     public static final String PWD_KEY = "PWD_KEY";
+
+    public static final String PARAM_PROP_KEY_IMG = "img";
 
     public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
 

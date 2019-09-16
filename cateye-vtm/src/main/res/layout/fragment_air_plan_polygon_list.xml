@@ -21,6 +21,27 @@
             android:background="@drawable/ripple_bg_drawable"
             android:src="@drawable/selector_back" />
 
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/atv_draw_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bootstrapBrand="success"
+            app:bootstrapSize="sm"
+            android:layout_margin="@dimen/button_padding_default"
+            app:fontAwesomeIcon="fa_cloud_upload"
+            android:layout_alignParentRight="true"
+            app:buttonMode="regular" />
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/atv_draw_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bootstrapBrand="success"
+            app:bootstrapSize="sm"
+            android:layout_margin="@dimen/button_padding_default"
+            app:fontAwesomeIcon="fa_cloud_upload"
+            android:layout_toLeftOf="@id/atv_draw_upload"
+            app:buttonMode="regular" />
+
     </RelativeLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout

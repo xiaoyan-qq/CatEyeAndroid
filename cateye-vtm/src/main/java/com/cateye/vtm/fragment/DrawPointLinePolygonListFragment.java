@@ -14,11 +14,14 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
 import com.cateye.android.entity.AirPlanDBEntity;
 import com.cateye.android.entity.DrawPointLinePolygonEntity;
+import com.cateye.android.entity.UploadRecordEntity;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
@@ -26,6 +29,7 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
+import com.lzy.okgo.OkGo;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
@@ -46,8 +50,16 @@ import org.oscim.map.Map;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.plugins.RxJavaPlugins;
+import okhttp3.Response;
 
 /**
  * Created by xiaoxiao on 2018/8/31.
@@ -71,6 +83,8 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     private ItemizedLayer highLightPointLayer;
     private MultiPathLayer highLightPathLayer;
     private MultiPolygonLayer highLightPolygonLayer;
+
+    private AwesomeTextView atv_upload,atv_download;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +127,9 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     public void initView(View rootView) {
         refreshLayout = rootView.findViewById(R.id.refreshLayout);
         recyclerView = rootView.findViewById(R.id.rv_air_plan_polygon);
+
+        atv_upload = rootView.findViewById(R.id.atv_draw_upload);
+        atv_download = rootView.findViewById(R.id.atv_draw_download);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listData = new ArrayList<>();
         adapter = new DrawPointLinePolygonAdapter(getActivity(), listData);
@@ -162,6 +179,51 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
             @Override
             public void onClick(View v) {
                 onBackPressedSupport();
+            }
+        });
+
+        //上传用户绘制的数据
+        atv_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    List<DrawPointLinePolygonEntity> uploadListData=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("isUpload","=",false).findAll();
+                    if (uploadListData!=null&&!uploadListData.isEmpty()){
+                        Observable.fromIterable(uploadListData).map(new Function<DrawPointLinePolygonEntity, UploadRecordEntity>() {
+                            @Override
+                            public UploadRecordEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
+                                if (drawPointLinePolygonEntity!=null){
+                                    UploadRecordEntity uploadRecordEntity = new UploadRecordEntity();
+                                    uploadRecordEntity.setUuid(drawPointLinePolygonEntity.get_id());
+                                    uploadRecordEntity.setName(drawPointLinePolygonEntity.getName());
+                                    uploadRecordEntity.setProjectId(drawPointLinePolygonEntity.getProjectId());
+                                    if (drawPointLinePolygonEntity.getImgUrlListStr()!=null&&!drawPointLinePolygonEntity.getImgUrlListStr().isEmpty()){
+                                        java.util.Map propMap=new HashMap();
+                                        propMap.put(SystemConstant.PARAM_PROP_KEY_IMG,drawPointLinePolygonEntity.getImgUrlListStr());
+                                        uploadRecordEntity.setProp(propMap);
+                                    }
+                                    return uploadRecordEntity;
+                                }
+                                return null;
+                            }
+                        }).doOnNext(new Consumer<UploadRecordEntity>() {
+                            @Override
+                            public void accept(UploadRecordEntity uploadRecordEntity) throws Exception {
+                                if (uploadRecordEntity!=null&&uploadRecordEntity.getProp()!=null&&uploadRecordEntity.getProp().get(SystemConstant.PARAM_PROP_KEY_IMG)!=null){
+                                    String[] imgStrs=uploadRecordEntity.getProp().get(SystemConstant.PARAM_PROP_KEY_IMG).toString().split(";");
+                                    for (int i = 0; i < imgStrs.length; i++) {
+                                        if (!imgStrs[i].startsWith("http://")&&!!imgStrs[i].startsWith("https://")){
+                                            Response imgUploadResponse=OkGo.<String>post(SystemConstant.IMG_UPLOAD).tag(this).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).params("file",new File(imgStrs[i])).execute();
+                                            imgUploadResponse.body().string();
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
