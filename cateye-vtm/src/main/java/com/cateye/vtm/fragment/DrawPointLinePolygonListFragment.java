@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
@@ -35,7 +36,9 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
+import com.vondear.rxtool.RxTextTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
@@ -48,17 +51,25 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 import org.xutils.DbManager;
+import org.xutils.common.util.KeyValue;
+import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.BiConsumer;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 
 /**
@@ -189,35 +200,87 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 try {
                     List<DrawPointLinePolygonEntity> uploadListData=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("isUpload","=",false).findAll();
                     if (uploadListData!=null&&!uploadListData.isEmpty()){
-                        Observable.fromIterable(uploadListData).map(new Function<DrawPointLinePolygonEntity, UploadRecordEntity>() {
-                            @Override
-                            public UploadRecordEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
-                                if (drawPointLinePolygonEntity!=null){
-                                    UploadRecordEntity uploadRecordEntity = new UploadRecordEntity();
-                                    uploadRecordEntity.setUuid(drawPointLinePolygonEntity.get_id());
-                                    uploadRecordEntity.setName(drawPointLinePolygonEntity.getName());
-                                    uploadRecordEntity.setProjectId(drawPointLinePolygonEntity.getProjectId());
-                                    if (drawPointLinePolygonEntity.getImgUrlListStr()!=null&&!drawPointLinePolygonEntity.getImgUrlListStr().isEmpty()){
-                                        java.util.Map propMap=new HashMap();
-                                        propMap.put(SystemConstant.PARAM_PROP_KEY_IMG,drawPointLinePolygonEntity.getImgUrlListStr());
-                                        uploadRecordEntity.setProp(propMap);
-                                    }
-                                    return uploadRecordEntity;
-                                }
-                                return null;
-                            }
-                        }).doOnNext(new Consumer<UploadRecordEntity>() {
-                            @Override
-                            public void accept(UploadRecordEntity uploadRecordEntity) throws Exception {
-                                if (uploadRecordEntity!=null&&uploadRecordEntity.getProp()!=null&&uploadRecordEntity.getProp().get(SystemConstant.PARAM_PROP_KEY_IMG)!=null){
-                                    String[] imgStrs=uploadRecordEntity.getProp().get(SystemConstant.PARAM_PROP_KEY_IMG).toString().split(";");
-                                    for (int i = 0; i < imgStrs.length; i++) {
-                                        if (!imgStrs[i].startsWith("http://")&&!!imgStrs[i].startsWith("https://")){
-                                            Response imgUploadResponse=OkGo.<String>post(SystemConstant.IMG_UPLOAD).tag(this).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).params("file",new File(imgStrs[i])).execute();
-                                            imgUploadResponse.body().string();
+                        Observable.fromIterable(uploadListData).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread())
+                                .map(new Function<DrawPointLinePolygonEntity, DrawPointLinePolygonEntity>() {
+                                    @Override
+                                    public DrawPointLinePolygonEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
+                                        if (!RxDataTool.isEmpty(drawPointLinePolygonEntity.getImgUrlList())){
+                                            List imgList=drawPointLinePolygonEntity.getImgUrlList();
+                                            ListIterator iterator= imgList.listIterator();
+                                            while (iterator.hasNext()){
+                                                String imgStr= (String) iterator.next();
+                                                if (!RxDataTool.isNullString(imgStr)&&!imgStr.startsWith("http://")&&!imgStr.startsWith("https://")){
+                                                    // 处理照片，当存在照片时，使用同步方式上传该照片，并且同步更新到本地数据库中
+                                                    Response imgUploadResponse=OkGo.<String>post(SystemConstant.IMG_UPLOAD).tag(this).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).params("file",new File(imgStr)).execute();
+                                                    String imgUploadResult=imgUploadResponse.body().string();
+                                                    if (imgUploadResult!=null){
+                                                        java.util.Map resultMap= (java.util.Map) JSON.parse(imgUploadResult);
+                                                        if (resultMap!=null&&resultMap.containsKey("errcode")&&resultMap.get("errcode").toString().equals("0")) {
+                                                            iterator.set(resultMap.get("data").toString()); // 更新照片路径为网络路径
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            drawPointLinePolygonEntity.setImgUrlList(imgList);
+                                            ((MainActivity)getActivity()).getDbManager().saveOrUpdate(drawPointLinePolygonEntity); // 更新到数据库中
                                         }
+                                        return drawPointLinePolygonEntity;
                                     }
-                                }
+                                })
+                                .subscribeOn(Schedulers.computation())
+                                .map(new Function<DrawPointLinePolygonEntity, UploadRecordEntity>() {
+                                    @Override
+                                    public UploadRecordEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
+                                        if (drawPointLinePolygonEntity!=null){
+                                            UploadRecordEntity uploadRecordEntity = new UploadRecordEntity();
+                                            uploadRecordEntity.setUuid(drawPointLinePolygonEntity.get_id());
+                                            uploadRecordEntity.setName(drawPointLinePolygonEntity.getName());
+                                            uploadRecordEntity.setProjectId(drawPointLinePolygonEntity.getProjectId());
+
+                                            if (drawPointLinePolygonEntity.getImgUrlListStr()!=null&&!drawPointLinePolygonEntity.getImgUrlListStr().isEmpty()){
+                                                java.util.Map propMap=new HashMap();
+                                                propMap.put(SystemConstant.PARAM_PROP_KEY_IMG,drawPointLinePolygonEntity.getImgUrlListStr());
+                                                uploadRecordEntity.setProp(JSON.toJSONString(propMap));
+                                            }
+                                            return uploadRecordEntity;
+                                        }
+                                        return null;
+                                    }
+                                })
+                                .subscribeOn(Schedulers.computation())
+                                .collect(new Callable<ArrayList<UploadRecordEntity>>() {
+                                        @Override
+                                        public ArrayList<UploadRecordEntity> call() throws Exception {
+                                            return new ArrayList<UploadRecordEntity>();
+                                        }
+                                    },
+                                        new BiConsumer<ArrayList<UploadRecordEntity>, UploadRecordEntity>() {
+                                            @Override
+                                            public void accept(ArrayList<UploadRecordEntity> uploadRecordEntities, UploadRecordEntity uploadRecordEntity) throws Exception {
+                                                uploadRecordEntities.add(uploadRecordEntity);
+                                            }
+                                })
+                                .subscribeOn(Schedulers.newThread())
+                                .map(new Function<ArrayList<UploadRecordEntity>, ArrayList<UploadRecordEntity>>() { // 调用网络接口，批量保存数据
+                                    @Override
+                                    public ArrayList<UploadRecordEntity> apply(ArrayList<UploadRecordEntity> uploadRecordEntities) throws Exception {
+                                        Response uploadDataResponse=OkGo.<String>post(SystemConstant.BATCH_SAVE_WKT).upJson(JSONArray.toJSONString(uploadRecordEntities)).execute();
+                                        String result=uploadDataResponse.body().string();
+                                        if (result!=null){
+                                            java.util.Map resultMap= (java.util.Map) JSON.parse(result);
+                                            if (resultMap.containsKey("errcode")&&resultMap.get("errcode").toString().equals("0")) {
+                                                // 批量更新所有的数据为已上传
+                                                KeyValue keyValue=new KeyValue("isUpload",true);
+                                                ((MainActivity)getActivity()).getDbManager().update(DrawPointLinePolygonEntity.class, WhereBuilder.b("1","=","1"),keyValue);
+                                            }
+                                        }
+                                        return null;
+                                    }
+                                })
+                                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<ArrayList<UploadRecordEntity>>() {
+                            @Override
+                            public void accept(ArrayList<UploadRecordEntity> uploadRecordEntities) throws Exception {
+
                             }
                         });
                     }

@@ -9,8 +9,9 @@ public class UploadRecordEntity {
     private String uuid;
     private int projectId;
     private String name;
-    private Map prop;
+    private String prop;
     private String wkt;
+    private int type; // 数据类型 0-绘制数据 1-轨迹数据
 
     public String getUuid() {
         return uuid;
@@ -36,11 +37,11 @@ public class UploadRecordEntity {
         this.name = name;
     }
 
-    public Map getProp() {
+    public String getProp() {
         return prop;
     }
 
-    public void setProp(Map prop) {
+    public void setProp(String prop) {
         this.prop = prop;
     }
 
