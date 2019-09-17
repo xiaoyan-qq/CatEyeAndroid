@@ -274,15 +274,10 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                                 ((MainActivity)getActivity()).getDbManager().update(DrawPointLinePolygonEntity.class, WhereBuilder.b("1","=","1"),keyValue);
                                             }
                                         }
-                                        return null;
+                                        return uploadRecordEntities;
                                     }
                                 })
-                                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<ArrayList<UploadRecordEntity>>() {
-                            @Override
-                            public void accept(ArrayList<UploadRecordEntity> uploadRecordEntities) throws Exception {
-
-                            }
-                        });
+                                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Su);
                     }
                 } catch (DbException e) {
                     e.printStackTrace();
