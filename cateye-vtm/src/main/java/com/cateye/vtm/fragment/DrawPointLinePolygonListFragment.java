@@ -31,6 +31,8 @@ import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.convert.StringConvert;
+import com.lzy.okrx2.adapter.ObservableResponse;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
@@ -40,6 +42,7 @@ import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
 import com.vondear.rxtool.RxTextTool;
 import com.vondear.rxtool.view.RxToast;
+import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
@@ -63,8 +66,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Flowable;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiConsumer;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -88,20 +96,22 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     private final int PAGE_SIZE = 10;
     private int page = 0;
 
-//    private AirPlanMultiPolygonLayer airPlanDrawLayer;
+    //    private AirPlanMultiPolygonLayer airPlanDrawLayer;
     private ImageView img_back;
 
     private ItemizedLayer highLightPointLayer;
     private MultiPathLayer highLightPathLayer;
     private MultiPolygonLayer highLightPolygonLayer;
 
-    private AwesomeTextView atv_upload,atv_download;
+    private AwesomeTextView atv_upload, atv_download;
+    private RxDialogLoading rxDialogLoading;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mMap = CatEyeMapManager.getMapView().map();
         this.dbManager = ((MainActivity) getActivity()).getDbManager();
+        this.rxDialogLoading= new RxDialogLoading(getActivity());
 
         //初始化点线面的显示图层
         if (highLightPointLayer == null) {
@@ -198,31 +208,31 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
             @Override
             public void onClick(View v) {
                 try {
-                    List<DrawPointLinePolygonEntity> uploadListData=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("isUpload","=",false).findAll();
-                    if (uploadListData!=null&&!uploadListData.isEmpty()){
+                    List<DrawPointLinePolygonEntity> uploadListData = DrawPointLinePolygonListFragment.this.dbManager.selector(DrawPointLinePolygonEntity.class).where("isUpload", "=", false).findAll();
+                    if (uploadListData != null && !uploadListData.isEmpty()) {
                         Observable.fromIterable(uploadListData).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread())
                                 .map(new Function<DrawPointLinePolygonEntity, DrawPointLinePolygonEntity>() {
                                     @Override
                                     public DrawPointLinePolygonEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
-                                        if (!RxDataTool.isEmpty(drawPointLinePolygonEntity.getImgUrlList())){
-                                            List imgList=drawPointLinePolygonEntity.getImgUrlList();
-                                            ListIterator iterator= imgList.listIterator();
-                                            while (iterator.hasNext()){
-                                                String imgStr= (String) iterator.next();
-                                                if (!RxDataTool.isNullString(imgStr)&&!imgStr.startsWith("http://")&&!imgStr.startsWith("https://")){
+                                        if (!RxDataTool.isEmpty(drawPointLinePolygonEntity.getImgUrlList())) {
+                                            List imgList = drawPointLinePolygonEntity.getImgUrlList();
+                                            ListIterator iterator = imgList.listIterator();
+                                            while (iterator.hasNext()) {
+                                                String imgStr = (String) iterator.next();
+                                                if (!RxDataTool.isNullString(imgStr) && !imgStr.startsWith("http://") && !imgStr.startsWith("https://")) {
                                                     // 处理照片，当存在照片时，使用同步方式上传该照片，并且同步更新到本地数据库中
-                                                    Response imgUploadResponse=OkGo.<String>post(SystemConstant.IMG_UPLOAD).tag(this).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).params("file",new File(imgStr)).execute();
-                                                    String imgUploadResult=imgUploadResponse.body().string();
-                                                    if (imgUploadResult!=null){
-                                                        java.util.Map resultMap= (java.util.Map) JSON.parse(imgUploadResult);
-                                                        if (resultMap!=null&&resultMap.containsKey("errcode")&&resultMap.get("errcode").toString().equals("0")) {
+                                                    Response imgUploadResponse = OkGo.<String>post(SystemConstant.IMG_UPLOAD).tag(this).params("projectId", SystemConstant.CURRENT_PROJECTS_ID).params("file", new File(imgStr)).execute();
+                                                    String imgUploadResult = imgUploadResponse.body().string();
+                                                    if (imgUploadResult != null) {
+                                                        java.util.Map resultMap = (java.util.Map) JSON.parse(imgUploadResult);
+                                                        if (resultMap != null && resultMap.containsKey("errcode") && resultMap.get("errcode").toString().equals("0")) {
                                                             iterator.set(resultMap.get("data").toString()); // 更新照片路径为网络路径
                                                         }
                                                     }
                                                 }
                                             }
                                             drawPointLinePolygonEntity.setImgUrlList(imgList);
-                                            ((MainActivity)getActivity()).getDbManager().saveOrUpdate(drawPointLinePolygonEntity); // 更新到数据库中
+                                            DrawPointLinePolygonListFragment.this.dbManager.saveOrUpdate(drawPointLinePolygonEntity); // 更新到数据库中
                                         }
                                         return drawPointLinePolygonEntity;
                                     }
@@ -231,15 +241,15 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 .map(new Function<DrawPointLinePolygonEntity, UploadRecordEntity>() {
                                     @Override
                                     public UploadRecordEntity apply(DrawPointLinePolygonEntity drawPointLinePolygonEntity) throws Exception {
-                                        if (drawPointLinePolygonEntity!=null){
+                                        if (drawPointLinePolygonEntity != null) {
                                             UploadRecordEntity uploadRecordEntity = new UploadRecordEntity();
                                             uploadRecordEntity.setUuid(drawPointLinePolygonEntity.get_id());
                                             uploadRecordEntity.setName(drawPointLinePolygonEntity.getName());
                                             uploadRecordEntity.setProjectId(drawPointLinePolygonEntity.getProjectId());
 
-                                            if (drawPointLinePolygonEntity.getImgUrlListStr()!=null&&!drawPointLinePolygonEntity.getImgUrlListStr().isEmpty()){
-                                                java.util.Map propMap=new HashMap();
-                                                propMap.put(SystemConstant.PARAM_PROP_KEY_IMG,drawPointLinePolygonEntity.getImgUrlListStr());
+                                            if (drawPointLinePolygonEntity.getImgUrlListStr() != null && !drawPointLinePolygonEntity.getImgUrlListStr().isEmpty()) {
+                                                java.util.Map propMap = new HashMap();
+                                                propMap.put(SystemConstant.PARAM_PROP_KEY_IMG, drawPointLinePolygonEntity.getImgUrlListStr());
                                                 uploadRecordEntity.setProp(JSON.toJSONString(propMap));
                                             }
                                             return uploadRecordEntity;
@@ -249,39 +259,90 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 })
                                 .subscribeOn(Schedulers.computation())
                                 .collect(new Callable<ArrayList<UploadRecordEntity>>() {
-                                        @Override
-                                        public ArrayList<UploadRecordEntity> call() throws Exception {
-                                            return new ArrayList<UploadRecordEntity>();
-                                        }
-                                    },
+                                             @Override
+                                             public ArrayList<UploadRecordEntity> call() throws Exception {
+                                                 return new ArrayList<UploadRecordEntity>();
+                                             }
+                                         },
                                         new BiConsumer<ArrayList<UploadRecordEntity>, UploadRecordEntity>() {
                                             @Override
                                             public void accept(ArrayList<UploadRecordEntity> uploadRecordEntities, UploadRecordEntity uploadRecordEntity) throws Exception {
                                                 uploadRecordEntities.add(uploadRecordEntity);
                                             }
-                                })
+                                        })
                                 .subscribeOn(Schedulers.newThread())
                                 .map(new Function<ArrayList<UploadRecordEntity>, ArrayList<UploadRecordEntity>>() { // 调用网络接口，批量保存数据
                                     @Override
                                     public ArrayList<UploadRecordEntity> apply(ArrayList<UploadRecordEntity> uploadRecordEntities) throws Exception {
-                                        Response uploadDataResponse=OkGo.<String>post(SystemConstant.BATCH_SAVE_WKT).upJson(JSONArray.toJSONString(uploadRecordEntities)).execute();
-                                        String result=uploadDataResponse.body().string();
-                                        if (result!=null){
-                                            java.util.Map resultMap= (java.util.Map) JSON.parse(result);
-                                            if (resultMap.containsKey("errcode")&&resultMap.get("errcode").toString().equals("0")) {
+                                        Response uploadDataResponse = OkGo.<String>post(SystemConstant.BATCH_SAVE_WKT).upJson(JSONArray.toJSONString(uploadRecordEntities)).execute();
+                                        String result = uploadDataResponse.body().string();
+                                        if (result != null) {
+                                            java.util.Map resultMap = (java.util.Map) JSON.parse(result);
+                                            if (resultMap.containsKey("errcode") && resultMap.get("errcode").toString().equals("0")) {
                                                 // 批量更新所有的数据为已上传
-                                                KeyValue keyValue=new KeyValue("isUpload",true);
-                                                ((MainActivity)getActivity()).getDbManager().update(DrawPointLinePolygonEntity.class, WhereBuilder.b("1","=","1"),keyValue);
+                                                KeyValue keyValue = new KeyValue("isUpload", true);
+                                                DrawPointLinePolygonListFragment.this.dbManager.update(DrawPointLinePolygonEntity.class, WhereBuilder.b("1", "=", "1"), keyValue);
                                             }
                                         }
                                         return uploadRecordEntities;
                                     }
                                 })
-                                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Su);
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new SingleObserver<ArrayList<UploadRecordEntity>>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+                                        rxDialogLoading.show();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(ArrayList<UploadRecordEntity> uploadRecordEntities) {
+                                        rxDialogLoading.dismiss();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        rxDialogLoading.dismiss();
+                                    }
+                        });
                     }
                 } catch (DbException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        atv_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OkGo.<String>get(SystemConstant.DATA_LIST).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).tag(this).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.newThread()).doOnSubscribe(new Consumer<Disposable>() {
+
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        rxDialogLoading.show();
+                    }
+                }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<com.lzy.okgo.model.Response<String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(com.lzy.okgo.model.Response<String> stringResponse) {
+                        if (stringResponse != null && stringResponse.body() != null){
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
             }
         });
     }
@@ -309,17 +370,17 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         public void onBindViewHolder(@NonNull DrawPointLinePolygonAdapter.ViewHolder viewHolder, final int i) {
             viewHolder.tv_name.setText(listData.get(i).getName());
             viewHolder.chk_name.setChecked(false);
-            viewHolder.tv_isUpload.setText(listData.get(i).isUpload()?"已同步":" 未同步");
+            viewHolder.tv_isUpload.setText(listData.get(i).isUpload() ? "已同步" : " 未同步");
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DrawPointLinePolygonEntity polygonEntity=listData.get(i);
+                    DrawPointLinePolygonEntity polygonEntity = listData.get(i);
                     String geometryType = GeometryTools.createGeometry(listData.get(i).getGeometry()).getGeometryType();
-                    if (geometryType == "Point"){
+                    if (geometryType == "Point") {
                         DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(DRAW_STATE.DRAW_POINT, polygonEntity);
-                    } else if (geometryType == "LineString"){
+                    } else if (geometryType == "LineString") {
                         DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(DRAW_STATE.DRAW_LINE, polygonEntity);
-                    } else if (geometryType == "Polygon"){
+                    } else if (geometryType == "Polygon") {
                         DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(DRAW_STATE.DRAW_POLYGON, polygonEntity);
                     }
 
@@ -334,11 +395,11 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                             try {
                                 // 通知主界面，从地图上删除指定的元素
                                 Message msg = Message.obtain();
-                                msg.what= SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
+                                msg.what = SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
                                 msg.obj = listData.get(i).getGeometry();
                                 EventBus.getDefault().post(msg);
 
-                                ((MainActivity) getActivity()).getDbManager().deleteById(DrawPointLinePolygonEntity.class, listData.get(i).get_id());
+                                DrawPointLinePolygonListFragment.this.dbManager.deleteById(DrawPointLinePolygonEntity.class, listData.get(i).get_id());
                                 listData.remove(i);//移除当前数据
 
                                 //删除成功，提示用户
@@ -359,17 +420,17 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     highLightPathLayer.removeAllPathDrawable();
                     highLightPolygonLayer.removeAllPathDrawable();
 
-                    String geometryStr=listData.get(i).getGeometry();
-                    Geometry geometry=GeometryTools.createGeometry(geometryStr);
-                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE){
-                        mMap.animator().animateTo(500,GeometryTools.createGeoPoint(geometryStr));
+                    String geometryStr = listData.get(i).getGeometry();
+                    Geometry geometry = GeometryTools.createGeometry(geometryStr);
+                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE) {
+                        mMap.animator().animateTo(500, GeometryTools.createGeoPoint(geometryStr));
 
-                        highLightPointLayer.addItem(new MarkerItem(listData.get(i).getName(),listData.get(i).getRemark(),GeometryTools.createGeoPoint(geometryStr)));
+                        highLightPointLayer.addItem(new MarkerItem(listData.get(i).getName(), listData.get(i).getRemark(), GeometryTools.createGeoPoint(geometryStr)));
                     } else {
-                        mMap.animator().animateTo(500,new BoundingBox(GeometryTools.getGeoPoints(geometryStr)));
+                        mMap.animator().animateTo(500, new BoundingBox(GeometryTools.getGeoPoints(geometryStr)));
 
-                        highLightPointLayer.addItem(new MarkerItem(listData.get(i).getName(),listData.get(i).getRemark(),GeometryTools.getGeoPoints(geometryStr).get(0)));
-                        if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE){
+                        highLightPointLayer.addItem(new MarkerItem(listData.get(i).getName(), listData.get(i).getRemark(), GeometryTools.getGeoPoints(geometryStr).get(0)));
+                        if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE) {
                             highLightPathLayer.addPathDrawable(GeometryTools.getGeoPoints(geometryStr));
                         } else if (geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE) {
                             highLightPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(geometryStr));

@@ -46,6 +46,7 @@ public class SystemConstant {
     public static final String URL_LOGIN = BASE_URL + "/auth/login";//获取项目列表的url
     public static final String IMG_UPLOAD = BASE_URL + "/data/imgUpload";//用户上传图片文件的url
     public static final String BATCH_SAVE_WKT = BASE_URL + "/data/batchSave";//批量上传用户数据
+    public static final String DATA_LIST = BASE_URL + "/data/list";//获取用户上传的数据
     public static int CURRENT_PROJECTS_ID = -1;//当前正在作业的项目id，默认为1
 
     public static final String DATA_CONTOUR_CHART = "DATA_CONTOUR_CHART";

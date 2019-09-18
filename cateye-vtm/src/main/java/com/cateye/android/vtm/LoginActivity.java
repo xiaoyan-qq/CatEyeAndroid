@@ -127,6 +127,7 @@ public class LoginActivity extends Activity {
                     public void onError(Throwable e) {
                         RxToast.error("请检查网络!");
                         RxLogTool.saveLogFile(e.toString());
+                        rxDialogLoading.dismiss();
                     }
 
                     @Override
