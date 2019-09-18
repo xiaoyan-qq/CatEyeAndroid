@@ -28,6 +28,7 @@ public class SystemConstant {
     public static final int MSG_WHAT_DRAW_POLYGON = 0x1013;//用户绘制面结束
 
     public static final int MSG_WHAT_DELETE_DRAW_DATA = 0x1014;//用户删除绘制的元素
+    public static final int MSG_WHAT_REDRAW_USER_DRAW_DATA = 0x1015;//重新绘制用户绘制的数据
 
     public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称
@@ -79,6 +80,7 @@ public class SystemConstant {
     public static final String PWD_KEY = "PWD_KEY";
 
     public static final String PARAM_PROP_KEY_IMG = "img";
+    public static final String PARAM_PROP_KEY_REMARK = "remark";
 
     public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
 

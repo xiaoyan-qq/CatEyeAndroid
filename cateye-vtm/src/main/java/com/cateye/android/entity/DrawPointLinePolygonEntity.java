@@ -98,7 +98,7 @@ public class DrawPointLinePolygonEntity {
         return imgUrlListStr;
     }
 
-    public void setImgUrlListStr(String imgUrlListStr) {
+    protected void setImgUrlListStr(String imgUrlListStr) {
         this.imgUrlListStr = imgUrlListStr;
     }
 

@@ -478,28 +478,7 @@ public class CatEyeMainFragment extends BaseFragment {
             mMap.layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 
-        //读取数据库中当前用户存储的点数据，添加到图层上
-        try {
-            String currentUserName=RxSPTool.getContent(getActivity(), SystemConstant.SP_LOGIN_USERNAME);
-            List<DrawPointLinePolygonEntity> entityList=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("userName","=", currentUserName).findAll();
-            if (entityList!=null&&!entityList.isEmpty()){
-                for (DrawPointLinePolygonEntity entity:entityList) {
-                    if (entity.getGeometry()!=null){
-                        String geometryType = GeometryTools.createGeometry(entity.getGeometry()).getGeometryType();
-                        if (geometryType == "Point"){
-                            MarkerItem markerItem=new MarkerItem(entity.getName(),entity.getRemark(),GeometryTools.createGeoPoint(entity.getGeometry()));
-                            markerLayer.addItem(markerItem);
-                        } else if (geometryType == "LineString"){
-                            multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
-                        } else if (geometryType == "Polygon"){
-                            multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
-                        }
-                    }
-                }
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
+        redrawUserData();
 
         img_location.setOnClickListener(new View.OnClickListener() {//定位到当前位置
             @Override
@@ -525,6 +504,38 @@ public class CatEyeMainFragment extends BaseFragment {
                 getActivity().finish();
             }
         });
+    }
+
+    private void redrawUserData(){ /*重新绘制用户绘制的数据*/
+        markerLayer.removeAllItems();
+        markerLayer.update();
+        multiPathLayer.removeAllPathDrawable();
+        multiPathLayer.update();
+        multiPolygonLayer.removeAllPathDrawable();
+        multiPolygonLayer.update();
+
+        //读取数据库中当前用户存储的点数据，添加到图层上
+        try {
+//            String currentUserName=RxSPTool.getContent(getActivity(), SystemConstant.SP_LOGIN_USERNAME);
+            List<DrawPointLinePolygonEntity> entityList=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("projectId","=", SystemConstant.CURRENT_PROJECTS_ID).findAll();
+            if (entityList!=null&&!entityList.isEmpty()){
+                for (DrawPointLinePolygonEntity entity:entityList) {
+                    if (entity.getGeometry()!=null){
+                        String geometryType = GeometryTools.createGeometry(entity.getGeometry()).getGeometryType();
+                        if (geometryType == "Point"){
+                            MarkerItem markerItem=new MarkerItem(entity.getName(),entity.getRemark(),GeometryTools.createGeoPoint(entity.getGeometry()));
+                            markerLayer.addItem(markerItem);
+                        } else if (geometryType == "LineString"){
+                            multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
+                        } else if (geometryType == "Polygon"){
+                            multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
+                        }
+                    }
+                }
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
     View.OnClickListener mainFragmentClickListener = new View.OnClickListener() {
@@ -1509,6 +1520,9 @@ public class CatEyeMainFragment extends BaseFragment {
                    }
                    mMap.updateMap(true);
                 }
+                break;
+            case SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA:
+                redrawUserData();
                 break;
         }
     }
