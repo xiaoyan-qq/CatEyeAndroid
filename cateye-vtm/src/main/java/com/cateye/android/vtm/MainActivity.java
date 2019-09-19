@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SlidingDrawer;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -78,6 +79,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
     private DbManager dbManager;//数据库管理类，使用xUtils
 
     private SlidingDrawer slidingDrawer;//右侧的抽屉式界面，默认隐藏，在某些情况下才会正常显示
+    private TextView tv_current_location; // 实时显示当前位置的控件
 
     //地图layer的分组
     public enum LAYER_GROUP_ENUM {
@@ -171,6 +173,8 @@ public class MainActivity extends SupportActivity implements TencentLocationList
 
         //右侧抽屉图层
         slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingdrawer);
+        // 实时显示当前位置的控件
+        tv_current_location = findViewById(R.id.tv_current_location);
     }
 
     /**
@@ -233,6 +237,11 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         if (TencentLocation.ERROR_OK == error) {
             // 定位成功,更新当前的位置信息，如果是第一次定位，则自动将屏幕中心位置设置为当前位置
             currentLocation = tencentLocation;
+
+            if (tencentLocation!=null){
+                tv_current_location.setText(new StringBuilder().append("Lat:").append(tencentLocation.getLatitude()).append(",").append("Lon:").append(tencentLocation.getLongitude()));
+            }
+
             Message msg = new Message();
             msg.obj = tencentLocation;
             msg.what = SystemConstant.MSG_WHAT_LOCATION_UPDATE;
