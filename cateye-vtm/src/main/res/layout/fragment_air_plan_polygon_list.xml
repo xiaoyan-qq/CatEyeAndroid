@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             app:bootstrapBrand="success"
             app:bootstrapSize="md"
-            android:layout_margin="@dimen/button_padding_default"
+            android:padding="@dimen/button_padding_default"
             app:fontAwesomeIcon="fa_cloud_upload"
             android:layout_alignParentRight="true"
             app:buttonMode="regular" />
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             app:bootstrapBrand="success"
             app:bootstrapSize="md"
-            android:layout_margin="@dimen/button_padding_default"
+            android:padding="@dimen/button_padding_default"
             app:fontAwesomeIcon="fa_cloud_download"
             android:layout_toLeftOf="@id/atv_draw_upload"
             app:buttonMode="regular" />
