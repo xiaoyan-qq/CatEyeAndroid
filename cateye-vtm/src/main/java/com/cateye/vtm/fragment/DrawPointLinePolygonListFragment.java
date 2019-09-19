@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.FeatureCollection;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okrx2.adapter.ObservableResponse;
@@ -48,11 +51,14 @@ import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
+import org.wololo.geojson.GeoJSON;
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
@@ -104,8 +110,10 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     private MultiPathLayer highLightPathLayer;
     private MultiPolygonLayer highLightPolygonLayer;
 
-    private AwesomeTextView atv_upload, atv_download;
+    private AwesomeTextView atv_upload, atv_download,atv_export;
     private RxDialogLoading rxDialogLoading;
+
+    private List<DrawPointLinePolygonEntity> checkedListData;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,8 +160,11 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
 
         atv_upload = rootView.findViewById(R.id.atv_draw_upload);
         atv_download = rootView.findViewById(R.id.atv_draw_download);
+        atv_export = rootView.findViewById(R.id.atv_draw_export);
+        atv_export.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listData = new ArrayList<>();
+        checkedListData = new ArrayList<>();
         adapter = new DrawPointLinePolygonAdapter(getActivity(), listData);
         recyclerView.setAdapter(adapter);
         //设置 Footer 为 球脉冲 样式
@@ -413,6 +424,40 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 });
             }
         });
+
+        atv_export.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkedListData == null||checkedListData.isEmpty()){
+                    RxToast.error("请至少勾选一条数据");
+                    return;
+                }
+                FeatureCollection featureCollection=new FeatureCollection();
+                for (DrawPointLinePolygonEntity entity: checkedListData){
+                    Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
+                    feature.setIdentifier(entity.get_id());
+                    JSONObject prop=new JSONObject();
+                    try {
+                        prop.put("remark",entity.getRemark());
+                        prop.put("userName",entity.getUserName());
+                        prop.put("id",entity.get_id());
+                        prop.put("img",entity.getImgUrlListStr());
+                        prop.put("name",entity.getName());
+                        prop.put("projectId",entity.getProjectId());
+                        prop.put("userName",entity.getUserName());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    feature.setProperties(prop);
+                    featureCollection.addFeature(feature);
+                }
+                try {
+                    System.out.println(featureCollection.toJSON());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 
@@ -507,6 +552,23 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     mMap.updateMap(true);
                 }
             });
+
+            viewHolder.chk_name.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        checkedListData.add(listData.get(i));
+                        atv_export.setVisibility(View.VISIBLE);
+                    } else {
+                        if (checkedListData!=null&&checkedListData.contains(listData.get(i))){
+                            checkedListData.remove(listData.get(i));
+                            if (checkedListData.isEmpty()){
+                                atv_export.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         @Override
@@ -527,6 +589,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 chk_name = itemView.findViewById(R.id.chk_name);
+                chk_name.setVisibility(View.VISIBLE);
                 tv_isUpload = itemView.findViewById(R.id.tv_isUpload);
                 tv_name = itemView.findViewById(R.id.tv_name);
                 btn_delete = itemView.findViewById(R.id.btn_delete);

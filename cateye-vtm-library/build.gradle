@@ -162,5 +162,8 @@ dependencies {
     //https://github.com/scwang90/SmartRefreshLayout?utm_medium=email&utm_source=gank.io
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
 
+    // geojson的处理工具
+    compile 'com.cocoahero.android:geojson:1.0.1@jar'
+
     compile 'com.android.support:multidex:1.0.2'
 }

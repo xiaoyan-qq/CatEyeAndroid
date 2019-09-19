@@ -3,6 +3,8 @@ package com.vtm.library.tools;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.Position;
 import com.litesuits.common.assist.Check;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -1301,10 +1303,10 @@ public class GeometryTools {
     private static GeoJSONWriter geoJsonWriter = new GeoJSONWriter();
     private static org.locationtech.jts.io.WKTReader wktReader = new org.locationtech.jts.io.WKTReader();
 
-    public static String getGeoJsonStr(Geometry geometry) throws ParseException {
-        GeoJSON geoJSONObject = geoJsonWriter.write(wktReader.read(geometry.toString()));
-        return geoJSONObject.toString();
-    }
+//    public static String getGeoJsonStr(Geometry geometry) throws ParseException {
+//        GeoJSON geoJSONObject = geoJsonWriter.write(wktReader.read(geometry.toString()));
+//        return geoJSONObject.toString();
+//    }
 
     public static GeoJSON getGeoJson(Geometry geometry){
         try {
@@ -1312,6 +1314,27 @@ public class GeometryTools {
             return geoJSONObject;
         }catch (Exception e){
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Feature wkt2Feature(Geometry geometry){
+        com.cocoahero.android.geojson.Geometry geometryValue = null;
+        if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE) {
+            GeoPoint geoPoint=GeometryTools.createGeoPoint(geometry.toString());
+            geometryValue=new com.cocoahero.android.geojson.Point();
+            ((com.cocoahero.android.geojson.Point) geometryValue).setPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+        } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE || geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE) {
+            List<GeoPoint> geoPointList=GeometryTools.getGeoPoints(geometry.toString());
+            geometryValue=new com.cocoahero.android.geojson.LineString();
+            for (GeoPoint geoPoint:geoPointList) {
+                ((com.cocoahero.android.geojson.LineString) geometryValue).addPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+            }
+        }
+        if (geometryValue!=null){
+            // Create feature with geometry
+            Feature feature = new Feature(geometryValue);
+            return feature;
         }
         return null;
     }

@@ -21,26 +21,45 @@
             android:background="@drawable/ripple_bg_drawable"
             android:src="@drawable/selector_back" />
 
-        <com.beardedhen.androidbootstrap.AwesomeTextView
-            android:id="@+id/atv_draw_upload"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:bootstrapBrand="success"
-            app:bootstrapSize="md"
-            android:padding="@dimen/button_padding_default"
-            app:fontAwesomeIcon="fa_cloud_upload"
             android:layout_alignParentRight="true"
-            app:buttonMode="regular" />
-        <com.beardedhen.androidbootstrap.AwesomeTextView
-            android:id="@+id/atv_draw_download"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:bootstrapBrand="success"
-            app:bootstrapSize="md"
-            android:padding="@dimen/button_padding_default"
-            app:fontAwesomeIcon="fa_cloud_download"
-            android:layout_toLeftOf="@id/atv_draw_upload"
-            app:buttonMode="regular" />
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                android:id="@+id/atv_draw_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="md"
+                android:padding="@dimen/button_padding_default"
+                android:visibility="gone"
+                app:fontAwesomeIcon="fa_cloud_upload"
+                app:buttonMode="regular" />
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                android:id="@+id/atv_draw_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="md"
+                android:padding="@dimen/button_padding_default"
+                android:visibility="gone"
+                app:fontAwesomeIcon="fa_cloud_download"
+                android:layout_toLeftOf="@id/atv_draw_upload"
+                app:buttonMode="regular" />
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                android:id="@+id/atv_draw_export"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="md"
+                android:padding="@dimen/button_padding_default"
+                android:visibility="gone"
+                app:fontAwesomeIcon="fa_expand"
+                android:layout_toLeftOf="@id/atv_draw_download"
+                app:buttonMode="regular" />
+        </LinearLayout>
 
     </RelativeLayout>
 
