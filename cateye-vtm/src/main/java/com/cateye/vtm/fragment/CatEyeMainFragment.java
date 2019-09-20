@@ -992,7 +992,7 @@ public class CatEyeMainFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if (requestCode == SELECT_MAP_FILE || requestCode == SELECT_GEOJSON_FILE) {//选择本地地图文件显示
+        if (requestCode == SELECT_MAP_FILE) {//选择本地地图文件显示
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
 //                finish();
                 return;
@@ -1044,7 +1044,13 @@ public class CatEyeMainFragment extends BaseFragment {
                     }
                 }
             }
-        } else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
+        }else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
+            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
+                return;
+            }
+            String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
+
+        }else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                 return;
             }
