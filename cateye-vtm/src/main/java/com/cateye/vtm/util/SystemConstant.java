@@ -12,6 +12,7 @@ public class SystemConstant {
     public static final String AIR_PLAN_OUTPUT_PATH = APP_ROOT_DATA_PATH + File.separator + "AirPlan" + File.separator + "Output";
     public static final String CACHE_FILE_PATH = APP_ROOT_DATA_PATH + File.separator + "Cache";
     public static final String CACHE_PHOTO_PATH = APP_ROOT_DATA_PATH + File.separator + "Photo";
+    public static final String CACHE_EXPORT_GEOJSON_PATH = APP_ROOT_DATA_PATH + File.separator + "Export_GeoJson";
 
     public static final int MSG_WHAT_DRAW_POINT_LINE_POLYGON_DESTROY = 0x1001;//绘制点线面
     public static final int MSG_WHAT_LOCATION_UPDATE = 0x1002;//位置更新
@@ -33,6 +34,10 @@ public class SystemConstant {
     public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称
     public static final String LAYER_NAME_DRAW_POLYGON = "LAYER_NAME_DRAW_POLYGON";//显示用户绘制面图层的名称
+
+    public static final String LAYER_NAME_GEOJSON_POINT = "LAYER_NAME_GEOJSON_POINT";//显示geoJson文件的点图层的名称
+    public static final String LAYER_NAME_GEOJSON_LINE = "LAYER_NAME_GEOJSON_LINE";//显示geoJson文件线图层的名称
+    public static final String LAYER_NAME_GEOJSON_POLYGON = "LAYER_NAME_GEOJSON_POLYGON";//显示geoJson文件面图层的名称
 
     public static final String LAYER_NAME_DRAW_POINT_HIGHLIGHT = "LAYER_NAME_DRAW_POINT";//高亮显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE_HIGHLIGHT = "LAYER_NAME_DRAW_LINE";//高亮显示用户绘制线图层的名称

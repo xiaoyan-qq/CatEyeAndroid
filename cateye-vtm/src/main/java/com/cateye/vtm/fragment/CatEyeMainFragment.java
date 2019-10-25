@@ -45,6 +45,13 @@ import com.cateye.vtm.util.AirPlanUtils;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.FeatureCollection;
+import com.cocoahero.android.geojson.GeoJSON;
+import com.cocoahero.android.geojson.GeoJSONObject;
+import com.cocoahero.android.geojson.LineString;
+import com.cocoahero.android.geojson.Position;
+import com.cocoahero.android.geojson.Ring;
 import com.github.lazylibrary.util.TimeUtils;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.OpacityBar;
@@ -210,9 +217,9 @@ public class CatEyeMainFragment extends BaseFragment {
 //    private java.util.Map<String, MapSourceFromNet.DataBean> netDataSourceMap;//用来记录用户勾选了哪些网络数据显示
 
     private LocationLayer locationLayer;//显示当前位置的图层
-    private ItemizedLayer<MarkerItem> markerLayer;
-    private MultiPathLayer multiPathLayer;
-    private MultiPolygonLayer multiPolygonLayer;
+    private ItemizedLayer<MarkerItem> markerLayer, geoJsonMarkerLayer/*geojson显示点元素的layer*/;
+    private MultiPathLayer multiPathLayer, geoJsonMultiPathLayer/*geojson显示线元素的layer*/;
+    private MultiPolygonLayer multiPolygonLayer, geoJsonMultiPolygonLayer/*geojson显示面元素的layer*/;
     private final MapPosition mapPosition = new MapPosition();//更新地图位置
     private boolean isMapCenterFollowLocation = true;//地图中心是否需要跟随当前定位位置
 
@@ -476,6 +483,25 @@ public class CatEyeMainFragment extends BaseFragment {
         if (multiPolygonLayer == null) {
             multiPolygonLayer = new MultiPolygonLayer(mMap, LayerStyle.getDefaultPolygonStyle(), SystemConstant.LAYER_NAME_DRAW_POLYGON);
             mMap.layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        }
+
+        //初始化点线面的geoJson文件的显示图层
+        if (geoJsonMarkerLayer == null) {
+            //打开该fragment，则自动向地图中添加marker的overlay
+            geoJsonMarkerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getGeoJsonMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_GEOJSON_POINT);
+            mMap.layers().add(geoJsonMarkerLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+
+        }
+
+        if (geoJsonMultiPathLayer == null) {
+            //自动添加pathLayer
+            geoJsonMultiPathLayer = new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), SystemConstant.LAYER_NAME_GEOJSON_LINE);
+            mMap.layers().add(geoJsonMultiPathLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        }
+
+        if (geoJsonMultiPolygonLayer == null) {
+            geoJsonMultiPolygonLayer = new MultiPolygonLayer(mMap, LayerStyle.getDefaultPolygonStyle(), SystemConstant.LAYER_NAME_GEOJSON_POLYGON);
+            mMap.layers().add(geoJsonMultiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 
         redrawUserData();
@@ -1049,7 +1075,36 @@ public class CatEyeMainFragment extends BaseFragment {
                 return;
             }
             String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
-
+            try {
+                FileInputStream geoJsonStream = new FileInputStream(new File(filePath));
+                GeoJSONObject geoJSONObject= GeoJSON.parse(geoJsonStream);
+                List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
+                if (geoJSONObject.getType() == "FeatureCollection") {
+                    FeatureCollection featureCollection= (FeatureCollection) geoJSONObject;
+                    for (Feature feature:featureCollection.getFeatures()) {
+                        geometryList.add(feature.getGeometry());
+                    }
+                } else if (geoJSONObject.getType() == "Feature") {
+                    Feature feature= (Feature) geoJSONObject;
+                    geometryList.add(feature.getGeometry());
+                } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
+                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geoJSONObject;
+                    geometryList.add(point);
+                } else if (geoJSONObject.getType() == "LineString") {
+                    com.cocoahero.android.geojson.LineString lineString= (com.cocoahero.android.geojson.LineString) geoJSONObject;
+                    geometryList.add(lineString);
+                } else if (geoJSONObject.getType() == "Polygon") {
+                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geoJSONObject;
+                    geometryList.add(polygon);
+                }
+                showGeoJsonFileData(geometryList);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                 return;
@@ -1631,10 +1686,53 @@ public class CatEyeMainFragment extends BaseFragment {
                 Layer layer = (Layer) mapLayerIterator.next();
                 if (!(layer instanceof MapEventLayer) && !(layer instanceof MapEventLayer2) && !(layer instanceof LocationLayer) && !(layer instanceof MapScaleBarLayer)
                         && (!SystemConstant.LAYER_NAME_DRAW_POINT.equals(layer.getName())) && (!SystemConstant.LAYER_NAME_DRAW_LINE.equals(layer.getName()))
-                        && (!SystemConstant.LAYER_NAME_DRAW_POLYGON.equals(layer.getName()))) {
+                        && (!SystemConstant.LAYER_NAME_DRAW_POLYGON.equals(layer.getName()))
+                        && (!SystemConstant.LAYER_NAME_GEOJSON_POINT.equals(layer.getName())) && (!SystemConstant.LAYER_NAME_GEOJSON_LINE.equals(layer.getName()))
+                        && (!SystemConstant.LAYER_NAME_GEOJSON_POLYGON.equals(layer.getName()))
+                ) {
                     mapLayerIterator.remove();
                 }
             }
+        }
+    }
+
+    /**
+     * 显示geoJson文件的数据
+     * */
+    private void showGeoJsonFileData(List<com.cocoahero.android.geojson.Geometry> geometryList){
+        if (geometryList!=null&&!geometryList.isEmpty()) {
+            for (com.cocoahero.android.geojson.Geometry geometry:geometryList) {
+                String geometryType = geometry.getType();
+                if (geometryType == "Point"){
+                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geometry;
+                    MarkerItem markerItem=new MarkerItem("","",GeometryTools.position2GeoPoint(point.getPosition()));
+                    geoJsonMarkerLayer.addItem(markerItem);
+                    geoJsonMarkerLayer.update();
+                } else if (geometryType == "LineString"){
+                    LineString lineString= (LineString) geometry;
+                    List<Position> positionList=lineString.getPositions();
+                    List<GeoPoint> pointList = new ArrayList<>();
+                    for (Position position:positionList) {
+                        pointList.add(GeometryTools.position2GeoPoint(position));
+                    }
+                    geoJsonMultiPathLayer.addPathDrawable(pointList);
+                    geoJsonMultiPathLayer.update();
+                } else if (geometryType == "Polygon"){
+                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geometry;
+                    List<Ring> positionList=polygon.getRings();
+                    for (Ring ring:positionList) {
+                        List<GeoPoint> pointList = new ArrayList<>();
+                        if (ring!=null&&ring.getPositions()!=null){
+                            for (Position position:ring.getPositions()) {
+                                pointList.add(GeometryTools.position2GeoPoint(position));
+                            }
+                        }
+                        geoJsonMultiPolygonLayer.addPolygonDrawable(pointList);
+                    }
+                    geoJsonMultiPolygonLayer.update();
+                }
+            }
+            mMap.updateMap(true);
         }
     }
 

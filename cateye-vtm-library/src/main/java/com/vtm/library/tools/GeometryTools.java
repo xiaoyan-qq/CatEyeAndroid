@@ -1342,4 +1342,11 @@ public class GeometryTools {
     public static GeoPoint createOSCGeoPoint(com.vividsolutions.jts.geom.Point point) {
         return new GeoPoint(point.getY(), point.getX());
     }
+
+    public static GeoPoint position2GeoPoint(Position position){
+        if (position!=null){
+            return new GeoPoint(position.getLatitude(),position.getLongitude());
+        }
+        return null;
+    }
 }

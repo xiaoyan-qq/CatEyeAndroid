@@ -18,6 +18,9 @@ public class LayerStyle {
     private static MarkerSymbol highlightMarkerSymbol;
     private static Style highlightLineStyle;
     private static Style highlightPolygonStyle;
+    private static MarkerSymbol geoJsonMarkerSymbol;
+    private static Style geoJsonLineStyle;
+    private static Style geoJsonPolygonStyle;
     public static MarkerSymbol getDefaultMarkerSymbol(Context mContext) {
         if (defaultMarkerSymbol == null){
             Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.marker_poi));
@@ -54,6 +57,44 @@ public class LayerStyle {
                     .build();
         }
         return defaultPolygonStyle;
+    }
+
+    public static MarkerSymbol getGeoJsonMarkerSymbol(Context mContext) {
+        if (geoJsonMarkerSymbol == null){
+            Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.geojson_point));
+            geoJsonMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
+        }
+        return geoJsonMarkerSymbol;
+    }
+
+    public static Style getGeoJsonLineStyle() {
+        if (geoJsonLineStyle == null) {
+            geoJsonLineStyle = Style.builder()
+                    .stippleColor(Color.parseColor("#A020F0"))
+                    .stipple(24)
+                    .stippleWidth(1)
+                    .strokeWidth(2)
+                    .strokeColor(Color.parseColor("#A020F0"))
+                    .fixed(true)
+                    .randomOffset(false)
+                    .build();
+        }
+        return geoJsonLineStyle;
+    }
+
+    public static Style getGeoJsonPolygonStyle(){
+        if (geoJsonPolygonStyle == null) {
+            geoJsonPolygonStyle = Style.builder()
+                    .stippleColor(Color.parseColor("#A020F0"))
+                    .stipple(24)
+                    .stippleWidth(1)
+                    .strokeWidth(2)
+                    .strokeColor(Color.parseColor("#A020F0")).fillColor(Color.parseColor("#A020F0")).fillAlpha(0.5f)
+                    .fixed(true)
+                    .randomOffset(false)
+                    .build();
+        }
+        return geoJsonPolygonStyle;
     }
 
     public static MarkerSymbol getHighLightMarkerSymbol(Context mContext) {

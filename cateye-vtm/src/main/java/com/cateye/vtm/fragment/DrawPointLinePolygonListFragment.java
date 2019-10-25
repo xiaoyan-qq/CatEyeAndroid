@@ -1,6 +1,7 @@
 package com.cateye.vtm.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -42,10 +43,13 @@ import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vondear.rxtool.RxDataTool;
+import com.vondear.rxtool.RxFileTool;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
 import com.vondear.rxtool.RxTextTool;
 import com.vondear.rxtool.view.RxToast;
+import com.vondear.rxui.view.dialog.RxDialogEditSureCancel;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
+import com.vondear.rxui.view.dialog.RxDialogSureCancel;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
@@ -68,9 +72,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Flowable;
@@ -114,6 +120,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     private RxDialogLoading rxDialogLoading;
 
     private List<DrawPointLinePolygonEntity> checkedListData;
+//    private Set<Integer> checkedSet;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -165,6 +172,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listData = new ArrayList<>();
         checkedListData = new ArrayList<>();
+//        checkedSet=new HashSet<>();
         adapter = new DrawPointLinePolygonAdapter(getActivity(), listData);
         recyclerView.setAdapter(adapter);
         //设置 Footer 为 球脉冲 样式
@@ -330,98 +338,117 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         atv_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OkGo.<String>get(SystemConstant.DATA_LIST).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).tag(this).converter(new StringConvert())
-                        .adapt(new ObservableResponse<String>())
-                        .subscribeOn(Schedulers.newThread())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(Disposable disposable) throws Exception {
-                                rxDialogLoading.show();
-                            }
-                }).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<com.lzy.okgo.model.Response<String>>() {
+                final RxDialogSureCancel rxDialogSureCancel=new RxDialogSureCancel(getActivity());
+                rxDialogSureCancel.show();
+                rxDialogSureCancel.setTitle("提示");
+                rxDialogSureCancel.setContent("下载同步数据后，本地未上传的数据可能会被覆盖，确认仍然下载吗？");
+                rxDialogSureCancel.setCancel("取消");
+                rxDialogSureCancel.setCancelListener(new View.OnClickListener() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
+                    public void onClick(View v) {
+                        rxDialogSureCancel.dismiss();
                     }
-
+                });
+                rxDialogSureCancel.setSure("确定");
+                rxDialogSureCancel.setSureListener(new View.OnClickListener() {
                     @Override
-                    public void onNext(com.lzy.okgo.model.Response<String> stringResponse) {
-                        if (stringResponse != null && stringResponse.body() != null){
-                            String result=stringResponse.body();
-                            if (result!=null){
+                    public void onClick(View v) {
+                        rxDialogSureCancel.dismiss();
+                        OkGo.<String>get(SystemConstant.DATA_LIST).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).tag(this).converter(new StringConvert())
+                                .adapt(new ObservableResponse<String>())
+                                .subscribeOn(Schedulers.newThread())
+                                .doOnSubscribe(new Consumer<Disposable>() {
+                                    @Override
+                                    public void accept(Disposable disposable) throws Exception {
+                                        rxDialogLoading.show();
+                                    }
+                                }).observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<com.lzy.okgo.model.Response<String>>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(com.lzy.okgo.model.Response<String> stringResponse) {
+                                        if (stringResponse != null && stringResponse.body() != null){
+                                            String result=stringResponse.body();
+                                            if (result!=null){
 //                                System.out.println(result);
-                                java.util.Map<String,Object> resultMap= (java.util.Map<String, Object>) JSON.parse(result);
-                                if (resultMap!=null&&resultMap.get("errcode").toString().equals("0")&&resultMap.get("data")!=null){
-                                    List<java.util.Map> dataList= (List<java.util.Map>) JSONArray.parse(resultMap.get("data").toString());
-                                    if (dataList!=null&&!dataList.isEmpty()){
-                                        for (java.util.Map<String,Object> data:dataList){
-                                            if (Integer.parseInt(data.get("type").toString()) == 0){ // 只处理type=0的数据，即用户绘制数据
-                                                DrawPointLinePolygonEntity entity=new DrawPointLinePolygonEntity();
-                                                if (data.get("uuid")==null){
-                                                    continue;
-                                                }
-                                                entity.set_id(data.get("uuid").toString());
-                                                entity.setUserName(data.get("userName").toString());
-                                                if (data.get("wkt")==null){
-                                                    continue;
-                                                }
-                                                entity.setGeometry(data.get("wkt").toString());
-                                                entity.setName(data.get("name").toString());
-                                                entity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
-                                                if (!RxDataTool.isEmpty(data.get("prop"))){
-                                                    java.util.Map<String,Object> propMap = (java.util.Map<String, Object>) JSON.parse(data.get("prop").toString());
-                                                    if (propMap.containsKey("img")&&propMap.get("img")!=null){
-                                                        List<String> imgList=Arrays.asList(propMap.get("img").toString().split(";"));
-                                                        entity.setImgUrlList(imgList);
+                                                java.util.Map<String,Object> resultMap= (java.util.Map<String, Object>) JSON.parse(result);
+                                                if (resultMap!=null&&resultMap.get("errcode").toString().equals("0")&&resultMap.get("data")!=null){
+                                                    List<java.util.Map> dataList= (List<java.util.Map>) JSONArray.parse(resultMap.get("data").toString());
+                                                    if (dataList!=null&&!dataList.isEmpty()){
+                                                        for (java.util.Map<String,Object> data:dataList){
+                                                            if (Integer.parseInt(data.get("type").toString()) == 0){ // 只处理type=0的数据，即用户绘制数据
+                                                                DrawPointLinePolygonEntity entity=new DrawPointLinePolygonEntity();
+                                                                if (data.get("uuid")==null){
+                                                                    continue;
+                                                                }
+                                                                entity.set_id(data.get("uuid").toString());
+                                                                entity.setUserName(data.get("userName").toString());
+                                                                if (data.get("wkt")==null){
+                                                                    continue;
+                                                                }
+                                                                entity.setGeometry(data.get("wkt").toString());
+                                                                entity.setName(data.get("name").toString());
+                                                                entity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
+                                                                if (!RxDataTool.isEmpty(data.get("prop"))){
+                                                                    java.util.Map<String,Object> propMap = (java.util.Map<String, Object>) JSON.parse(data.get("prop").toString());
+                                                                    if (propMap.containsKey("img")&&propMap.get("img")!=null){
+                                                                        List<String> imgList=Arrays.asList(propMap.get("img").toString().split(";"));
+                                                                        entity.setImgUrlList(imgList);
+                                                                    }
+                                                                    if (propMap.containsKey("remark")){
+                                                                        entity.setRemark(propMap.get("remark").toString());
+                                                                    }
+                                                                }
+                                                                entity.setUpload(true);
+                                                                try {
+                                                                    DrawPointLinePolygonListFragment.this.dbManager.saveOrUpdate(entity);
+                                                                } catch (DbException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                        }
+                                                        listData.clear();
+                                                        page = 0;
+                                                        List<DrawPointLinePolygonEntity> dbEntityList = null;
+                                                        try {
+                                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).orderBy("_id", false).findAll();
+                                                        } catch (DbException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        if (dbEntityList != null && !dbEntityList.isEmpty()) {
+                                                            listData.addAll(dbEntityList);
+                                                        }
+                                                        adapter.notifyDataSetChanged();
+
+                                                        //通知地图重新绘制数据
+                                                        Message msg = Message.obtain();
+                                                        msg.what=SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA;
+                                                        EventBus.getDefault().post(msg);
                                                     }
-                                                    if (propMap.containsKey("remark")){
-                                                        entity.setRemark(propMap.get("remark").toString());
-                                                    }
-                                                }
-                                                entity.setUpload(true);
-                                                try {
-                                                    DrawPointLinePolygonListFragment.this.dbManager.saveOrUpdate(entity);
-                                                } catch (DbException e) {
-                                                    e.printStackTrace();
+                                                }else {
+                                                    RxToast.error("无法获取数据！");
                                                 }
                                             }
                                         }
-                                        listData.clear();
-                                        page = 0;
-                                        List<DrawPointLinePolygonEntity> dbEntityList = null;
-                                        try {
-                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).orderBy("_id", false).findAll();
-                                        } catch (DbException e) {
-                                            e.printStackTrace();
-                                        }
-                                        if (dbEntityList != null && !dbEntityList.isEmpty()) {
-                                            listData.addAll(dbEntityList);
-                                        }
-                                        adapter.notifyDataSetChanged();
-
-                                        //通知地图重新绘制数据
-                                        Message msg = Message.obtain();
-                                        msg.what=SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA;
-                                        EventBus.getDefault().post(msg);
                                     }
-                                }else {
-                                    RxToast.error("无法获取数据！");
-                                }
-                            }
-                        }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        rxDialogLoading.dismiss();
-                    }
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        rxDialogLoading.dismiss();
+                                    }
 
-                    @Override
-                    public void onComplete() {
-                        rxDialogLoading.dismiss();
+                                    @Override
+                                    public void onComplete() {
+                                        rxDialogLoading.dismiss();
+                                    }
+                                });
                     }
                 });
+
             }
         });
 
@@ -432,30 +459,63 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     RxToast.error("请至少勾选一条数据");
                     return;
                 }
-                FeatureCollection featureCollection=new FeatureCollection();
-                for (DrawPointLinePolygonEntity entity: checkedListData){
-                    Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
-                    feature.setIdentifier(entity.get_id());
-                    JSONObject prop=new JSONObject();
-                    try {
-                        prop.put("remark",entity.getRemark());
-                        prop.put("userName",entity.getUserName());
-                        prop.put("id",entity.get_id());
-                        prop.put("img",entity.getImgUrlListStr());
-                        prop.put("name",entity.getName());
-                        prop.put("projectId",entity.getProjectId());
-                        prop.put("userName",entity.getUserName());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                final RxDialogEditSureCancel rxDialogEditSureCancel=new RxDialogEditSureCancel(getActivity());
+                rxDialogEditSureCancel.show();
+                rxDialogEditSureCancel.setTitle("导出文件名");
+                rxDialogEditSureCancel.getEditText().setHint("请输入导出文件名");
+                rxDialogEditSureCancel.getCancelView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rxDialogEditSureCancel.dismiss();
                     }
-                    feature.setProperties(prop);
-                    featureCollection.addFeature(feature);
-                }
-                try {
-                    System.out.println(featureCollection.toJSON());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
+                rxDialogEditSureCancel.getSureView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String fileName=rxDialogEditSureCancel.getEditText().getText().toString();
+                        if (RxDataTool.isEmpty(fileName)){
+                            RxToast.error("文件名不能为空！");
+                            return;
+                        }
+                        File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojosn");
+                        if (!saveFile.getParentFile().exists()){
+                            saveFile.getParentFile().mkdirs();
+                        }
+                        if (saveFile.exists()){
+                            RxToast.error("存在同名文件，请重新命名！");
+                            return;
+                        }
+                        FeatureCollection featureCollection=new FeatureCollection();
+                        for (DrawPointLinePolygonEntity entity: checkedListData){
+                            Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
+                            feature.setIdentifier(entity.get_id());
+                            JSONObject prop=new JSONObject();
+                            try {
+                                prop.put("remark",entity.getRemark());
+                                prop.put("userName",entity.getUserName());
+                                prop.put("id",entity.get_id());
+                                prop.put("img",entity.getImgUrlListStr());
+                                prop.put("name",entity.getName());
+                                prop.put("projectId",entity.getProjectId());
+                                prop.put("userName",entity.getUserName());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            feature.setProperties(prop);
+                            featureCollection.addFeature(feature);
+                        }
+                        rxDialogEditSureCancel.dismiss();
+                        try {
+                            JSONObject jsonObject=featureCollection.toJSON();
+                            jsonObject.put("crs",new JSONObject("{ \"type\": \"name\", \"properties\": { \"name\": \"urn:ogc:def:crs:OGC:1.3:CRS84\" } }"));
+                            jsonObject.put("name",fileName);
+                            RxFileTool.write(saveFile.getAbsolutePath(),jsonObject.toString());
+                            RxToast.info("保存成功："+saveFile.getAbsolutePath());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -480,9 +540,11 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull DrawPointLinePolygonAdapter.ViewHolder viewHolder, final int i) {
+        public void onBindViewHolder(@NonNull DrawPointLinePolygonAdapter.ViewHolder viewHolder, int index) {
+            final int i = index;
             viewHolder.tv_name.setText(listData.get(i).getName());
-            viewHolder.chk_name.setChecked(false);
+            viewHolder.chk_name.setOnCheckedChangeListener(null);
+            viewHolder.chk_name.setChecked(checkedListData.contains(listData.get(i))); // 设置当前勾选框是否选中
             viewHolder.tv_isUpload.setText(listData.get(i).isUpload() ? "已同步" : " 未同步");
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -558,6 +620,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         checkedListData.add(listData.get(i));
+//                        checkedSet.add(i);
                         atv_export.setVisibility(View.VISIBLE);
                     } else {
                         if (checkedListData!=null&&checkedListData.contains(listData.get(i))){
@@ -566,6 +629,9 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 atv_export.setVisibility(View.GONE);
                             }
                         }
+//                        if (checkedSet!=null&&checkedSet.contains(i)){
+//                            checkedSet.remove(i);
+//                        }
                     }
                 }
             });

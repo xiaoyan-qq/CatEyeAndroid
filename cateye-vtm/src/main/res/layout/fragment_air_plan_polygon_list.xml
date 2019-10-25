@@ -56,7 +56,7 @@
                 app:bootstrapSize="md"
                 android:padding="@dimen/button_padding_default"
                 android:visibility="gone"
-                app:fontAwesomeIcon="fa_expand"
+                app:fontAwesomeIcon="fa_share"
                 android:layout_toLeftOf="@id/atv_draw_download"
                 app:buttonMode="regular" />
         </LinearLayout>
