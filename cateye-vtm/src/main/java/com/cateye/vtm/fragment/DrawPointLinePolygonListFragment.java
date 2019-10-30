@@ -181,7 +181,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         recyclerView.addItemDecoration(new RxRecyclerViewDividerTool(0, 0, 2, 2));
         //默认加载前20条数据
         try {
-            List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
+            List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
             if (dbEntityList != null && !dbEntityList.isEmpty()) {
                 listData.addAll(dbEntityList);
             } else {
@@ -198,7 +198,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
             public void onLoadMore(RefreshLayout refreshLayout) {
                 page++;
                 try {
-                    List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
+                    List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
                     if (dbEntityList != null && !dbEntityList.isEmpty()) {
                         listData.addAll(dbEntityList);
                         adapter.notifyDataSetChanged();
@@ -415,7 +415,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                                         page = 0;
                                                         List<DrawPointLinePolygonEntity> dbEntityList = null;
                                                         try {
-                                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).orderBy("_id", false).findAll();
+                                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).orderBy("_id", false).findAll();
                                                         } catch (DbException e) {
                                                             e.printStackTrace();
                                                         }
