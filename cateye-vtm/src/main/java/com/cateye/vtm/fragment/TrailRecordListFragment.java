@@ -42,7 +42,9 @@ import org.oscim.map.Map;
 import org.oscim.map.Viewport;
 import org.xutils.DbManager;
 import org.xutils.db.sqlite.SqlInfo;
+import org.xutils.db.sqlite.SqlInfoBuilder;
 import org.xutils.db.sqlite.WhereBuilder;
+import org.xutils.db.table.TableEntity;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
@@ -242,29 +244,32 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                     }
                 }
             });
-//            viewHolder.btn_delete.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    new CanDialog.Builder(getActivity()).setMessage("确定删除该轨迹吗?").setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
-//                            try {
-//                                ((MainActivity) getActivity()).getDbManager().deleteById(AirPlanDBEntity.class, listData.get(i).getId());
-//                                listData.remove(i);//移除当前数据
-//
-//                                //图层上删除已添加的polygon数据
-//                                Polygon polygon = (Polygon) GeometryTools.createGeometry(listData.get(i).getGeometry());
-//                                LayerUtils.getAirPlanDrawLayer(mMap).removePolygonDrawable(polygon);
-//                                //删除成功，提示用户
-//                                RxToast.info(getActivity(), "删除成功！");
-//                                TrailRecordListFragment.AirPlanPolygonAdapter.this.notifyDataSetChanged();
-//                            } catch (DbException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }).setNegativeButton("取消", true, null).show();
-//                }
-//            });
+            viewHolder.btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new CanDialog.Builder(getActivity()).setMessage("确定删除该轨迹吗?").setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
+                            try {
+                                SqlInfo sqlInfo=SqlInfoBuilder.buildDeleteSqlInfo(dbManager.getTable(TravelLocation.class),WhereBuilder.b("locationTime", "<=", listData.get(i).geteTime()).and("locationTime", ">=", listData.get(i).getsTime()));
+                                dbManager.executeUpdateDelete(sqlInfo);
+                                dbManager.deleteById(TravelRecord.class, listData.get(i).getId());
+                                //地图界面移除轨迹显示
+                                if (viewHolder.chk_name.isChecked()){
+                                    trailRecordMultiPathLayer.removeTrailRecordDrawable(listData.get(i).getsTime() + "-" + listData.get(i).geteTime());
+                                }
+                                listData.remove(i);//移除当前数据
+
+                                //删除成功，提示用户
+                                RxToast.info(getActivity(), "删除成功！");
+                                TrailRecordListFragment.TrailRecordAdapter.this.notifyDataSetChanged();
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).setNegativeButton("取消", true, null).show();
+                }
+            });
             //单击item，支持修改轨迹名称
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

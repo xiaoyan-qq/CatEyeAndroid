@@ -8,8 +8,8 @@
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/btn_polygon_delete"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="删除"
         app:bootstrapBrand="danger"
         app:bootstrapSize="md"
