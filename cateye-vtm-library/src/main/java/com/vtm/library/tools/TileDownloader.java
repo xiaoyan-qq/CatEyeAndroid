@@ -1,7 +1,14 @@
 package com.vtm.library.tools;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -13,7 +20,12 @@ import com.beardedhen.androidbootstrap.BootstrapProgressBarGroup;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
 import com.example.cateye_vtm_library.R;
+import com.hss01248.notifyutil.NotifyUtil;
+import com.vondear.rxtool.RxBarTool;
+import com.vondear.rxtool.RxTool;
+import com.vondear.rxui.view.dialog.RxDialog;
 
+import org.greenrobot.eventbus.EventBus;
 import org.oscim.backend.CanvasAdapter;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MercatorProjection;
@@ -51,6 +63,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class TileDownloader {
+    private Dialog dialog;
+    private CatEyeTileDownloadReceiver receiver;
 
     public TileDownloader() {
     }
@@ -136,10 +150,19 @@ public class TileDownloader {
 
     public void openDownloadTileDialog(final Activity mContext, final List<Tile> tileList, final List<Layer> mapLayerList) {
         View downloadProgressView = LayoutInflater.from(mContext).inflate(R.layout.layer_tile_download_progress, null);
-        final CanDialog dialog = new CanDialog.Builder(mContext).setCancelable(false).setView(downloadProgressView).setTitle("缓存tile地图数据").show();
+        dialog = new Dialog(mContext);
+        dialog.setCancelable(false);
+        dialog.setContentView(downloadProgressView);
+        dialog.setTitle("缓存tile地图数据");
+        dialog.show();
+//        dialog = new CanDialog.Builder(mContext).setCancelable(false).setView(downloadProgressView).setTitle("缓存tile地图数据").show();
+        IntentFilter filter=new IntentFilter("catEye_tile_download");
+        receiver=new CatEyeTileDownloadReceiver();
+        mContext.registerReceiver(receiver,filter);
+
         final ProgressBar pb_download = downloadProgressView.findViewById(R.id.pb_tile_download);
         final TextView tv_download = downloadProgressView.findViewById(R.id.tv_tile_download);
-//        final BootstrapButton bbtn_cancel = downloadProgressView.findViewById(R.id.bbtn_tile_download_cancel);
+        final BootstrapButton bbtn_mini = downloadProgressView.findViewById(R.id.bbtn_tile_download_mini);
         final BootstrapButton bbtn_ok = downloadProgressView.findViewById(R.id.bbtn_tile_download_ok);
 
         final List<UrlTileSource> urlTileSourceList = new ArrayList<>();
@@ -185,7 +208,7 @@ public class TileDownloader {
                 }
                 pb_download.setMax(tileList.size() * urlTileSourceList.size());
                 pb_download.setProgress(0);
-//                bbtn_cancel.setEnabled(false);
+                bbtn_mini.setEnabled(true);
                 bbtn_ok.setEnabled(false);
 
                 d.request(1);
@@ -197,6 +220,9 @@ public class TileDownloader {
                 tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
                 System.out.println("进度:" + pb_download.getProgress() + "/" + pb_download.getMax());
 
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress(),pb_download.getMax(),"下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,new Intent("catEye_tile_download"),PendingIntent.FLAG_ONE_SHOT)).show();;
+
                 subscription.request(1);
             }
 
@@ -207,7 +233,6 @@ public class TileDownloader {
 
             @Override
             public void onComplete() {
-//                bbtn_cancel.setEnabled(true);
                 bbtn_ok.setEnabled(true);
             }
         });
@@ -216,9 +241,38 @@ public class TileDownloader {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                // 通知主界面，清除下载区域的绘制框
+                Message msg = Message.obtain();
+                msg.what = MSG_DOWNLOAD_TILE_FINISH;
+                EventBus.getDefault().post(msg);
+
+                if (receiver!=null){
+                    mContext.unregisterReceiver(receiver);
+                }
             }
         };
-//        bbtn_cancel.setOnClickListener(dissmissClickListener);
         bbtn_ok.setOnClickListener(dissmissClickListener);
+        bbtn_mini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress(),pb_download.getMax(),"下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,new Intent("catEye_tile_download"),PendingIntent.FLAG_ONE_SHOT)).show();
+                dialog.hide();
+            }
+        });
     }
+
+    public class CatEyeTileDownloadReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() == "catEye_tile_download") {
+                if (dialog!=null){
+                    dialog.show();
+                }
+            }
+        }
+    }
+
+    public static final int MSG_DOWNLOAD_TILE_FINISH = 0x10111;
 }

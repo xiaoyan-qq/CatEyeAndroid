@@ -6,6 +6,7 @@ import android.support.multidex.MultiDexApplication;
 
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.cateye.vtm.util.SystemConstant;
+import com.hss01248.notifyutil.NotifyUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
@@ -87,5 +88,7 @@ public class MainApplication extends MultiDexApplication {
         }
 
         x.Ext.init(this);
+
+        NotifyUtil.init(this);
     }
 }

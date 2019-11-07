@@ -1585,6 +1585,13 @@ public class CatEyeMainFragment extends BaseFragment {
             case SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA:
                 redrawUserData();
                 break;
+            case TileDownloader.MSG_DOWNLOAD_TILE_FINISH:
+                PolygonLayer drawRectTileLayer= (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
+                if (drawRectTileLayer!=null){
+                    mMap.layers().remove(drawRectTileLayer);
+                    mMap.updateMap(true);
+                }
+                break;
         }
     }
 
