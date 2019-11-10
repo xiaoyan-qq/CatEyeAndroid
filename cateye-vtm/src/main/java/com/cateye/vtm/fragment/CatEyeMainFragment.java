@@ -190,15 +190,9 @@ public class CatEyeMainFragment extends BaseFragment {
     private CatEyeMapScaleBar mMapScaleBar;
     private MapPreferences mPrefs;
 
-    static final int SELECT_MAP_FILE = 0;
-    static final int SELECT_THEME_FILE = SELECT_MAP_FILE + 1;
-    static final int SELECT_GEOJSON_FILE = SELECT_MAP_FILE + 2;
-    static final int SELECT_CONTOUR_FILE = SELECT_MAP_FILE + 3;
-    public static final int SELECT_AIR_PLAN_FILE = SELECT_MAP_FILE + 4;
+    public static final int SELECT_CONTOUR_FILE = 0xFF3;
+    public static final int SELECT_AIR_PLAN_FILE = 0xFF4;
 
-    private static final Tag ISSEA_TAG = new Tag("natural", "issea");
-    private static final Tag NOSEA_TAG = new Tag("natural", "nosea");
-    private static final Tag SEA_TAG = new Tag("natural", "sea");
     private static final Tag CONTOUR_TAG = new Tag("contour", "1000");//等高线
 
 //    private List<TileSource> mTileSourceList;//当前正在显示的tileSource的集合
@@ -1017,128 +1011,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
-        if (requestCode == SELECT_MAP_FILE) {//选择本地地图文件显示
-            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
-//                finish();
-                return;
-            }
-            String file = intent.getStringExtra(FilePicker.SELECTED_FILE);
-
-            //增加本地layer的dataBean到dataBeanList中
-            if (file != null) {
-                //判断当前图层中是否已经存在选择的文件，如果存在，则不再添加
-                if (layerDataBeanList != null && !layerDataBeanList.isEmpty()) {
-                    for (MapSourceFromNet.DataBean dataBean : layerDataBeanList) {
-                        if (dataBean.getMaps() != null) {
-                            for (MapSourceFromNet.DataBean.MapsBean mapsBean : dataBean.getMaps()) {
-                                if (file.equals(mapsBean.getHref())) {
-                                    RxToast.info("已经添加过相同的图层！无法再次添加！");
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-                File mapFile = new File(file);
-                if (mapFile.exists()) {
-                    MapSourceFromNet.DataBean.MapsBean mapFileDataBean = new MapSourceFromNet.DataBean.MapsBean();
-                    mapFileDataBean.setAbstractX(mapFile.getName());
-                    mapFileDataBean.setHref(file);
-                    String fileName = mapFile.getName();
-                    String suffix = fileName.substring(fileName.lastIndexOf("."));
-                    mapFileDataBean.setExtension(suffix);
-                    if (suffix != null) {
-                        MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
-                        if (suffix.toLowerCase().endsWith("map")) {
-                            mapFileDataBean.setGroup(LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                            localDataBean.setGroup(LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                        } else if (suffix.toLowerCase().endsWith("json")) {
-                            mapFileDataBean.setGroup(LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                            localDataBean.setGroup(LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                        }
-                        localDataBean.setMemo(mapFile.getName());
-                        localDataBean.setMaps(new ArrayList<MapSourceFromNet.DataBean.MapsBean>());
-                        localDataBean.getMaps().add(mapFileDataBean);
-                        if (layerDataBeanList != null) {
-                            layerDataBeanList.add(localDataBean);
-                            if (layerManagerAdapter != null) {
-                                layerManagerAdapter.sortListDataAndGroup(layerDataBeanList);
-                                layerManagerAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                }
-            }
-        }else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
-            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
-                return;
-            }
-            String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
-            try {
-                FileInputStream geoJsonStream = new FileInputStream(new File(filePath));
-                GeoJSONObject geoJSONObject= GeoJSON.parse(geoJsonStream);
-                List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
-                if (geoJSONObject.getType() == "FeatureCollection") {
-                    FeatureCollection featureCollection= (FeatureCollection) geoJSONObject;
-                    for (Feature feature:featureCollection.getFeatures()) {
-                        geometryList.add(feature.getGeometry());
-                    }
-                } else if (geoJSONObject.getType() == "Feature") {
-                    Feature feature= (Feature) geoJSONObject;
-                    geometryList.add(feature.getGeometry());
-                } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geoJSONObject;
-                    geometryList.add(point);
-                } else if (geoJSONObject.getType() == "LineString") {
-                    com.cocoahero.android.geojson.LineString lineString= (com.cocoahero.android.geojson.LineString) geoJSONObject;
-                    geometryList.add(lineString);
-                } else if (geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geoJSONObject;
-                    geometryList.add(polygon);
-                }
-                showGeoJsonFileData(geometryList);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
-            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
-                return;
-            }
-
-            String file = intent.getStringExtra(FilePicker.SELECTED_FILE);
-            ExternalRenderTheme externalRenderTheme = new ExternalRenderTheme(file);
-
-            // Use tessellation with sea and land for Mapsforge themes
-            if (ThemeUtils.isMapsforgeTheme(externalRenderTheme)) {
-                //遍历所有的地图图层，添加hook
-                if (mMap.layers() != null && !mMap.layers().isEmpty()) {
-                    for (Layer layer : mMap.layers()) {
-                        if (layer.isEnabled() && layer instanceof OsmTileLayer)
-                            ((OsmTileLayer) layer).addHook(new VectorTileLayer.TileLoaderThemeHook() {
-                                @Override
-                                public boolean process(MapTile tile, RenderBuckets buckets, MapElement element, RenderStyle style, int level) {
-                                    if (element.tags.contains(ISSEA_TAG) || element.tags.contains(SEA_TAG) || element.tags.contains(NOSEA_TAG)) {
-                                        if (style instanceof AreaStyle)
-                                            ((AreaStyle) style).mesh = true;
-                                    }
-                                    return false;
-                                }
-
-                                @Override
-                                public void complete(MapTile tile, boolean success) {
-                                }
-                            });
-                    }
-                }
-
-            }
-            mMap.setTheme(externalRenderTheme);
-        } else if (requestCode == SELECT_CONTOUR_FILE) {
+        if (requestCode == SELECT_CONTOUR_FILE) {
             try {
                 if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                     return;
@@ -1703,45 +1576,6 @@ public class CatEyeMainFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 显示geoJson文件的数据
-     * */
-    private void showGeoJsonFileData(List<com.cocoahero.android.geojson.Geometry> geometryList){
-        if (geometryList!=null&&!geometryList.isEmpty()) {
-            for (com.cocoahero.android.geojson.Geometry geometry:geometryList) {
-                String geometryType = geometry.getType();
-                if (geometryType == "Point"){
-                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geometry;
-                    MarkerItem markerItem=new MarkerItem("","",GeometryTools.position2GeoPoint(point.getPosition()));
-                    geoJsonMarkerLayer.addItem(markerItem);
-                    geoJsonMarkerLayer.update();
-                } else if (geometryType == "LineString"){
-                    LineString lineString= (LineString) geometry;
-                    List<Position> positionList=lineString.getPositions();
-                    List<GeoPoint> pointList = new ArrayList<>();
-                    for (Position position:positionList) {
-                        pointList.add(GeometryTools.position2GeoPoint(position));
-                    }
-                    geoJsonMultiPathLayer.addPathDrawable(pointList);
-                    geoJsonMultiPathLayer.update();
-                } else if (geometryType == "Polygon"){
-                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geometry;
-                    List<Ring> positionList=polygon.getRings();
-                    for (Ring ring:positionList) {
-                        List<GeoPoint> pointList = new ArrayList<>();
-                        if (ring!=null&&ring.getPositions()!=null){
-                            for (Position position:ring.getPositions()) {
-                                pointList.add(GeometryTools.position2GeoPoint(position));
-                            }
-                        }
-                        geoJsonMultiPolygonLayer.addPolygonDrawable(pointList);
-                    }
-                    geoJsonMultiPolygonLayer.update();
-                }
-            }
-            mMap.updateMap(true);
-        }
-    }
 
     private void initOperateLayerMap() {
         operateLayerMap = new HashMap<>();

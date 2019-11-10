@@ -81,6 +81,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
     private SlidingDrawer slidingDrawer;//右侧的抽屉式界面，默认隐藏，在某些情况下才会正常显示
     private TextView tv_current_location; // 实时显示当前位置的控件
 
+
     //地图layer的分组
     public enum LAYER_GROUP_ENUM {
         BASE_GRID_GROUP(0, "L0", "基础栅格图层L0", false), PROJ_GRID_GROUP(1, "L1", "项目栅格图层分组L1", false), BASE_VECTOR_GROUP(2, "L2", "基础矢量图层L2", true), PROJ_VECTOR_GROUP(3, "L3", "项目矢量图层分组L3", true), OTHER_GROUP(4, "L4", "其他图层分组", true), OBJECTS_3D_GROUP(5, "L5", "3D图层分组", true), OPERTOR_GROUP(6, "L6", "操作图层分组L4", true), LOCATION_GROUP(7, "L7", "当前位置分组", false);

@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/layer_manager_operate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_layerlist_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/button_padding_default"
+            android:text="添加本地map数据"
+            android:textSize="@dimen/bootstrap_h4_text_size" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:background="@color/divider"></View>
+
+        <TextView
+            android:id="@+id/tv_layerlist_geojson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/button_padding_default"
+            android:text="添加本地GeoJson数据"
+            android:textSize="@dimen/bootstrap_h4_text_size" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定"/>
+    </LinearLayout>
 
     <ExpandableListView
         android:id="@+id/sadLv_layerlist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ExpandableListView>
-
-    <TextView
-        android:id="@+id/tv_layerlist_add"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="@dimen/button_padding_default"
-        android:text="添加本地map数据"
-        android:textSize="@dimen/bootstrap_h4_text_size" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:background="@color/divider"></View>
-
-    <TextView
-        android:id="@+id/tv_layerlist_geojson"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="@dimen/button_padding_default"
-        android:text="添加本地GeoJson数据"
-        android:textSize="@dimen/bootstrap_h4_text_size" />
-
-</LinearLayout>
+        android:layout_above="@id/layer_manager_operate"></ExpandableListView>
+</RelativeLayout>

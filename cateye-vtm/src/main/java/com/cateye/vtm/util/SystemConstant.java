@@ -58,6 +58,7 @@ public class SystemConstant {
     public static final String DATA_CONTOUR_CHART = "DATA_CONTOUR_CHART";
     public static final String BUNDLE_AREA_HIDEN_STATE = "BUNDLE_AREA_HIDEN_STATE";//主界面上部分区域的显隐状态，隐藏或显示
     public static final String BUNDLE_BUTTON_AREA = "BUNDLE_BUTTON_AREA";//主界面上控制的显隐区域
+    public static final String BUNDLE_LAYER_MANAGER_DATA = "BUNDLE_LAYER_MANAGER_DATA";//图层管理对应的数据
     public static final long SCREEN_MOVE_BOUNDARY = 20;//判断点击屏幕时是否为移动事件的边界值
 
     public static final String DRAW_POINT_LIST = "DRAW_POINT_LIST";//绘制点线面后的点位集合
