@@ -32,6 +32,7 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
+import com.vondear.rxtool.RxSPTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialogShapeLoading;
 import com.vtm.library.tools.GeometryTools;
@@ -113,7 +114,7 @@ public class TrailRecordListFragment extends BaseDrawFragment {
         recyclerView.addItemDecoration(new RxRecyclerViewDividerTool(0, 0, 2, 2));
         //默认加载前20条数据
         try {
-            List<TravelRecord> dbEntityList = dbManager.selector(TravelRecord.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE).orderBy("_id", true).findAll();
+            List<TravelRecord> dbEntityList = dbManager.selector(TravelRecord.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).orderBy("_id", true).findAll();
             if (dbEntityList != null && !dbEntityList.isEmpty()) {
                 listData.addAll(dbEntityList);
             } else {
@@ -130,7 +131,7 @@ public class TrailRecordListFragment extends BaseDrawFragment {
             public void onLoadMore(RefreshLayout refreshLayout) {
                 page++;
                 try {
-                    List<TravelRecord> dbEntityList = dbManager.selector(TravelRecord.class).limit(PAGE_SIZE).offset(page * PAGE_SIZE).findAll();
+                    List<TravelRecord> dbEntityList = dbManager.selector(TravelRecord.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).findAll();
                     if (dbEntityList != null && !dbEntityList.isEmpty()) {
                         listData.addAll(dbEntityList);
                         adapter.notifyDataSetChanged();
@@ -198,7 +199,7 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                             Observable.create(new ObservableOnSubscribe<List<TravelLocation>>() {
                                 @Override
                                 public void subscribe(ObservableEmitter<List<TravelLocation>> emitter) throws Exception {
-                                    List<TravelLocation> travelLocationList = dbManager.selector(TravelLocation.class).where(WhereBuilder.b().and("locationTime", "<=", listData.get(i).geteTime()).and("locationTime", ">=", listData.get(i).getsTime())).findAll();
+                                    List<TravelLocation> travelLocationList = dbManager.selector(TravelLocation.class).where(WhereBuilder.b("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).and("locationTime", "<=", listData.get(i).geteTime()).and("locationTime", ">=", listData.get(i).getsTime())).findAll();
                                     if (travelLocationList != null && !travelLocationList.isEmpty()) {
                                         emitter.onNext(travelLocationList);
                                     } else {
@@ -255,7 +256,7 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                                     @Override
                                     public void accept(TravelRecord travelRecord) throws Exception {
                                         if (travelRecord!=null){
-                                            SqlInfo sqlInfo=SqlInfoBuilder.buildDeleteSqlInfo(dbManager.getTable(TravelLocation.class),WhereBuilder.b("locationTime", "<=", travelRecord.geteTime()).and("locationTime", ">=", travelRecord.getsTime()));
+                                            SqlInfo sqlInfo=SqlInfoBuilder.buildDeleteSqlInfo(dbManager.getTable(TravelLocation.class),WhereBuilder.b("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).and("locationTime", "<=", travelRecord.geteTime()).and("locationTime", ">=", travelRecord.getsTime()));
                                             int deleteResult=dbManager.executeUpdateDelete(sqlInfo);
                                         }
                                     }
@@ -309,6 +310,7 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                                     try {
                                         TravelRecord travelRecord = listData.get(i);
                                         travelRecord.setTravelName(text.toString());
+                                        travelRecord.setUserName(RxSPTool.getContent(mContext, SystemConstant.SP_LOGIN_USERNAME));
                                         dbManager.saveOrUpdate(travelRecord);
                                         RxToast.info("保存成功！");
                                         viewHolder.tv_polygonName.setText(text);

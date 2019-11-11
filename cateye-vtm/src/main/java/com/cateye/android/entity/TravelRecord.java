@@ -18,6 +18,10 @@ public class TravelRecord {
     private String eTime;//轨迹记录的结束时间
     @Column(name = "description")
     private String description;//轨迹记录的描述信息
+    @Column(name = "userName")
+    private String userName;
+    @Column(name = "projectId")
+    private int projectId;
 
     public int getId() {
         return id;
@@ -57,5 +61,21 @@ public class TravelRecord {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 }

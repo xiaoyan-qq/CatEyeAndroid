@@ -310,6 +310,8 @@ public class CatEyeMainFragment extends BaseFragment {
                             TencentLocation location = ((MainActivity) getActivity()).getCurrentLocation();
                             travelLocation.setGeometry(GeometryTools.createGeometry(new GeoPoint(location.getLatitude(), location.getLongitude())).toString());
                             travelLocation.setLocationTime(TimeUtils.getCurrentTimeInString(travelSdf));
+                            travelLocation.setUserName(RxSPTool.getContent(mContext, SystemConstant.SP_LOGIN_USERNAME));
+                            travelLocation.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
                             try {
                                 ((MainActivity) getActivity()).getDbManager().save(travelLocation);
                             } catch (DbException e) {
@@ -335,6 +337,8 @@ public class CatEyeMainFragment extends BaseFragment {
                     travelRecord.setTravelName(sTravelTime + "-" + eTravelTime);
                     travelRecord.setsTime(sTravelTime);
                     travelRecord.seteTime(eTravelTime);
+                    travelRecord.setUserName(RxSPTool.getContent(mContext, SystemConstant.SP_LOGIN_USERNAME));
+                    travelRecord.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
                     try {
                         ((MainActivity) getActivity()).getDbManager().save(travelRecord);
                     } catch (DbException e) {
