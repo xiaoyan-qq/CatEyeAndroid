@@ -112,48 +112,13 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //初始化数据库管理
+        initDbManager();
+
         //启动fragment，显示地图界面
         mainFragment = CatEyeMainFragment.newInstance(new Bundle());
         loadRootFragment(R.id.fragment_main_container, mainFragment);
-        //申请所需要的权限
-        AndPermission.with(this).permission(Permission.Group.LOCATION/*定位权限*/, Permission.Group.STORAGE/*存储权限*/, Permission.Group.CAMERA /*, Permission.Group.PHONE*//*电话相关权限*//*, Permission.Group.MICROPHONE*//*录音权限*/)
-                .onGranted(new Action() {//用户允许
-                    @Override
-                    public void onAction(List<String> permissions) {
-                        if (permissions.contains(Permission.Group.STORAGE)){
-                            //初始化数据库管理
-                            initDbManager();
-                        }
-                    }
-                })
-                .onDenied(new Action() {//用户拒绝
-                    @Override
-                    public void onAction(List<String> permissions) {
-                        if (AndPermission.hasAlwaysDeniedPermission(MainActivity.this, permissions)) {
-                            StringBuilder permissionSB = new StringBuilder();
-                            if (permissions != null && !permissions.isEmpty()) {
-                                for (String p : permissions) {
-                                    permissionSB.append(Permission.transformText(MainActivity.this, p));
-                                    permissionSB.append(",");
-                                }
-                            }
-                            if (permissionSB.toString().endsWith(",")) {
-                                permissionSB.delete(permissionSB.length() - 1, permissionSB.length());
-                            }
-                            // 这些权限被用户总是拒绝。
-                            RxDialogSure sureDialog = new RxDialogSure(MainActivity.this);
-                            sureDialog.setContent("您拒绝了" + permissionSB + "权限，可能会导致某些功能无法正常使用!");
-                            sureDialog.setTitle("提示");
-                            sureDialog.getSureView().setEnabled(true);
-                            sureDialog.show();
-                        }
-                    }
-                }).rationale(new Rationale() {
-            @Override
-            public void showRationale(Context context, List<String> permissions, RequestExecutor executor) {
 
-            }
-        }).start();
 
         TencentLocationRequest request = TencentLocationRequest.create();
         request.setAllowCache(true);

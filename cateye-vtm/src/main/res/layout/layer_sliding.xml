@@ -14,13 +14,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-        <!--需要使用该view撑开handler，否则滑动过程中仅能看到一半视图-->
-        <View
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_above="@id/img_back"
-            android:layout_weight="1"></View>
-
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="wrap_content"
@@ -31,6 +24,14 @@
             android:paddingLeft="@dimen/button_padding_default"
             android:paddingTop="@dimen/button_padding_default"
             android:src="@drawable/slibe_up" />
+
+        <!--需要使用该view撑开handler，否则滑动过程中仅能看到一半视图-->
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_above="@id/img_back"
+            android:layout_weight="1"></View>
+
     </LinearLayout>
 
     <LinearLayout

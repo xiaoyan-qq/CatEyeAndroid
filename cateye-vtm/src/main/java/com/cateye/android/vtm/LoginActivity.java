@@ -1,6 +1,7 @@
 package com.cateye.android.vtm;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,9 +23,18 @@ import com.vondear.rxtool.RxEncryptTool;
 import com.vondear.rxtool.RxLogTool;
 import com.vondear.rxtool.RxSPTool;
 import com.vondear.rxtool.view.RxToast;
+import com.vondear.rxui.view.dialog.RxDialog;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
+import com.vondear.rxui.view.dialog.RxDialogSure;
+import com.vondear.rxui.view.dialog.RxDialogSureCancel;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observer;
@@ -114,9 +124,60 @@ public class LoginActivity extends Activity {
 
                                 RxSPTool.putBoolean(LoginActivity.this,SystemConstant.SP_LOGIN_PWD_IS_REMEMBER,chk_remember_pwd.isChecked());//记录密码的勾选框是否选中的缓存
 
-                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(mainIntent);
-                                LoginActivity.this.finish();
+                                //申请所需要的权限
+                                AndPermission.with(LoginActivity.this).permission(Permission.Group.LOCATION/*定位权限*/, Permission.Group.STORAGE/*存储权限*/, Permission.Group.CAMERA /*, Permission.Group.PHONE*//*电话相关权限*//*, Permission.Group.MICROPHONE*//*录音权限*/)
+                                        .onGranted(new Action() {//用户允许
+                                            @Override
+                                            public void onAction(List<String> permissions) {
+                                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                startActivity(mainIntent);
+                                                LoginActivity.this.finish();
+                                            }
+                                        })
+                                        .onDenied(new Action() {//用户拒绝
+                                            @Override
+                                            public void onAction(List<String> permissions) {
+                                                if (permissions!=null && !permissions.isEmpty()) {
+                                                    String permissionSB = getPermissionStr(permissions);
+                                                    // 这些权限被用户总是拒绝。
+                                                    RxDialogSure sureDialog = new RxDialogSure(LoginActivity.this);
+                                                    sureDialog.setContent("您拒绝了" + permissionSB + "权限，程序无法正常使用，请重新授予程序权限!");
+                                                    sureDialog.setTitle("提示");
+                                                    sureDialog.getSureView().setEnabled(true);
+                                                    sureDialog.setSureListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            sureDialog.dismiss();
+                                                        }
+                                                    });
+                                                    sureDialog.show();
+                                                }
+                                            }
+                                        }).rationale(new Rationale() {
+                                            @Override
+                                            public void showRationale(Context context, List<String> permissions, RequestExecutor executor) {
+                                                RxDialogSureCancel sureCancelDialog = new RxDialogSureCancel(LoginActivity.this);
+                                                String permissionSB = getPermissionStr(permissions);
+                                                sureCancelDialog.setContent("程序需要" + permissionSB + "等权限才可以正常运行，请授权程序获取权限!");
+                                                sureCancelDialog.setTitle("提示");
+                                                sureCancelDialog.getSureView().setEnabled(true);
+                                                sureCancelDialog.setCancelListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        executor.cancel();
+                                                        sureCancelDialog.dismiss();
+                                                    }
+                                                });
+                                                sureCancelDialog.setSureListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        executor.execute();
+                                                        sureCancelDialog.dismiss();
+                                                    }
+                                                });
+                                                sureCancelDialog.show();
+                                            }
+                                }).start();
                             } else {
                                 RxToast.error("无法获取用户token！");
                             }
@@ -137,6 +198,20 @@ public class LoginActivity extends Activity {
                 });
             }
         });
+    }
+
+    private String getPermissionStr(List<String> permissions) {
+        StringBuilder permissionSB = new StringBuilder();
+        if (permissions != null && !permissions.isEmpty()) {
+            for (String p : permissions) {
+                permissionSB.append(Permission.transformText(LoginActivity.this, p));
+                permissionSB.append(",");
+            }
+        }
+        if (permissionSB.toString().endsWith(",")) {
+            permissionSB.delete(permissionSB.length() - 1, permissionSB.length());
+        }
+        return permissionSB.toString();
     }
 
     private void initView() {

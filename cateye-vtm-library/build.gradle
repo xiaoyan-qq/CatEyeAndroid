@@ -79,7 +79,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.x.x'
 
     //https://github.com/yanzhenjie/AndPermission
-
     //动态获取权限的三方库
     compile 'com.yanzhenjie:permission:2.0.0-rc3'
 
