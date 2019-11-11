@@ -56,6 +56,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -250,22 +251,47 @@ public class TrailRecordListFragment extends BaseDrawFragment {
                     new CanDialog.Builder(getActivity()).setMessage("确定删除该轨迹吗?").setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
                         @Override
                         public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
-                            try {
-                                SqlInfo sqlInfo=SqlInfoBuilder.buildDeleteSqlInfo(dbManager.getTable(TravelLocation.class),WhereBuilder.b("locationTime", "<=", listData.get(i).geteTime()).and("locationTime", ">=", listData.get(i).getsTime()));
-                                dbManager.executeUpdateDelete(sqlInfo);
-                                dbManager.deleteById(TravelRecord.class, listData.get(i).getId());
-                                //地图界面移除轨迹显示
-                                if (viewHolder.chk_name.isChecked()){
-                                    trailRecordMultiPathLayer.removeTrailRecordDrawable(listData.get(i).getsTime() + "-" + listData.get(i).geteTime());
-                                }
-                                listData.remove(i);//移除当前数据
+                                Observable.just(listData.get(i)).subscribeOn(Schedulers.io()).doOnNext(new Consumer<TravelRecord>() {
+                                    @Override
+                                    public void accept(TravelRecord travelRecord) throws Exception {
+                                        if (travelRecord!=null){
+                                            SqlInfo sqlInfo=SqlInfoBuilder.buildDeleteSqlInfo(dbManager.getTable(TravelLocation.class),WhereBuilder.b("locationTime", "<=", travelRecord.geteTime()).and("locationTime", ">=", travelRecord.getsTime()));
+                                            int deleteResult=dbManager.executeUpdateDelete(sqlInfo);
+                                        }
+                                    }
+                                }).subscribeOn(Schedulers.io()).doOnNext(new Consumer<TravelRecord>() {
+                                    @Override
+                                    public void accept(TravelRecord travelRecord) throws Exception {
+                                        dbManager.deleteById(TravelRecord.class, travelRecord.getId());
+                                    }
+                                }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<TravelRecord>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+                                        shapeLoading.show();
+                                    }
 
-                                //删除成功，提示用户
-                                RxToast.info(getActivity(), "删除成功！");
-                                TrailRecordListFragment.TrailRecordAdapter.this.notifyDataSetChanged();
-                            } catch (DbException e) {
-                                e.printStackTrace();
-                            }
+                                    @Override
+                                    public void onNext(TravelRecord travelRecord) {
+                                        //地图界面移除轨迹显示
+                                        if (viewHolder.chk_name.isChecked()){
+                                            trailRecordMultiPathLayer.removeTrailRecordDrawable(travelRecord.getsTime() + "-" + travelRecord.geteTime());
+                                        }
+                                        listData.remove(travelRecord);//移除当前数据
+                                        //删除成功，提示用户
+                                        RxToast.info(getActivity(), "删除成功！");
+                                        TrailRecordAdapter.this.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        RxToast.error("删除失败，请重试！");
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+                                        shapeLoading.dismiss();
+                                    }
+                                });
                         }
                     }).setNegativeButton("取消", true, null).show();
                 }

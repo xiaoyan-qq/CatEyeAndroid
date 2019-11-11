@@ -2,11 +2,14 @@ package com.cateye.vtm.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.cateye.android.entity.ContourMPData;
 import com.cateye.android.entity.MapSourceFromNet;
 import com.cateye.android.vtm.MainActivity;
@@ -28,12 +31,16 @@ import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.oscim.android.filepicker.FilePicker;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapElement;
 import org.oscim.core.Tag;
 import org.oscim.layers.Layer;
+import org.oscim.layers.LocationLayer;
+import org.oscim.layers.MapEventLayer;
+import org.oscim.layers.MapEventLayer2;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.MapTile;
@@ -41,16 +48,20 @@ import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.map.Map;
 import org.oscim.renderer.bucket.RenderBuckets;
+import org.oscim.scalebar.MapScaleBarLayer;
 import org.oscim.theme.ExternalRenderTheme;
 import org.oscim.theme.ThemeUtils;
 import org.oscim.theme.styles.AreaStyle;
 import org.oscim.theme.styles.RenderStyle;
+import org.oscim.tiling.source.bitmap.BitmapTileSource;
+import org.oscim.tiling.source.geojson.ContourGeojsonTileSource;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class LayerManagerFragment extends BaseFragment {
@@ -122,6 +133,26 @@ public class LayerManagerFragment extends BaseFragment {
             public void onClick(View view) {
                 startActivityForResult(new Intent(getActivity(), MainActivity.ContourFilePicker.class),
                         SELECT_GEOJSON_FILE);
+            }
+        });
+
+        BootstrapButton btn_confirm = rootView.findViewById(R.id.btn_layer_manager_confirm);
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 通知主界面刷新图层
+                Message msg = Message.obtain();
+                msg.what = SystemConstant.MSG_WHAT_REFRSH_MAP_LAYERS;
+                msg.obj = layerDataBeanList;
+                EventBus.getDefault().post(msg);
+            }
+        });
+
+        ImageView img_back = rootView.findViewById(R.id.img_layer_manager_back);
+        img_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressedSupport();
             }
         });
     }
@@ -312,5 +343,11 @@ public class LayerManagerFragment extends BaseFragment {
             }
             mMap.setTheme(externalRenderTheme);
         }
+    }
+    @Override
+    public boolean onBackPressedSupport() {
+        pop();
+        ((MainActivity) getActivity()).hiddenSlidingLayout(true);//同时隐藏右侧面板
+        return true;
     }
 }

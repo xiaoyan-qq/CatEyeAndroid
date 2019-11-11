@@ -169,4 +169,5 @@ dependencies {
 
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     compile 'com.github.hss01248:NotifyUtil:1.0.1'
+
 }

@@ -30,6 +30,7 @@ public class SystemConstant {
 
     public static final int MSG_WHAT_DELETE_DRAW_DATA = 0x1014;//用户删除绘制的元素
     public static final int MSG_WHAT_REDRAW_USER_DRAW_DATA = 0x1015;//重新绘制用户绘制的数据
+    public static final int MSG_WHAT_REFRSH_MAP_LAYERS = 0x1016;//重新绘制用户绘制的数据
 
     public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称

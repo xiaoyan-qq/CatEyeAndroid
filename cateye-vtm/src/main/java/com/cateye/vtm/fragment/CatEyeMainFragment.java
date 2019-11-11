@@ -183,7 +183,6 @@ import static com.cateye.vtm.util.SystemConstant.URL_MAP_SOURCE_NET;
 /**
  * Created by zhangdezhi1702 on 2018/3/15.
  */
-//@Puppet(containerViewId = R.id.layer_main_cateye_bottom)
 public class CatEyeMainFragment extends BaseFragment {
     private MapView mapView;//地图控件
     private Map mMap;
@@ -872,38 +871,10 @@ public class CatEyeMainFragment extends BaseFragment {
     private int dragBeginPosition = -1;
 
     private void showLayerManagerDialog(final List<MapSourceFromNet.DataBean> dataBeanList) {
-        //使用ExpandableListView展示二级列表
-        layerManagerRootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_layer_manager, null);
-        ExpandableListView expandableListView = (ExpandableListView) layerManagerRootView.findViewById(R.id.sadLv_layerlist);
-
-        layerManagerAdapter = new LayerManagerAdapter(getActivity(), dataBeanList);
-        expandableListView.setAdapter(layerManagerAdapter);
-
-        //增加map按钮
-        TextView tv_add = (TextView) layerManagerRootView.findViewById(R.id.tv_layerlist_add);
-        tv_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), MainActivity.MapFilePicker.class),
-                        SELECT_MAP_FILE);
-            }
-        });
-
-        //增加geojson按钮
-        TextView tv_geojson = (TextView) layerManagerRootView.findViewById(R.id.tv_layerlist_geojson);
-        tv_geojson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), MainActivity.ContourFilePicker.class),
-                        SELECT_GEOJSON_FILE);
-            }
-        });
-        new CanDialog.Builder(getActivity()).setView(layerManagerRootView).setNegativeButton("取消", true, null).setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
-            @Override
-            public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
-                refreshAllLayers(dataBeanList);
-            }
-        }).show();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA, (ArrayList)layerDataBeanList);
+        LayerManagerFragment layerManagerFragment = (LayerManagerFragment) LayerManagerFragment.newInstance(bundle);
+        ((MainActivity) getActivity()).showSlidingLayout(0.4f, layerManagerFragment);
     }
 
     private void refreshAllLayers(List<MapSourceFromNet.DataBean> dataBeanList) { // 根据勾选的图层，重新切换地图上的图层显示
@@ -1463,6 +1434,12 @@ public class CatEyeMainFragment extends BaseFragment {
                 if (drawRectTileLayer!=null){
                     mMap.layers().remove(drawRectTileLayer);
                     mMap.updateMap(true);
+                }
+                break;
+            case SystemConstant.MSG_WHAT_REFRSH_MAP_LAYERS:
+                if (msg.obj != null) {
+                    this.layerDataBeanList = (List<MapSourceFromNet.DataBean>) msg.obj;
+                    this.refreshAllLayers(this.layerDataBeanList);
                 }
                 break;
         }
