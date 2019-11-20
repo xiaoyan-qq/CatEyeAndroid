@@ -181,8 +181,8 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         recyclerView.addItemDecoration(new RxRecyclerViewDividerTool(0, 0, 2, 2));
         //默认加载前20条数据
         try {
-            List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
-            if (dbEntityList != null && !dbEntityList.isEmpty()) {
+            List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).findAll();
+            if (dbEntityList != null/* && !dbEntityList.isEmpty()*/) {
                 listData.addAll(dbEntityList);
             } else {
                 RxToast.warning("本地没有存储的绘制数据");
@@ -198,7 +198,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
             public void onLoadMore(RefreshLayout refreshLayout) {
                 page++;
                 try {
-                    List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).findAll();
+                    List<DrawPointLinePolygonEntity> dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).findAll();
                     if (dbEntityList != null && !dbEntityList.isEmpty()) {
                         listData.addAll(dbEntityList);
                         adapter.notifyDataSetChanged();
@@ -415,7 +415,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                                         page = 0;
                                                         List<DrawPointLinePolygonEntity> dbEntityList = null;
                                                         try {
-                                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE+1).orderBy("_id", false).findAll();
+                                                            dbEntityList = dbManager.selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).orderBy("_id", false).findAll();
                                                         } catch (DbException e) {
                                                             e.printStackTrace();
                                                         }
@@ -477,7 +477,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                             RxToast.error("文件名不能为空！");
                             return;
                         }
-                        File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojosn");
+                        File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojson");
                         if (!saveFile.getParentFile().exists()){
                             saveFile.getParentFile().mkdirs();
                         }
@@ -568,6 +568,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                         @Override
                         public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
                             try {
+                                String deleteId = listData.get(i).get_id();
                                 // 通知主界面，从地图上删除指定的元素
                                 Message msg = Message.obtain();
                                 msg.what = SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
@@ -576,10 +577,20 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
 
                                 DrawPointLinePolygonListFragment.this.dbManager.deleteById(DrawPointLinePolygonEntity.class, listData.get(i).get_id());
                                 listData.remove(i);//移除当前数据
-
                                 //删除成功，提示用户
                                 RxToast.info(getActivity(), "删除成功！");
                                 DrawPointLinePolygonListFragment.DrawPointLinePolygonAdapter.this.notifyDataSetChanged();
+
+//                                OkGo.<String>delete(SystemConstant.DATA_DELETE).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).params("uuid",deleteId).tag(this).converter(new StringConvert())
+//                                        .adapt(new ObservableResponse<String>())
+//                                        .subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<com.lzy.okgo.model.Response<String>>() {
+//                                    @Override
+//                                    public void accept(com.lzy.okgo.model.Response<String> stringResponse) throws Exception {
+//                                        //删除成功，提示用户
+//                                        RxToast.info(getActivity(), "删除成功！");
+//                                        DrawPointLinePolygonListFragment.DrawPointLinePolygonAdapter.this.notifyDataSetChanged();
+//                                    }
+//                                });
                             } catch (DbException e) {
                                 e.printStackTrace();
                             }

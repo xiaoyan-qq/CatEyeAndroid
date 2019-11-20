@@ -234,6 +234,12 @@ public class TileDownloader {
             @Override
             public void onComplete() {
                 bbtn_ok.setEnabled(true);
+
+                // 结束下载后，择缓存地图按钮置为可用，直到下载完成后才可以进行下一次下载
+                Message msg = Message.obtain();
+                msg.what = 0x1017; // SystemConstant.MSG_WHAT_TILE_DOWNLAOD_ENABLE
+                msg.obj = true;
+                EventBus.getDefault().post(msg);
             }
         });
 

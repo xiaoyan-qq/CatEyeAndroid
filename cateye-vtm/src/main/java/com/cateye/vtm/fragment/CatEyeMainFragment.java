@@ -1209,6 +1209,9 @@ public class CatEyeMainFragment extends BaseFragment {
     @Subscribe
     public void onEventMainThread(Message msg) {
         switch (msg.what) {
+            case SystemConstant.MSG_WHAT_TILE_DOWNLAOD_ENABLE:
+                findViewById(R.id.img_download_tile).setEnabled((Boolean) msg.obj);
+                break;
             case SystemConstant.MSG_WHAT_DRAW_POINT_LINE_POLYGON_DESTROY://绘制点线面结束
                 if (chkDrawPointLinePolygonList != null) {
                     for (View chk : chkDrawPointLinePolygonList) {

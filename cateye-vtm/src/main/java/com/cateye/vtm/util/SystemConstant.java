@@ -32,6 +32,8 @@ public class SystemConstant {
     public static final int MSG_WHAT_REDRAW_USER_DRAW_DATA = 0x1015;//重新绘制用户绘制的数据
     public static final int MSG_WHAT_REFRSH_MAP_LAYERS = 0x1016;//重新绘制用户绘制的数据
 
+    public static final int MSG_WHAT_TILE_DOWNLAOD_ENABLE = 0x1017;//设置下载tile数据按钮的功能是否可用
+
     public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称
     public static final String LAYER_NAME_DRAW_POLYGON = "LAYER_NAME_DRAW_POLYGON";//显示用户绘制面图层的名称
@@ -54,6 +56,7 @@ public class SystemConstant {
     public static final String IMG_UPLOAD = BASE_URL + "/data/imgUpload";//用户上传图片文件的url
     public static final String BATCH_SAVE_WKT = BASE_URL + "/data/batchSave";//批量上传用户数据
     public static final String DATA_LIST = BASE_URL + "/data/list";//获取用户上传的数据
+    public static final String DATA_DELETE = BASE_URL + "/data/del";//删除用户上传的数据
     public static int CURRENT_PROJECTS_ID = -1;//当前正在作业的项目id，默认为1
 
     public static final String DATA_CONTOUR_CHART = "DATA_CONTOUR_CHART";

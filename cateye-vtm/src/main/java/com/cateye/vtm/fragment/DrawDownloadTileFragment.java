@@ -56,6 +56,11 @@ public class DrawDownloadTileFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 DrawDownloadTileFragment.this.onBackPressedSupport();
+                // 开始下载后，择缓存地图按钮置为不可用，直到下载完成后才可以进行下一次下载
+                Message msg = Message.obtain();
+                msg.what = SystemConstant.MSG_WHAT_TILE_DOWNLAOD_ENABLE;
+                msg.obj = false;
+                EventBus.getDefault().post(msg);
             }
         });
     }

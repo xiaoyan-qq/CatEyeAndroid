@@ -115,10 +115,10 @@ public class TrailRecordListFragment extends BaseDrawFragment {
         //默认加载前20条数据
         try {
             List<TravelRecord> dbEntityList = dbManager.selector(TravelRecord.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).limit(PAGE_SIZE).offset(page * PAGE_SIZE).orderBy("_id", true).findAll();
-            if (dbEntityList != null && !dbEntityList.isEmpty()) {
+            if (dbEntityList != null /*&& !dbEntityList.isEmpty()*/) {
                 listData.addAll(dbEntityList);
             } else {
-                RxToast.warning("没有存储的polygon数据");
+                RxToast.warning("没有存储的绘制数据");
                 onBackPressedSupport();
             }
         } catch (DbException e) {
@@ -156,13 +156,17 @@ public class TrailRecordListFragment extends BaseDrawFragment {
             mMap.updateMap(true);
         }
 
-        img_back = (ImageView) findViewById(R.id.tv_air_plan_list_back);
+        img_back = (ImageView) rootView.findViewById(R.id.tv_air_plan_list_back);
         img_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressedSupport();
             }
         });
+
+        rootView.findViewById(R.id.atv_draw_upload).setVisibility(View.GONE);
+        rootView.findViewById(R.id.atv_draw_download).setVisibility(View.GONE);
+        rootView.findViewById(R.id.atv_draw_export).setVisibility(View.GONE);
     }
 
 
