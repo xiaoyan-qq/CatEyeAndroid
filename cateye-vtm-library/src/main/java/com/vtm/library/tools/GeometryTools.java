@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.Position;
+import com.cocoahero.android.geojson.Ring;
 import com.litesuits.common.assist.Check;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -1324,12 +1325,21 @@ public class GeometryTools {
             GeoPoint geoPoint=GeometryTools.createGeoPoint(geometry.toString());
             geometryValue=new com.cocoahero.android.geojson.Point();
             ((com.cocoahero.android.geojson.Point) geometryValue).setPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
-        } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE || geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE) {
+        } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE) {
             List<GeoPoint> geoPointList=GeometryTools.getGeoPoints(geometry.toString());
             geometryValue=new com.cocoahero.android.geojson.LineString();
             for (GeoPoint geoPoint:geoPointList) {
                 ((com.cocoahero.android.geojson.LineString) geometryValue).addPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
             }
+        } else if (geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE) {
+            List<GeoPoint> geoPointList=GeometryTools.getGeoPoints(geometry.toString());
+            geometryValue=new com.cocoahero.android.geojson.Polygon();
+            Ring ring=new Ring();
+            for (GeoPoint geoPoint:geoPointList) {
+                ring.addPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+            }
+            ring.close();
+            ((com.cocoahero.android.geojson.Polygon) geometryValue).addRing(ring);
         }
         if (geometryValue!=null){
             // Create feature with geometry
