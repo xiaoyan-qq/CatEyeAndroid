@@ -166,6 +166,10 @@ public class TileDownloader {
         final BootstrapButton bbtn_ok = downloadProgressView.findViewById(R.id.bbtn_tile_download_ok);
 
         final List<UrlTileSource> urlTileSourceList = new ArrayList<>();
+
+        final Intent tileDownloaderIntent=new Intent("catEye_tile_download");
+        tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         Flowable.create(new FlowableOnSubscribe<Tile>() {
             @Override
             public void subscribe(FlowableEmitter<Tile> emitter) throws Exception {
@@ -220,8 +224,9 @@ public class TileDownloader {
                 tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
                 System.out.println("进度:" + pb_download.getProgress() + "/" + pb_download.getMax());
 
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress(),pb_download.getMax(),"下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,new Intent("catEye_tile_download"),PendingIntent.FLAG_ONE_SHOT)).show();;
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress() + 1,pb_download.getMax(),"下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT))
+                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT)).show();
 
                 subscription.request(1);
             }
@@ -240,6 +245,7 @@ public class TileDownloader {
                 msg.what = 0x1017; // SystemConstant.MSG_WHAT_TILE_DOWNLAOD_ENABLE
                 msg.obj = true;
                 EventBus.getDefault().post(msg);
+
             }
         });
 
@@ -261,8 +267,9 @@ public class TileDownloader {
         bbtn_mini.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress(),pb_download.getMax(),"下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,new Intent("catEye_tile_download"),PendingIntent.FLAG_ONE_SHOT)).show();
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress() + 1,pb_download.getMax(),"下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT))
+                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT)).show();
                 dialog.hide();
             }
         });
@@ -275,6 +282,7 @@ public class TileDownloader {
             if (intent.getAction() == "catEye_tile_download") {
                 if (dialog!=null){
                     dialog.show();
+                    context.startActivity(intent);//显示主界面，主界面设置了clear_top的tag，如果当前已经在显示了，不会重复显示
                 }
             }
         }

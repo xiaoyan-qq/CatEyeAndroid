@@ -136,7 +136,7 @@
     <!--六盘水自定义线-->
     <style-line id="liupanshui" use="residential" width="16" stroke="#00ff00" fade="0" outline="0"/>
     <!--自定义线-->
-    <style-line id="customer" use="residential" width="-0.6" stroke="#00ff00" fade="0" outline="0"/>
+    <style-line id="customer" use="residential" width="1.0" stroke="#00ff00" fade="0" outline="0"/>
 
     <!-- track|footway|path|cycleway -->
     <style-line cap="butt" fix="true" id="footway" stipple="2" stipple-stroke="#d35c48"
@@ -195,8 +195,8 @@
         <symbol src="assets:symbols/place_of_worship/unknown.svg" />
     </m>
     <m k="name" v="line">
-        <area use="liupanshui"/>
-        <line use="liupanshui"/>
+        <area use="customer"/>
+        <line use="customer"/>
         <text use="liupanshui"/>
         <symbol src="assets:symbols/place_of_worship/unknown.svg" />
     </m>
