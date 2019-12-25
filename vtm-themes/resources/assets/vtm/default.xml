@@ -102,7 +102,7 @@
     <!--六盘水自定义区域显示-->
     <style-area fade="80" fill="#EE4000" id="liupanshui" stroke="#EE9A49" stroke-width="3.0" />
     <!--自定义区域显示-->
-    <style-area fade="15" fill="#f2f0eb" id="customer" stroke="#EED8AE" stroke-width="1.0" />
+    <style-area fade="5" fill="#66EED8AE" id="customer" stroke="#EED8AE" stroke-width="1.5" />
 
     <!--water-->
     <!--<style-area id="water" fill="#97b7e5" afc5e3 /> -->
@@ -192,13 +192,21 @@
         <area use="liupanshui"/>
         <line use="liupanshui"/>
         <text use="liupanshui"/>
-        <symbol src="assets:symbols/place_of_worship/unknown.svg" />
+        <symbol src="assets:symbols/place_of_worship/dot_blue.svg" />
     </m>
-    <m k="name" v="line">
-        <area use="customer"/>
-        <line use="customer"/>
+    <m k="name" v="polygon">
         <text use="liupanshui"/>
-        <symbol src="assets:symbols/place_of_worship/unknown.svg" />
+        <area use="customer"/>
+    </m>
+
+    <m k="name" v="line">
+        <text use="liupanshui"/>
+        <line use="customer"/>
+    </m>
+
+    <m k="name" v="point">
+        <text use="liupanshui"/>
+        <symbol src="assets:symbols/dot_blue.svg" />
     </m>
     <!--<m k="$ref" v="$.features[0].properties">-->
         <!--<area use="liupanshui"/>-->
