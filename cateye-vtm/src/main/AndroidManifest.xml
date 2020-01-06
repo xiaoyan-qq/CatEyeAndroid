@@ -34,18 +34,18 @@
         <activity
             android:name="com.cateye.android.vtm.LoginActivity"
             android:screenOrientation="sensorLandscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.cateye.android.vtm.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="sensorLandscape">
+<!--            <intent-filter>-->
+<!--                <action android:name="catEye_tile_download"/>-->
+<!--                <category android:name="android.intent.category.DEFAULT"></category>-->
+<!--            </intent-filter>-->
             <intent-filter>
-                <action android:name="catEye_tile_download"/>
-                <category android:name="android.intent.category.DEFAULT"></category>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!--地图文件选择筛选类-->

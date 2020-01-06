@@ -1,8 +1,6 @@
 package com.cateye.android.vtm;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -38,17 +36,10 @@ import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtool.RxFileTool;
-import com.vondear.rxtool.RxImageTool;
 import com.vondear.rxtool.RxLogTool;
 import com.vondear.rxtool.RxPhotoTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
-import com.vondear.rxui.view.dialog.RxDialogSure;
-import com.yanzhenjie.permission.Action;
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.Permission;
-import com.yanzhenjie.permission.Rationale;
-import com.yanzhenjie.permission.RequestExecutor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.android.filepicker.FilePicker;
@@ -113,7 +104,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         setContentView(R.layout.activity_main);
 
         //初始化数据库管理
-        initDbManager();
+//        initDbManager();
 
         //启动fragment，显示地图界面
         mainFragment = CatEyeMainFragment.newInstance(new Bundle());
@@ -126,14 +117,14 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         TencentLocationManager locationManager = TencentLocationManager.getInstance(this);
         locationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_WGS84);//使用wgs84坐标系
         int error = locationManager.requestLocationUpdates(request, this);
-        if (error!=0){
+        if (error != 0) {
             RxToast.warning("注意！无法获取位置信息！");
         }
 
 //        //处理ActionBar
 //        RxBarTool.transparencyBar(this);
 
-        setCurrentProject();//设置当前正在作业的项目
+//        setCurrentProject();//设置当前正在作业的项目
 
         initBMB();
 
@@ -204,7 +195,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
             // 定位成功,更新当前的位置信息，如果是第一次定位，则自动将屏幕中心位置设置为当前位置
             currentLocation = tencentLocation;
 
-            if (tencentLocation!=null){
+            if (tencentLocation != null) {
                 tv_current_location.setText(new StringBuilder().append("Lat:").append(tencentLocation.getLatitude()).append(",").append("Lon:").append(tencentLocation.getLongitude()));
             }
 
@@ -313,8 +304,8 @@ public class MainActivity extends SupportActivity implements TencentLocationList
                                             mainFragment.popToChild(MultiTimeLayerSelectFragment.class, true);
                                         }
 
-                                        //自动加载该项目对应的图层
-                                        mainFragment.getMapDataSourceFromNet(true);
+//                                        //自动加载该项目对应的图层
+//                                        mainFragment.getMapDataSourceFromNet(true);
                                     }
                                 } else {
                                     RxToast.info("未切换项目，仍保持当前项目继续作业");
@@ -387,6 +378,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         }
     }
 
+
     public DbManager getDbManager() {
         initDbManager();
         return dbManager;
@@ -399,18 +391,18 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         layoutParams.width = (int) (pecent * screenWidth);
         slidingDrawer.setLayoutParams(layoutParams);
         slidingDrawer.setVisibility(View.VISIBLE);
-        if (!slidingDrawer.isOpened()){
+        if (!slidingDrawer.isOpened()) {
             slidingDrawer.animateOpen();//动画打开右侧面板
         }
-        if (!getTopFragment().getClass().equals(fragment.getClass())){
+        if (!getTopFragment().getClass().equals(fragment.getClass())) {
             //内容界面显示用户指定的fragment
-            loadRootFragment(R.id.layer_slideing_content,fragment);
+            loadRootFragment(R.id.layer_slideing_content, fragment);
         }
     }
 
     public void hiddenSlidingLayout(boolean removeAllFragment) {
-        if (removeAllFragment){
-            popTo(CatEyeMainFragment.class,false);
+        if (removeAllFragment) {
+            popTo(CatEyeMainFragment.class, false);
         }
         slidingDrawer.setVisibility(View.GONE);
     }
@@ -419,15 +411,15 @@ public class MainActivity extends SupportActivity implements TencentLocationList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RxPhotoTool.GET_IMAGE_BY_CAMERA) { //获取用户拍摄的照片
-            String imgPath=RxPhotoTool.getImageAbsolutePath(this, RxPhotoTool.imageUriFromCamera);
-            File photoFile = new File(SystemConstant.CACHE_PHOTO_PATH+File.separator+UUID.randomUUID().toString().replace("-","")+".jpg");
-            if (!photoFile.getParentFile().exists() || !photoFile.getParentFile().isDirectory()){
+            String imgPath = RxPhotoTool.getImageAbsolutePath(this, RxPhotoTool.imageUriFromCamera);
+            File photoFile = new File(SystemConstant.CACHE_PHOTO_PATH + File.separator + UUID.randomUUID().toString().replace("-", "") + ".jpg");
+            if (!photoFile.getParentFile().exists() || !photoFile.getParentFile().isDirectory()) {
                 photoFile.getParentFile().mkdirs();
             }
-            if (RxFileTool.copyOrMoveFile(imgPath, photoFile.getAbsolutePath(),true)){
+            if (RxFileTool.copyOrMoveFile(imgPath, photoFile.getAbsolutePath(), true)) {
                 Message msg = Message.obtain();
                 msg.what = SystemConstant.MSG_WHAT_DRAW_PHOTO_FINISH;
-                msg.obj=photoFile.getAbsolutePath();
+                msg.obj = photoFile.getAbsolutePath();
                 EventBus.getDefault().post(msg);
             }
         }

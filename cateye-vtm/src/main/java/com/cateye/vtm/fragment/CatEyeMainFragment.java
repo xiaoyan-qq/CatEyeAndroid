@@ -1,18 +1,12 @@
 package com.cateye.vtm.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,17 +39,7 @@ import com.cateye.vtm.util.AirPlanUtils;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
-import com.cocoahero.android.geojson.Feature;
-import com.cocoahero.android.geojson.FeatureCollection;
-import com.cocoahero.android.geojson.GeoJSON;
-import com.cocoahero.android.geojson.GeoJSONObject;
-import com.cocoahero.android.geojson.LineString;
-import com.cocoahero.android.geojson.Position;
-import com.cocoahero.android.geojson.Ring;
 import com.github.lazylibrary.util.TimeUtils;
-import com.larswerkman.holocolorpicker.ColorPicker;
-import com.larswerkman.holocolorpicker.OpacityBar;
-import com.larswerkman.holocolorpicker.SVBar;
 import com.litesuits.common.assist.Check;
 import com.litesuits.common.io.IOUtils;
 import com.lzy.okgo.OkGo;
@@ -73,6 +57,8 @@ import com.vondear.rxtool.RxTimeTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialog;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
+import com.vondear.rxui.view.dialog.RxDialogSure;
+import com.vondear.rxui.view.dialog.RxDialogSureCancel;
 import com.vtm.library.layers.GeoJsonLayer;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
@@ -81,13 +67,17 @@ import com.vtm.library.tools.DrawLayerUtils;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
 import com.vtm.library.tools.TileDownloader;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jeo.carto.Carto;
 import org.jeo.map.Style;
 import org.jeo.vector.VectorDataset;
-import org.json.JSONException;
 import org.oscim.android.MapPreferences;
 import org.oscim.android.MapView;
 import org.oscim.android.cache.TileCache;
@@ -96,59 +86,43 @@ import org.oscim.android.theme.AssetsRenderTheme;
 import org.oscim.backend.CanvasAdapter;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
-import org.oscim.core.MapElement;
 import org.oscim.core.MapPosition;
-import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tag;
 import org.oscim.core.Tile;
 import org.oscim.event.Gesture;
 import org.oscim.event.GestureListener;
 import org.oscim.event.MotionEvent;
-import org.oscim.layers.ContourLineLayer;
-import org.oscim.layers.JeoVectorLayer;
 import org.oscim.layers.Layer;
 import org.oscim.layers.LocationLayer;
 import org.oscim.layers.MapEventLayer;
 import org.oscim.layers.MapEventLayer2;
-import org.oscim.layers.OSMIndoorLayer;
 import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerInterface;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.tile.MapTile;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.layers.tile.buildings.BuildingLayer;
 import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
-import org.oscim.layers.vector.PathLayer;
 import org.oscim.layers.vector.geometries.PolygonDrawable;
 import org.oscim.map.Map;
 import org.oscim.renderer.BitmapRenderer;
 import org.oscim.renderer.GLViewport;
-import org.oscim.renderer.bucket.RenderBuckets;
 import org.oscim.scalebar.CatEyeMapScaleBar;
 import org.oscim.scalebar.ImperialUnitAdapter;
 import org.oscim.scalebar.MapScaleBar;
 import org.oscim.scalebar.MapScaleBarLayer;
 import org.oscim.scalebar.MetricUnitAdapter;
 import org.oscim.test.JeoTest;
-import org.oscim.theme.ExternalRenderTheme;
-import org.oscim.theme.ThemeUtils;
 import org.oscim.theme.VtmThemes;
 import org.oscim.theme.XmlRenderThemeMenuCallback;
 import org.oscim.theme.XmlRenderThemeStyleLayer;
 import org.oscim.theme.XmlRenderThemeStyleMenu;
-import org.oscim.theme.styles.AreaStyle;
-import org.oscim.theme.styles.LineStyle;
-import org.oscim.theme.styles.RenderStyle;
 import org.oscim.theme.styles.TextStyle;
 import org.oscim.tiling.source.bitmap.BitmapTileSource;
 import org.oscim.tiling.source.geojson.ContourGeojsonTileSource;
 import org.oscim.tiling.source.geojson.GeojsonTileSource;
 import org.oscim.tiling.source.mapfile.MapFileTileSource;
 import org.oscim.tiling.source.mapfile.MapInfo;
-import org.xutils.db.sqlite.SqlInfo;
-import org.xutils.db.sqlite.SqlInfoBuilder;
 import org.xutils.ex.DbException;
 
 import java.io.File;
@@ -157,7 +131,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -169,8 +142,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -236,6 +207,20 @@ public class CatEyeMainFragment extends BaseFragment {
         return R.layout.fragment_main_cateye;
     }
 
+    private String getPermissionStr(List<String> permissions) {
+        StringBuilder permissionSB = new StringBuilder();
+        if (permissions != null && !permissions.isEmpty()) {
+            for (String p : permissions) {
+                permissionSB.append(Permission.transformText(getActivity(), p));
+                permissionSB.append(",");
+            }
+        }
+        if (permissionSB.toString().endsWith(",")) {
+            permissionSB.delete(permissionSB.length() - 1, permissionSB.length());
+        }
+        return permissionSB.toString();
+    }
+
     @Override
     public void initView(View rootView) {
         travelSdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -275,7 +260,62 @@ public class CatEyeMainFragment extends BaseFragment {
         img_location = rootView.findViewById(R.id.img_location);
         img_exit_app = rootView.findViewById(R.id.img_exit_app);
 
-        initData();
+        //申请所需要的权限
+        AndPermission.with(getActivity()).permission(Permission.Group.LOCATION/*定位权限*/, Permission.Group.STORAGE/*存储权限*/, Permission.Group.CAMERA /*, Permission.Group.PHONE*//*电话相关权限*//*, Permission.Group.MICROPHONE*//*录音权限*/)
+                .onGranted(new Action() {//用户允许
+                    @Override
+                    public void onAction(List<String> permissions) {
+//                        Intent mainIntent = new Intent(MainActivity.this, MainActivity.class);
+//                        startActivity(mainIntent);
+//                        LoginActivity.this.finish();
+                        initData();
+
+                    }
+                })
+                .onDenied(new Action() {//用户拒绝
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        if (permissions != null && !permissions.isEmpty()) {
+                            String permissionSB = getPermissionStr(permissions);
+                            // 这些权限被用户总是拒绝。
+                            RxDialogSure sureDialog = new RxDialogSure(getActivity());
+                            sureDialog.setContent("您拒绝了" + permissionSB + "权限，程序无法正常使用，请重新授予程序权限!");
+                            sureDialog.setTitle("提示");
+                            sureDialog.getSureView().setEnabled(true);
+                            sureDialog.setSureListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sureDialog.dismiss();
+                                }
+                            });
+                            sureDialog.show();
+                        }
+                    }
+                }).rationale(new Rationale() {
+            @Override
+            public void showRationale(Context context, List<String> permissions, RequestExecutor executor) {
+                RxDialogSureCancel sureCancelDialog = new RxDialogSureCancel(getActivity());
+                String permissionSB = getPermissionStr(permissions);
+                sureCancelDialog.setContent("程序需要" + permissionSB + "等权限才可以正常运行，请授权程序获取权限!");
+                sureCancelDialog.setTitle("提示");
+                sureCancelDialog.getSureView().setEnabled(true);
+                sureCancelDialog.setCancelListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        executor.cancel();
+                        sureCancelDialog.dismiss();
+                    }
+                });
+                sureCancelDialog.setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        executor.execute();
+                        sureCancelDialog.dismiss();
+                    }
+                });
+                sureCancelDialog.show();
+            }
+        }).start();
         initScaleBar();
         initOperateLayerMap();
 
@@ -618,15 +658,16 @@ public class CatEyeMainFragment extends BaseFragment {
                     popChild();
                 }
             } else if (view.getId() == R.id.img_map_source_select) {//选择地图资源
-                if (layerDataBeanList != null && !layerDataBeanList.isEmpty()) {
-                    showLayerManagerDialog(layerDataBeanList);
-                } else {
-                    if (SystemConstant.CURRENT_PROJECTS_ID < 0) {//没有获取到当前作业的项目ID，提示用户
-                        RxToast.info("无法获取当前作业项目，请检查您的网络设置");
-                    } else {
-                        getMapDataSourceFromNet(false);
-                    }
-                }
+                showLayerManagerDialog(layerDataBeanList);
+//                if (layerDataBeanList != null && !layerDataBeanList.isEmpty()) {
+//                    showLayerManagerDialog(layerDataBeanList);
+//                } else {
+//                    if (SystemConstant.CURRENT_PROJECTS_ID < 0) {//没有获取到当前作业的项目ID，提示用户
+//                        RxToast.info("无法获取当前作业项目，请检查您的网络设置");
+//                    } else {
+//                        getMapDataSourceFromNet(false);
+//                    }
+//                }
             } else if (view.getId() == R.id.img_contour_select) {//选择等高线文件
                 final RxDialog dialog = new RxDialog(getContext());
                 View layer_select_map_source = LayoutInflater.from(getContext()).inflate(R.layout.layer_select_contour_source, null);
@@ -876,6 +917,9 @@ public class CatEyeMainFragment extends BaseFragment {
 
     private void showLayerManagerDialog(final List<MapSourceFromNet.DataBean> dataBeanList) {
         Bundle bundle = new Bundle();
+        if (layerDataBeanList == null){
+            layerDataBeanList = new ArrayList<>();
+        }
         bundle.putSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA, (ArrayList)layerDataBeanList);
         LayerManagerFragment layerManagerFragment = (LayerManagerFragment) LayerManagerFragment.newInstance(bundle);
         ((MainActivity) getActivity()).showSlidingLayout(0.4f, layerManagerFragment);
