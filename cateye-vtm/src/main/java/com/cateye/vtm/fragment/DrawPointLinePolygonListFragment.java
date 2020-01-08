@@ -1,11 +1,11 @@
 package com.cateye.vtm.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +23,6 @@ import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
-import com.cateye.android.entity.AirPlanDBEntity;
 import com.cateye.android.entity.DrawPointLinePolygonEntity;
 import com.cateye.android.entity.UploadRecordEntity;
 import com.cateye.android.vtm.MainActivity;
@@ -42,45 +42,48 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxFileTool;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
-import com.vondear.rxtool.RxTextTool;
 import com.vondear.rxtool.view.RxToast;
-import com.vondear.rxui.view.dialog.RxDialogEditSureCancel;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vondear.rxui.view.dialog.RxDialogSureCancel;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
 
+import org.geotools.data.FeatureWriter;
+import org.geotools.data.Transaction;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.oscim.core.BoundingBox;
-import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
-import org.wololo.geojson.GeoJSON;
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
-import io.reactivex.Flowable;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
@@ -89,7 +92,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiConsumer;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 
@@ -459,67 +461,142 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     RxToast.error("请至少勾选一条数据");
                     return;
                 }
-                final RxDialogEditSureCancel rxDialogEditSureCancel=new RxDialogEditSureCancel(getActivity());
-                rxDialogEditSureCancel.show();
-                rxDialogEditSureCancel.setTitle("导出文件名");
-                rxDialogEditSureCancel.getEditText().setHint("请输入导出文件名");
-                rxDialogEditSureCancel.getCancelView().setOnClickListener(new View.OnClickListener() {
+                final RxDialogSureCancel rxDialogSureCancel=new RxDialogSureCancel(getActivity());
+                View rootView=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_export_customer_data, null);
+                rxDialogSureCancel.setContentView(rootView);
+                rxDialogSureCancel.show();
+                final AppCompatSpinner spinnerFormate=rootView.findViewById(R.id.spn_file_format);
+                final EditText edt_fileName = rootView.findViewById(R.id.edt_export_file_name);
+                rxDialogSureCancel.setCancel("取消");
+                rxDialogSureCancel.setCancelListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        rxDialogEditSureCancel.dismiss();
+                    public void onClick(View view) {
+                        rxDialogSureCancel.dismiss();
                     }
                 });
-                rxDialogEditSureCancel.getSureView().setOnClickListener(new View.OnClickListener() {
+                rxDialogSureCancel.setSure("确定");
+                rxDialogSureCancel.setSureListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        String fileName=rxDialogEditSureCancel.getEditText().getText().toString();
-                        if (RxDataTool.isEmpty(fileName)){
+                    public void onClick(View view) {
+                        String fileName=edt_fileName.getText().toString().trim();
+                        if (fileName.equals("")){
                             RxToast.error("文件名不能为空！");
                             return;
                         }
-                        File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojson");
-                        if (!saveFile.getParentFile().exists()){
-                            saveFile.getParentFile().mkdirs();
-                        }
-                        if (saveFile.exists()){
-                            RxToast.error("存在同名文件，请重新命名！");
-                            return;
-                        }
-                        FeatureCollection featureCollection=new FeatureCollection();
-                        for (DrawPointLinePolygonEntity entity: checkedListData){
-                            Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
-                            feature.setIdentifier(entity.get_id());
-                            JSONObject prop=new JSONObject();
+                        if (".json".equals(spinnerFormate.getSelectedItem().toString())){
+                            File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojson");
+                            if (!saveFile.getParentFile().exists()){
+                                saveFile.getParentFile().mkdirs();
+                            }
+                            if (saveFile.exists()){
+                                RxToast.error("存在同名文件，请重新命名！");
+                                return;
+                            }
+                            FeatureCollection featureCollection=new FeatureCollection();
+                            for (DrawPointLinePolygonEntity entity: checkedListData){
+                                Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
+                                feature.setIdentifier(entity.get_id());
+                                JSONObject prop=new JSONObject();
+                                try {
+                                    prop.put("remark",entity.getRemark());
+                                    prop.put("userName",entity.getUserName());
+                                    prop.put("id",entity.get_id());
+                                    prop.put("img",entity.getImgUrlListStr());
+                                    prop.put("name",entity.getName());
+                                    prop.put("projectId",entity.getProjectId());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                feature.setProperties(prop);
+                                featureCollection.addFeature(feature);
+                            }
                             try {
-                                prop.put("remark",entity.getRemark());
-                                prop.put("userName",entity.getUserName());
-                                prop.put("id",entity.get_id());
-                                prop.put("img",entity.getImgUrlListStr());
-                                prop.put("name",entity.getName());
-                                prop.put("projectId",entity.getProjectId());
-                                prop.put("userName",entity.getUserName());
+                                JSONObject jsonObject=featureCollection.toJSON();
+                                jsonObject.put("crs",new JSONObject("{ \"type\": \"name\", \"properties\": { \"name\": \"urn:ogc:def:crs:OGC:1.3:CRS84\" } }"));
+                                jsonObject.put("name",fileName);
+                                RxFileTool.write(saveFile.getAbsolutePath(),jsonObject.toString());
+                                RxToast.info("保存成功："+saveFile.getAbsolutePath());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            feature.setProperties(prop);
-                            featureCollection.addFeature(feature);
+                        } else { // 导出为shp文件
+                            File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".shp");
+                            if (!saveFile.getParentFile().exists()){
+                                saveFile.getParentFile().mkdirs();
+                            }
+                            if (saveFile.exists()){
+                                RxToast.error("存在同名文件，请重新命名！");
+                                return;
+                            }
                         }
-                        rxDialogEditSureCancel.dismiss();
-                        try {
-                            JSONObject jsonObject=featureCollection.toJSON();
-                            jsonObject.put("crs",new JSONObject("{ \"type\": \"name\", \"properties\": { \"name\": \"urn:ogc:def:crs:OGC:1.3:CRS84\" } }"));
-                            jsonObject.put("name",fileName);
-                            RxFileTool.write(saveFile.getAbsolutePath(),jsonObject.toString());
-                            RxToast.info("保存成功："+saveFile.getAbsolutePath());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        rxDialogSureCancel.dismiss();
                     }
                 });
             }
         });
     }
 
+
+    private void write2ShpFile(String fileName, String geometryType){
+        try {
+            if (fileName==null||"".equals(fileName)){
+                RxToast.error("文件名不能为空！");
+                return;
+            }
+            File saveFile = null;
+            if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
+                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_point"+".shp");
+            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_line"+".shp");
+            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_polygon"+".shp");
+            }
+            if (saveFile!=null){
+                java.util.Map<String, Serializable> params = new HashMap<String, Serializable>();
+                params.put( ShapefileDataStoreFactory.URLP.key, saveFile.toURI().toURL() );
+                ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
+                //定义图形信息和属性信息
+                SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+                tb.setCRS(DefaultGeographicCRS.WGS84);
+                tb.setName(fileName);
+                tb.add("id",String.class);
+                tb.add("name",String.class);
+                tb.add("userName",String.class);
+                tb.add("remark",String.class);
+                tb.add("img",String.class);
+                tb.add("projectId",String.class);
+                if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
+                    tb.add("geometry", Point.class);
+                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                    tb.add("geometry", .class);
+                }  else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                    tb.add("geometry", Point.class);
+                }
+                ds.createSchema(tb.buildFeatureType());
+                ds.setCharset(Charset.forName("UTF-8"));
+                //设置Writer
+                FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ds.getFeatureWriter(ds.getTypeNames()[0], Transaction.AUTO_COMMIT);
+                for (DrawPointLinePolygonEntity entity: checkedListData){
+                    Geometry geometry=GeometryTools.createGeometry(entity.getGeometry());
+                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE){
+                        SimpleFeature feature=writer.next();
+                        feature.setAttribute("id",entity.get_id());
+                        feature.setAttribute("name",entity.getName());
+                        feature.setAttribute("userName",entity.getUserName());
+                        feature.setAttribute("remark",entity.getRemark());
+                        feature.setAttribute("img",entity.getImgUrlListStr());
+                        feature.setAttribute("projectId",entity.getProjectId());
+                        feature.setAttribute("geometry",geometry);
+                        writer.write();
+                    }
+                }
+                writer.close();
+                ds.dispose();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private class DrawPointLinePolygonAdapter extends RecyclerView.Adapter<DrawPointLinePolygonAdapter.ViewHolder> {
         private List<DrawPointLinePolygonEntity> listData;
