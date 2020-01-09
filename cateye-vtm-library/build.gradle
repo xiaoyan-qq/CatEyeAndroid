@@ -121,13 +121,8 @@ dependencies {
 
     //绘制图表的开源库 https://github.com/PhilJay/MPAndroidChart
     api 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-
     //    //https://github.com/locationtech/jts/blob/master/USING.md gis的java工具库
-
     //    implementation 'com.vividsolutions:jts:1.13'
-
-    ////    implementation 'com.vividsolutions:jts-io:1.14.0'
-
     //    implementation files('libs/spatial4j-0.7.jar')
 
     //    implementation files('libs/spatial4j-0.7-javadoc.jar')

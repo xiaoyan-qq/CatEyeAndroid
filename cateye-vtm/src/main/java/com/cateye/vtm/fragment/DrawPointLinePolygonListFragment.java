@@ -42,7 +42,9 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxFileTool;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
@@ -543,6 +545,10 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 RxToast.error("文件名不能为空！");
                 return;
             }
+            if (geometryType==null||"".equals(geometryType)){
+                RxToast.error("文件类型不能为空！");
+                return;
+            }
             File saveFile = null;
             if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
                 saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_point"+".shp");
@@ -568,9 +574,9 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
                     tb.add("geometry", Point.class);
                 } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
-                    tb.add("geometry", .class);
+                    tb.add("geometry", LineString.class);
                 }  else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
-                    tb.add("geometry", Point.class);
+                    tb.add("geometry", Polygon.class);
                 }
                 ds.createSchema(tb.buildFeatureType());
                 ds.setCharset(Charset.forName("UTF-8"));
@@ -578,17 +584,24 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ds.getFeatureWriter(ds.getTypeNames()[0], Transaction.AUTO_COMMIT);
                 for (DrawPointLinePolygonEntity entity: checkedListData){
                     Geometry geometry=GeometryTools.createGeometry(entity.getGeometry());
-                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE){
-                        SimpleFeature feature=writer.next();
-                        feature.setAttribute("id",entity.get_id());
-                        feature.setAttribute("name",entity.getName());
-                        feature.setAttribute("userName",entity.getUserName());
-                        feature.setAttribute("remark",entity.getRemark());
-                        feature.setAttribute("img",entity.getImgUrlListStr());
-                        feature.setAttribute("projectId",entity.getProjectId());
-                        feature.setAttribute("geometry",geometry);
-                        writer.write();
+                    SimpleFeature feature=writer.next();
+                    feature.setAttribute("id",entity.get_id());
+                    feature.setAttribute("name",entity.getName());
+                    feature.setAttribute("userName",entity.getUserName());
+                    feature.setAttribute("remark",entity.getRemark());
+                    feature.setAttribute("img",entity.getImgUrlListStr());
+                    feature.setAttribute("projectId",entity.getProjectId());
+                    feature.setAttribute("geometry",geometry);
+                    if (geometry.getGeometryType().equals(geometryType)){
+
                     }
+                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE){
+                    } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE){
+
+                    } else if (geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE){
+
+                    }
+                    writer.write();
                 }
                 writer.close();
                 ds.dispose();
