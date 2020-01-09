@@ -102,7 +102,7 @@
     <!--六盘水自定义区域显示-->
     <style-area fade="80" fill="#EE4000" id="liupanshui" stroke="#EE9A49" stroke-width="3.0" />
     <!--自定义区域显示-->
-    <style-area fade="5" fill="#66EED8AE" id="customer" stroke="#EED8AE" stroke-width="1.5" />
+    <style-area fade="5" fill="#66EED8AE" id="customer" stroke="#66EED8AE" stroke-width="1.5" />
 
     <!--water-->
     <!--<style-area id="water" fill="#97b7e5" afc5e3 /> -->
