@@ -469,15 +469,15 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 rxDialogSureCancel.show();
                 final AppCompatSpinner spinnerFormate=rootView.findViewById(R.id.spn_file_format);
                 final EditText edt_fileName = rootView.findViewById(R.id.edt_export_file_name);
-                rxDialogSureCancel.setCancel("取消");
-                rxDialogSureCancel.setCancelListener(new View.OnClickListener() {
+//                rxDialogSureCancel.setCancel("取消");
+                rxDialogSureCancel.findViewById(R.id.btn_export_shp_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         rxDialogSureCancel.dismiss();
                     }
                 });
-                rxDialogSureCancel.setSure("确定");
-                rxDialogSureCancel.setSureListener(new View.OnClickListener() {
+//                rxDialogSureCancel.setSure("确定");
+                rxDialogSureCancel.findViewById(R.id.btn_export_shp_confirm).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String fileName=edt_fileName.getText().toString().trim();
@@ -522,14 +522,19 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 e.printStackTrace();
                             }
                         } else { // 导出为shp文件
-                            File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".shp");
-                            if (!saveFile.getParentFile().exists()){
-                                saveFile.getParentFile().mkdirs();
+                            File saveFilePoint=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_point"+".shp");
+                            File saveFileLine=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_line"+".shp");
+                            File saveFilePolygon=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_polygon"+".shp");
+                            if (!saveFilePoint.getParentFile().exists()){
+                                saveFilePoint.getParentFile().mkdirs();
                             }
-                            if (saveFile.exists()){
+                            if (saveFilePoint.exists() || saveFileLine.exists() || saveFilePolygon.exists()){
                                 RxToast.error("存在同名文件，请重新命名！");
                                 return;
                             }
+                            write2ShpFile(saveFilePoint.getName(),GeometryTools.POINT_GEOMETRY_TYPE);
+                            write2ShpFile(saveFileLine.getName(),GeometryTools.LINE_GEOMETRY_TYPE);
+                            write2ShpFile(saveFilePolygon.getName(),GeometryTools.POLYGON_GEOMETRY_TYPE);
                         }
                         rxDialogSureCancel.dismiss();
                     }
@@ -591,15 +596,8 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     feature.setAttribute("remark",entity.getRemark());
                     feature.setAttribute("img",entity.getImgUrlListStr());
                     feature.setAttribute("projectId",entity.getProjectId());
-                    feature.setAttribute("geometry",geometry);
-                    if (geometry.getGeometryType().equals(geometryType)){
-
-                    }
-                    if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE){
-                    } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE){
-
-                    } else if (geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE){
-
+                    if (geometryType.equals(geometry.getGeometryType())){
+                        feature.setAttribute("geometry",geometry);
                     }
                     writer.write();
                 }

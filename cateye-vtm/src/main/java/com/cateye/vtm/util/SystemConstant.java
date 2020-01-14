@@ -46,8 +46,8 @@ public class SystemConstant {
     public static final String LAYER_NAME_DRAW_LINE_HIGHLIGHT = "LAYER_NAME_DRAW_LINE";//高亮显示用户绘制线图层的名称
     public static final String LAYER_NAME_DRAW_POLYGON_HIGHLIGHT = "LAYER_NAME_DRAW_POLYGON";//高亮显示用户绘制面图层的名称
 
-    public static final String BASE_URL = "http://111.202.109.211:8080";
-    public static final String PROJECT_URL = "http://111.202.109.211:8080/project";
+    public static final String BASE_URL = "http://211.154.194.45:8080";
+    public static final String PROJECT_URL = "http://211.154.194.45:8080/project";
     public static final String USER_ID = "{userId}";
     public static final String URL_MAP_SOURCE_NET = BASE_URL + "/projects/" + USER_ID + "/datasets";//获取数据源的url
     public static final String URL_CONTOUR_CALCULATE = BASE_URL + "/dem/contour";//等高线获取的url
