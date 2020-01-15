@@ -13,6 +13,7 @@ public class SystemConstant {
     public static final String CACHE_FILE_PATH = APP_ROOT_DATA_PATH + File.separator + "Cache";
     public static final String CACHE_PHOTO_PATH = APP_ROOT_DATA_PATH + File.separator + "Photo";
     public static final String CACHE_EXPORT_GEOJSON_PATH = APP_ROOT_DATA_PATH + File.separator + "Export_GeoJson";
+    public static final String CACHE_EXPORT_SHP_PATH = APP_ROOT_DATA_PATH + File.separator + "Export_Shp";
 
     public static final int MSG_WHAT_DRAW_POINT_LINE_POLYGON_DESTROY = 0x1001;//绘制点线面
     public static final int MSG_WHAT_LOCATION_UPDATE = 0x1002;//位置更新
