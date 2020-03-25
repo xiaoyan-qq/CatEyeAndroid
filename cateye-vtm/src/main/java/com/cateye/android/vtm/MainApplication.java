@@ -1,6 +1,5 @@
 package com.cateye.android.vtm;
 
-import android.app.Application;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
@@ -16,6 +15,7 @@ import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.umeng.commonsdk.UMConfigure;
 import com.vondear.rxtool.RxTool;
 
+import org.gdal.ogr.ogr;
 import org.xutils.x;
 
 import java.io.File;
@@ -41,6 +41,8 @@ public class MainApplication extends MultiDexApplication {
         System.loadLibrary("AirPhotoPlanner");
 
         RxTool.init(this);
+        // 注册gdal
+        ogr.RegisterAll();
 
         Fragmentation.builder()
                 // 显示悬浮球 ; 其他Mode:SHAKE: 摇一摇唤出   NONE：隐藏

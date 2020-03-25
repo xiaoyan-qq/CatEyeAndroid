@@ -42,8 +42,9 @@ android {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
+    api project(':gdal')
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     api project(':vtm-android')
@@ -125,8 +126,6 @@ dependencies {
     //    //https://github.com/locationtech/jts/blob/master/USING.md gis的java工具库
 
     //    implementation 'com.vividsolutions:jts:1.13'
-
-    ////    implementation 'com.vividsolutions:jts-io:1.14.0'
 
     //    implementation files('libs/spatial4j-0.7.jar')
 
