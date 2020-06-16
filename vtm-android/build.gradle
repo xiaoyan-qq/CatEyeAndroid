@@ -4,6 +4,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 dependencies {
     api project(':vtm')
     api 'com.caverock:androidsvg:1.4'
+//    api 'com.caverock:androidsvg-aar:1.4'
 }
 
 android {
