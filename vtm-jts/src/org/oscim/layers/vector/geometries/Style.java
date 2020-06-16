@@ -1,6 +1,6 @@
 /*
  * Copyright 2014 Hannes Janetzek
- * Copyright 2016-2017 devemux86
+ * Copyright 2016-2019 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -46,6 +46,8 @@ public class Style {
 
     public final Paint.Cap cap;
     public final boolean fixed;
+    public final double strokeIncrease;
+    public final float blur;
     public final int stipple;
     public final int stippleColor;
     public final float stippleWidth;
@@ -68,6 +70,8 @@ public class Style {
 
         cap = builder.cap;
         fixed = builder.fixed;
+        strokeIncrease = builder.strokeIncrease;
+        blur = builder.blur;
         stipple = builder.stipple;
         stippleColor = builder.stippleColor;
         stippleWidth = builder.stippleWidth;
@@ -90,7 +94,7 @@ public class Style {
     public static class Builder {
 
         private float strokeWidth = 1f;
-        private int strokeColor = Color.GRAY;
+        public int strokeColor = Color.GRAY;
         private int fillColor = Color.GRAY;
         private float fillAlpha = 0.25f;
 
@@ -101,6 +105,8 @@ public class Style {
 
         public Paint.Cap cap = Paint.Cap.ROUND;
         public boolean fixed = false;
+        public double strokeIncrease = 1;
+        public float blur = 0;
         public int stipple = 0;
         public int stippleColor = Color.GRAY;
         public float stippleWidth = 1;
@@ -204,6 +210,16 @@ public class Style {
 
         public Builder fixed(boolean b) {
             this.fixed = b;
+            return this;
+        }
+
+        public Builder strokeIncrease(double strokeIncrease) {
+            this.strokeIncrease = strokeIncrease;
+            return this;
+        }
+
+        public Builder blur(float blur) {
+            this.blur = blur;
             return this;
         }
 

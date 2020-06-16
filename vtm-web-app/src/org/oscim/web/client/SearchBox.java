@@ -82,18 +82,18 @@ public class SearchBox {
         BoundingBox getBoundingBox();
     }
 
-    final static class NominatimData extends JavaScriptObject implements
+    static final class NominatimData extends JavaScriptObject implements
             PoiData {
 
         protected NominatimData() {
         }
 
-        final static class BBox extends JsArrayNumber {
+        static final class BBox extends JsArrayNumber {
             protected BBox() {
             }
         }
 
-        final static class Polygon extends JsArray<JsArrayNumber> {
+        static final class Polygon extends JsArray<JsArrayNumber> {
             protected Polygon() {
             }
 
@@ -125,6 +125,7 @@ public class SearchBox {
             return this.lon;
         }-*/;
 
+        @Override
         public final native String getIcon() /*-{
             return this.icon;
         }-*/;
@@ -242,6 +243,7 @@ public class SearchBox {
             }
         });
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 final PoiData d = selectionModel.getSelectedObject();
 
@@ -307,6 +309,7 @@ public class SearchBox {
             /**
              * Fired when the user clicks on the sendButton.
              */
+            @Override
             public void onClick(ClickEvent event) {
                 sendRequest();
             }
@@ -314,6 +317,7 @@ public class SearchBox {
             /**
              * Fired when the user types in the nameField.
              */
+            @Override
             public void onKeyUp(KeyUpEvent event) {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
                     sendRequest();
@@ -335,11 +339,13 @@ public class SearchBox {
                 JsonpRequestBuilder builder = new JsonpRequestBuilder();
                 builder.setCallbackParam("json_callback");
                 builder.requestObject(url, new AsyncCallback<JsArray<NominatimData>>() {
+                    @Override
                     public void onFailure(Throwable caught) {
                         log.debug("request failed");
                         searchButton.setEnabled(true);
                     }
 
+                    @Override
                     public void onSuccess(JsArray<NominatimData> data) {
                         List<PoiData> items = new ArrayList<PoiData>();
                         for (int i = 0, n = data.length(); i < n; i++) {

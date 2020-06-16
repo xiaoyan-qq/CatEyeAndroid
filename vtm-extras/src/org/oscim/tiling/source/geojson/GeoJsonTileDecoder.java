@@ -54,18 +54,18 @@ public class GeoJsonTileDecoder implements ITileDecoder {
     private final LinkedHashMap<String, Object> mTagMap;
     private final JsonFactory mJsonFactory;
 
-    private final static char[] FIELD_FEATURES = "features".toCharArray();
-    private final static char[] FIELD_GEOMETRY = "geometry".toCharArray();
-    private final static char[] FIELD_PROPERTIES = "properties".toCharArray();
-    private final static char[] FIELD_COORDINATES = "coordinates".toCharArray();
-    private final static char[] FIELD_TYPE = "type".toCharArray();
+    private static final char[] FIELD_FEATURES = "features".toCharArray();
+    private static final char[] FIELD_GEOMETRY = "geometry".toCharArray();
+    private static final char[] FIELD_PROPERTIES = "properties".toCharArray();
+    private static final char[] FIELD_COORDINATES = "coordinates".toCharArray();
+    private static final char[] FIELD_TYPE = "type".toCharArray();
 
-    private final static char[] LINETRING = "LineString".toCharArray();
-    private final static char[] POLYGON = "Polygon".toCharArray();
-    private final static char[] POINT = "Point".toCharArray();
-    private final static char[] MULTI_LINESTRING = "MultiLineString".toCharArray();
-    private final static char[] MULTI_POLYGON = "MultiPolygon".toCharArray();
-    private final static char[] MULTI_POINT = "MultiPoint".toCharArray();
+    private static final char[] LINETRING = "LineString".toCharArray();
+    private static final char[] POLYGON = "Polygon".toCharArray();
+    private static final char[] POINT = "Point".toCharArray();
+    private static final char[] MULTI_LINESTRING = "MultiLineString".toCharArray();
+    private static final char[] MULTI_POLYGON = "MultiPolygon".toCharArray();
+    private static final char[] MULTI_POINT = "MultiPoint".toCharArray();
 
     private ITileDataSink mTileDataSink;
 
@@ -259,18 +259,13 @@ public class GeoJsonTileDecoder implements ITileDecoder {
 
                 ring++;
                 parseCoordSequence(jp);
-                removeLastPoint();
+                mMapElement.removeLastPoint();
                 continue;
             }
 
             if (t == END_ARRAY)
                 break;
         }
-    }
-
-    private void removeLastPoint() {
-        mMapElement.pointNextPos -= 2;
-        mMapElement.index[mMapElement.indexCurrentPos] -= 2;
     }
 
     private void parseLineString(JsonParser jp)
@@ -329,7 +324,7 @@ public class GeoJsonTileDecoder implements ITileDecoder {
 
     }
 
-    private final static boolean match(JsonParser jp, char[] fieldName)
+    private static final boolean match(JsonParser jp, char[] fieldName)
             throws JsonParseException, IOException {
 
         int length = jp.getTextLength();

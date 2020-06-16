@@ -1,7 +1,10 @@
 /*
- * Copyright 2016-2018 devemux86
+ * Copyright 2014 Hannes Janetzek
+ * Copyright 2016-2020 devemux86
  * Copyright 2017 Luca Osten
  * Copyright 2018 Izumi Kawashima
+ * Copyright 2018 Mathieu De Brito
+ * Copyright 2020 Stephan Brandt
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -29,7 +32,8 @@ import static org.oscim.utils.FastMath.clamp;
 
 public class ViewController extends Viewport {
 
-    protected float mPivotY = 0.0f;
+    private float mPivotX = 0.0f;
+    private float mPivotY = 0.0f;
 
     private final float[] mat = new float[16];
 
@@ -72,11 +76,49 @@ public class ViewController extends Viewport {
     }
 
     /**
-     * Set pivot height relative to view center. E.g. 0.5 is usually preferred
-     * for navigation, moving the center to 25% of the view height.
-     * Range is [-1, 1].
+     * Get pivot horizontal / vertical relative to view center in [-1, 1].
+     * e.g. pivotY 0.5 is usually preferred for navigation, moving center to 25% of view height.
      */
-    public void setMapViewCenter(float pivotY) {
+    public float[] getMapViewCenter() {
+        return new float[]{mPivotX, mPivotY};
+    }
+
+    /**
+     * Get pivot horizontal relative to view center in [-1, 1].
+     */
+    public float getMapViewCenterX() {
+        return mPivotX;
+    }
+
+    /**
+     * Get pivot vertical relative to view center in [-1, 1].
+     * e.g. pivotY 0.5 is usually preferred for navigation, moving center to 25% of view height.
+     */
+    public float getMapViewCenterY() {
+        return mPivotY;
+    }
+
+    /**
+     * Set pivot horizontal / vertical relative to view center in [-1, 1].
+     * e.g. pivotY 0.5 is usually preferred for navigation, moving center to 25% of view height.
+     */
+    public void setMapViewCenter(float pivotX, float pivotY) {
+        setMapViewCenterX(pivotX);
+        setMapViewCenterY(pivotY);
+    }
+
+    /**
+     * Set pivot horizontal relative to view center in [-1, 1].
+     */
+    public void setMapViewCenterX(float pivotX) {
+        mPivotX = FastMath.clamp(pivotX, -1, 1) * 0.5f;
+    }
+
+    /**
+     * Set pivot horizontal / vertical relative to view center in [-1, 1].
+     * e.g. pivotY 0.5 is usually preferred for navigation, moving center to 25% of view height.
+     */
+    public void setMapViewCenterY(float pivotY) {
         mPivotY = FastMath.clamp(pivotY, -1, 1) * 0.5f;
     }
 
@@ -168,6 +210,7 @@ public class ViewController extends Viewport {
         mPos.scale = newScale;
 
         if (pivotX != 0 || pivotY != 0) {
+            pivotX -= mWidth * mPivotX;
             pivotY -= mHeight * mPivotY;
 
             moveMap(pivotX * (1.0f - scale),
@@ -183,17 +226,20 @@ public class ViewController extends Viewport {
     public void rotateMap(double radians, float pivotX, float pivotY) {
         ThreadUtils.assertMainThread();
 
-        double rsin = Math.sin(radians);
-        double rcos = Math.cos(radians);
-
-        pivotY -= mHeight * mPivotY;
-
-        float x = (float) (pivotX - pivotX * rcos + pivotY * rsin);
-        float y = (float) (pivotY - pivotX * rsin - pivotY * rcos);
-
-        moveMap(x, y);
-
         setRotation(mPos.bearing + Math.toDegrees(radians));
+
+        if (pivotX != 0 && pivotY != 0) {
+            double rsin = Math.sin(radians);
+            double rcos = Math.cos(radians);
+
+            pivotX -= mWidth * mPivotX;
+            pivotY -= mHeight * mPivotY;
+
+            float x = (float) (pivotX - pivotX * rcos + pivotY * rsin);
+            float y = (float) (pivotY - pivotX * rsin - pivotY * rcos);
+
+            moveMap(x, y);
+        }
     }
 
     public void setRotation(double degree) {
@@ -267,7 +313,7 @@ public class ViewController extends Viewport {
 
         mViewMatrix.copy(mRotationMatrix);
 
-        mTmpMatrix.setTranslation(0, mPivotY * mHeight, 0);
+        mTmpMatrix.setTranslation(mPivotX * mWidth, mPivotY * mHeight, 0);
         mViewMatrix.multiplyLhs(mTmpMatrix);
 
         mViewProjMatrix.multiplyMM(mProjMatrix, mViewMatrix);
@@ -292,7 +338,7 @@ public class ViewController extends Viewport {
         }
     }
 
-    void syncViewport() {
+    public void syncViewport() {
         synchronized (mNextFrame) {
             mNextFrame.copy(this);
         }

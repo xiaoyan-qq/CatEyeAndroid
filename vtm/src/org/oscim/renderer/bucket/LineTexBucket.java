@@ -101,6 +101,7 @@ public final class LineTexBucket extends LineBucket {
         this.evenSegment = true;
     }
 
+    @Override
     public void addLine(GeometryBuffer geom) {
         addLine(geom.points, geom.index, -1, false);
     }
@@ -264,11 +265,11 @@ public final class LineTexBucket extends LineBucket {
         }
     }
 
-    public final static class Renderer {
+    public static final class Renderer {
         private static Shader shader;
 
         /* factor to normalize extrusion vector and scale to coord scale */
-        private final static float COORD_SCALE_BY_DIR_SCALE =
+        private static final float COORD_SCALE_BY_DIR_SCALE =
                 COORD_SCALE / LineBucket.DIR_SCALE;
 
         private static int mVertexFlipID;
@@ -297,7 +298,7 @@ public final class LineTexBucket extends LineBucket {
             GLState.bindVertexBuffer(mVertexFlipID);
             gl.bufferData(GL.ARRAY_BUFFER, flip.length, sbuf,
                     GL.STATIC_DRAW);
-            GLState.bindVertexBuffer(0);
+            GLState.bindVertexBuffer(GLState.UNBIND);
 
             //    mTexID = new int[10];
             //    byte[] stipple = new byte[40];
@@ -342,10 +343,10 @@ public final class LineTexBucket extends LineBucket {
         }
 
         /* posX, posY, extrX, extrY, length, unused */
-        private final static int STRIDE = 6 * RenderBuckets.SHORT_BYTES;
+        private static final int STRIDE = 6 * RenderBuckets.SHORT_BYTES;
 
         /* offset for line length, unused; skip first 4 units */
-        private final static int LEN_OFFSET = 4 * RenderBuckets.SHORT_BYTES;
+        private static final int LEN_OFFSET = 4 * RenderBuckets.SHORT_BYTES;
 
         public static RenderBucket draw(RenderBucket b, GLViewport v,
                                         float div, RenderBuckets buckets) {
@@ -353,7 +354,7 @@ public final class LineTexBucket extends LineBucket {
             GLState.blend(true);
             shader.useProgram();
 
-            GLState.enableVertexArrays(-1, -1);
+            GLState.enableVertexArrays(GLState.DISABLED, GLState.DISABLED);
 
             int aLen0 = shader.aLen0;
             int aLen1 = shader.aLen1;
@@ -384,7 +385,7 @@ public final class LineTexBucket extends LineBucket {
                 LineTexBucket lb = (LineTexBucket) b;
                 LineStyle line = lb.line.current();
 
-                gl.uniform1f(shader.uMode, line.dashArray != null ? 2 : (line.texture != null ? 1 : 0));
+                gl.uniform1i(shader.uMode, line.dashArray != null ? 2 : (line.texture != null ? 1 : 0));
 
                 if (line.texture != null)
                     line.texture.bind();

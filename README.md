@@ -1,25 +1,28 @@
-[![Maven Central](https://img.shields.io/maven-central/v/org.mapsforge/vtm.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.mapsforge%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.mapsforge/vtm.svg)](https://search.maven.org/search?q=g:org.mapsforge)
 [![Build Status](https://travis-ci.org/mapsforge/vtm.svg?branch=master)](https://travis-ci.org/mapsforge/vtm)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0)
 
 # V™
 
-VTM was developed within the [OpenScienceMap](https://github.com/opensciencemap) project.
+<img src="docs/logo/VTM.svg" style="bottom:0;" width="200" align="right">
 
-**This fork continues VTM development. And provides compatibility with latest [Mapsforge](https://github.com/mapsforge/mapsforge).**
+VTM (Vector Tile Map) was developed within the [OpenScienceMap](https://github.com/opensciencemap) project.
 
-See the **[integration guide](docs/Integration.md)** and [changelog](docs/Changelog.md). And read through [how to contribute](.github/CONTRIBUTING.md) guidelines.
+**This fork continues VTM development and provides compatibility with [Mapsforge](https://github.com/mapsforge/mapsforge).**
 
-If you have any questions or problems, don't hesitate to ask our public [mailing list](https://groups.google.com/group/mapsforge-dev) for help.
+See the **[integration guide](docs/Integration.md)** and [changelog](docs/Changelog.md). And read through [how to contribute](docs/CONTRIBUTING.md) guidelines.
+
+If you have any questions or problems, don't hesitate to ask our public [forum](https://groups.google.com/group/mapsforge-dev) for help.
 
 ## Features
 - Java map library
 - OpenGL vector-tile rendering
-- Themeable vector layers
+- Themeable vector layers ([render themes](docs/Rendertheme.md))
 - Support for multiple tile sources:
   - OpenScienceMap vector tiles
   - Mapsforge vector maps
-  - Mapbox vector tiles (e.g. Mapzen, Nextzen, OpenMapTiles)
+  - MBTiles vector & raster maps
+  - Mapbox vector tiles (e.g. Mapilion, Mapzen, Nextzen, OpenMapTiles)
   - GeoJSON vector tiles (e.g. Mapzen, Nextzen)
   - Raster tiles: any quadtree-scheme tiles as texture
 - Backends:
@@ -35,6 +38,8 @@ If you have any questions or problems, don't hesitate to ask our public [mailing
 - **vtm-gdx** common libGDX backend
 - **vtm-android-gdx** Android libGDX backend
 - **vtm-desktop** Desktop libGDX backend
+- **vtm-desktop-lwjgl** Desktop LWJGL backend
+- **vtm-desktop-lwjgl3** Desktop LWJGL 3 backend
 - **vtm-playground** Desktop examples
 - **vtm-ios** iOS libGDX backend
 - **vtm-ios-example** iOS examples
@@ -59,16 +64,24 @@ This library contains code from several projects:
 - **osmdroid** (Apache 2.0): some overlay classes (https://github.com/osmdroid/osmdroid)
 - **tessellate** (SGI Free Software License B 2.0): (https://github.com/cscheid/tessellate)
 
+## License
+
+VTM library is under [LGPL v3 license](http://www.gnu.org/licenses/lgpl-3.0), with an important simplification: the constraints mentioned in sections LGPL v3 §4(d) and §4(e) are waived.
+
+This means that you are allowed to convey a Combined Work without providing the user any way to recombine or relink the application and without providing any shared library mechanism.
+
+In other words, you are allowed to include VTM library in your Android application, without making your application open source.
+
 ## Screenshots
 
-### Android
-![Android](docs/images/android.png)
+| Android       | iOS           |
+| ------------- | ------------- |
+|<img src="docs/images/android.png" width="1000">|<img src="docs/images/ios.png" width="1000">|
 
-### iOS
-![iOS](docs/images/ios.png)
+| Desktop       |
+| ------------- |
+|![Desktop](docs/images/desktop.png)|
 
-### Desktop
-![Desktop](docs/images/desktop.png)
-
-### Browser
-![Browser](docs/images/browser.png)
+| Browser       |
+| ------------- |
+|![Browser](docs/images/browser.png)|

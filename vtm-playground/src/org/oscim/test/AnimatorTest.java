@@ -1,6 +1,6 @@
 /*
  * Copyright 2014 Hannes Janetzek
- * Copyright 2017-2018 devemux86
+ * Copyright 2017-2020 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -18,14 +18,15 @@
 package org.oscim.test;
 
 import com.badlogic.gdx.Input;
-
 import org.oscim.core.BoundingBox;
 import org.oscim.gdx.GdxMapApp;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.renderer.MapRenderer;
-import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.oscim.tiling.source.UrlTileSource;
 import org.oscim.tiling.source.bitmap.DefaultSources;
+
+import java.util.Collections;
 
 public class AnimatorTest extends GdxMapApp {
 
@@ -33,9 +34,10 @@ public class AnimatorTest extends GdxMapApp {
     public void createLayers() {
         MapRenderer.setBackgroundColor(0xff000000);
 
-        TileSource tileSource = DefaultSources.OPENSTREETMAP
+        UrlTileSource tileSource = DefaultSources.OPENSTREETMAP
                 .httpFactory(new OkHttpEngine.OkHttpFactory())
                 .build();
+        tileSource.setHttpRequestHeaders(Collections.singletonMap("User-Agent", "vtm-playground"));
         mMap.layers().add(new BitmapTileLayer(mMap, tileSource));
 
         mMap.setMapPosition(0, 0, 1 << 4);
@@ -46,6 +48,7 @@ public class AnimatorTest extends GdxMapApp {
     protected boolean onKeyDown(int keycode) {
         if (keycode == Input.Keys.NUM_1) {
             mMap.animator().animateTo(new BoundingBox(53.1, 8.8, 53.2, 8.9));
+            mMap.updateMap(true);
             return true;
         }
         return false;

@@ -1,6 +1,6 @@
 /*
  * Copyright 2014 Hannes Janetzek
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2020 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -28,33 +28,35 @@ import org.oscim.layers.vector.PathLayer;
 import org.oscim.layers.vector.geometries.Style;
 import org.oscim.map.Map;
 import org.oscim.renderer.bucket.TextureItem;
-import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.oscim.tiling.source.UrlTileSource;
 import org.oscim.tiling.source.bitmap.DefaultSources;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LineTexTest extends GdxMapApp {
 
-    private static final boolean ANIMATION = false;
+    private static final boolean ANIMATION = true;
 
     private List<PathLayer> mPathLayers = new ArrayList<>();
     private TextureItem tex;
 
     @Override
     public void createLayers() {
-        TileSource tileSource = DefaultSources.OPENSTREETMAP
+        UrlTileSource tileSource = DefaultSources.OPENSTREETMAP
                 .httpFactory(new OkHttpEngine.OkHttpFactory())
                 .build();
+        tileSource.setHttpRequestHeaders(Collections.singletonMap("User-Agent", "vtm-playground"));
         mMap.layers().add(new BitmapTileLayer(mMap, tileSource));
 
         mMap.setMapPosition(0, 0, 1 << 2);
 
         try {
             tex = new TextureItem(CanvasAdapter.getBitmapAsset("", "patterns/pike.png"));
-            tex.mipmap = true;
+            //tex.mipmap = true;
         } catch (IOException e) {
             e.printStackTrace();
         }

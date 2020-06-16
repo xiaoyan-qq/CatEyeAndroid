@@ -4,8 +4,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -14,10 +14,10 @@ allprojects {
     version = 'master-SNAPSHOT'
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-    ext.androidBuildVersionTools = "27.0.3"
-    ext.gdxVersion = "1.9.8"
-    ext.gwtVersion = "2.8.0"
-    ext.slf4jVersion = "1.7.25"
+    ext.androidBuildVersionTools = "29.0.3"
+    ext.gdxVersion = "1.9.10"
+    ext.gwtVersion = "2.8.2"
+    ext.slf4jVersion = "1.7.28"
 
     if (JavaVersion.current().isJava8Compatible()) {
         tasks.withType(Javadoc) {
@@ -36,12 +36,12 @@ allprojects {
     }
 }
 
-static def androidCompileSdk() { return 27 }
+static def androidCompileSdk() { return 29 }
 
-// Minimum API Level by Support Library
-static def androidMinSdk() { return 14 }
+// 14 for Support Library, 16 for sqlite-android
+static def androidMinSdk() { return 16 }
 
-static def androidTargetSdk() { return 27 }
+static def androidTargetSdk() { return 29 }
 
 static def versionCode() { return 1 }
 
@@ -52,6 +52,11 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
     project.configurations.all {
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == 'com.android.support'
@@ -59,7 +64,6 @@ subprojects {
                 //统一版本号
                 details.useVersion "27.0.0"
             }
-
         }
     }
 }

@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 dependencies {
     api project(':vtm')
-    api 'com.caverock:androidsvg:1.3-SNAPSHOT'
+    api 'com.caverock:androidsvg:1.4'
 }
 
 android {
@@ -16,8 +16,8 @@ android {
     }
 
     defaultConfig {
-        versionCode versionCode()
-        versionName versionName()
+        versionCode project.versionCode()
+        versionName project.versionName()
         minSdkVersion androidMinSdk()
         targetSdkVersion androidTargetSdk()
     }
@@ -26,7 +26,6 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
-            resources.srcDirs = ['src']
         }
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
@@ -41,8 +40,11 @@ android.libraryVariants.all { variant ->
         return
 
     def jar = project.tasks.create "jar${name.capitalize()}", Jar
-    jar.dependsOn variant.javaCompiler
-    jar.from variant.javaCompiler.destinationDir
+    jar.dependsOn variant.javaCompileProvider
+    jar.exclude '**/BuildConfig.class'
+    jar.exclude '**/R.class'
+    jar.exclude '**/R$*.class'
+    jar.from variant.javaCompileProvider.get().destinationDir
     artifacts.add('archives', jar)
 
     file('natives').eachDir() { dir ->

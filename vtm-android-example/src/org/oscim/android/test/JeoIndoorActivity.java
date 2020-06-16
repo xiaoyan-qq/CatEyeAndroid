@@ -23,15 +23,11 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.jeo.carto.Carto;
-import org.jeo.map.Style;
-import org.jeo.vector.VectorDataset;
 import org.oscim.backend.CanvasAdapter;
 import org.oscim.backend.canvas.Color;
 import org.oscim.layers.ContourLineLayer;
 import org.oscim.layers.OSMIndoorLayer;
-import org.oscim.layers.tile.buildings.BuildingLayer;
-import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.layers.vector.geometries.Style;
 import org.oscim.test.JeoTest;
 import org.oscim.theme.VtmThemes;
 import org.oscim.theme.styles.TextStyle;
@@ -96,41 +92,41 @@ public class JeoIndoorActivity extends BaseMapActivity {
     void loadJson(InputStream is) {
         showToast("got data");
 
-        VectorDataset data = JeoTest.readGeoJson(is);
-
-        Style style = null;
-
-        try {
-            style = Carto.parse("" +
-                    "#qqq {" +
-                    "  line-width: 2;" +
-                    "  line-color: #f09;" +
-                    "  polygon-fill: #44111111;" +
-                    "  " +
-                    "}" +
-                    "#states {" +
-                    "  line-width: 2.2;" +
-                    "  line-color: #c80;" +
-                    "  polygon-fill: #44111111;" +
-                    "  " +
-                    "}"
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        Style style = JeoTest.getStyle();
-        TextStyle textStyle = TextStyle.builder()
-                .isCaption(true)
-                .fontSize(16 * CanvasAdapter.getScale()).color(Color.BLACK)
-                .strokeWidth(2.2f * CanvasAdapter.getScale()).strokeColor(Color.WHITE)
-                .build();
-        ContourLineLayer contourLineLayer=new ContourLineLayer(mMap, data, style, textStyle);
-//        mIndoorLayer = new Co(mMap, data, style, textStyle);
-        mMap.layers().add(contourLineLayer);
-
-        showToast("data ready");
-        mMap.updateMap(true);
+//        VectorDataset data = JeoTest.readGeoJson(is);
+//
+//        Style style = null;
+//
+//        try {
+//            style = Carto.parse("" +
+//                    "#qqq {" +
+//                    "  line-width: 2;" +
+//                    "  line-color: #f09;" +
+//                    "  polygon-fill: #44111111;" +
+//                    "  " +
+//                    "}" +
+//                    "#states {" +
+//                    "  line-width: 2.2;" +
+//                    "  line-color: #c80;" +
+//                    "  polygon-fill: #44111111;" +
+//                    "  " +
+//                    "}"
+//            );
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+////        Style style = JeoTest.getStyle();
+//        TextStyle textStyle = TextStyle.builder()
+//                .isCaption(true)
+//                .fontSize(16 * CanvasAdapter.getScale()).color(Color.BLACK)
+//                .strokeWidth(2.2f * CanvasAdapter.getScale()).strokeColor(Color.WHITE)
+//                .build();
+//        ContourLineLayer contourLineLayer=new ContourLineLayer(mMap, data, style, textStyle);
+////        mIndoorLayer = new Co(mMap, data, style, textStyle);
+//        mMap.layers().add(contourLineLayer);
+//
+//        showToast("data ready");
+//        mMap.updateMap(true);
 
 //        mIndoorLayer.activeLevels[0] = true;
 //        shift();

@@ -15,11 +15,13 @@
  */
 package org.oscim.theme.comparator;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.jtattoo.plaf.DecorationHelper;
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
-
 import org.oscim.awt.AwtGraphics;
+import org.oscim.backend.DateTime;
+import org.oscim.backend.DateTimeAdapter;
 import org.oscim.backend.GLAdapter;
 import org.oscim.gdx.GdxAssets;
 import org.oscim.gdx.LwjglGL20;
@@ -30,32 +32,25 @@ import org.oscim.theme.comparator.logging.VtmAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.Properties;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JRootPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import ch.qos.logback.classic.LoggerContext;
 
 public class Main {
 
     public static Preferences prefs = Preferences.userNodeForPackage(Main.class);
     public static boolean useDarkTheme = true; // set black look and feel as default for unimpaired color impression
-    public final static BaseAppender ALL_APPENDER = new AllAppender();
-    public final static BaseAppender VTM_APPENDER = new VtmAppender();
-    public final static BaseAppender MAPSFORGE_APPENDER = new MapsforgeAppender();
+    public static final BaseAppender ALL_APPENDER = new AllAppender();
+    public static final BaseAppender VTM_APPENDER = new VtmAppender();
+    public static final BaseAppender MAPSFORGE_APPENDER = new MapsforgeAppender();
 
-    public final static int MAX_ZOOM_LEVEL = 21;
-    public final static int MIN_ZOOM_LEVEL = 0;
+    public static final int MAX_ZOOM_LEVEL = 21;
+    public static final int MIN_ZOOM_LEVEL = 0;
 
 
-    public final static ImageIcon ICON_OPEN = new ImageIcon(Main.class.getClassLoader().getResource("menu-open.png"));
-    public final static ImageIcon ICON_SAVE = new ImageIcon(Main.class.getClassLoader().getResource("menu-saveall.png"));
+    public static final ImageIcon ICON_OPEN = new ImageIcon(Main.class.getClassLoader().getResource("menu-open.png"));
+    public static final ImageIcon ICON_SAVE = new ImageIcon(Main.class.getClassLoader().getResource("menu-saveall.png"));
     public static final ImageIcon ICON_EDIT = new ImageIcon(Main.class.getClassLoader().getResource("editSource_dark.png"));
     public static final ImageIcon ICON_DEBUG = new ImageIcon(Main.class.getClassLoader().getResource("debug_dark.png"));
     public static final ImageIcon ICON_EXIT = new ImageIcon(Main.class.getClassLoader().getResource("exit_dark.png"));
@@ -88,6 +83,7 @@ public class Main {
         AwtGraphics.init();
         GdxAssets.init("assets/");
         GLAdapter.init(new LwjglGL20());
+        DateTimeAdapter.init(new DateTime());
         GLAdapter.GDX_DESKTOP_QUIRKS = true;
         window = new MainWindow();
         window.setSize(800, 600);

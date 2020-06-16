@@ -85,7 +85,7 @@ public final class BufferObject extends Inlist<BufferObject> {
     }
 
     public void unbind() {
-        GLState.bindBuffer(target, 0);
+        GLState.bindBuffer(target, GLState.UNBIND);
     }
 
     // ---------------------------- pool ----------------------------
@@ -102,8 +102,8 @@ public final class BufferObject extends Inlist<BufferObject> {
         log.debug("now: " + mBufferMemoryUsage / MB + "MB");
     }
 
-    private final static BufferObject pool[] = new BufferObject[2];
-    private final static int counter[] = new int[2];
+    private static final BufferObject pool[] = new BufferObject[2];
+    private static final int counter[] = new int[2];
 
     /**
      * @param target can be GL20.ARRAY_BUFFER or GL20.ELEMENT_ARRAY_BUFFER

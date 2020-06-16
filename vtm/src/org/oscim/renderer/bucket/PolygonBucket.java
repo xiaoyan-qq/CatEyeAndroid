@@ -23,11 +23,7 @@ import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeometryBuffer;
 import org.oscim.core.MapPosition;
 import org.oscim.core.Tile;
-import org.oscim.renderer.GLMatrix;
-import org.oscim.renderer.GLShader;
-import org.oscim.renderer.GLState;
-import org.oscim.renderer.GLUtils;
-import org.oscim.renderer.GLViewport;
+import org.oscim.renderer.*;
 import org.oscim.theme.styles.AreaStyle;
 import org.oscim.utils.ArrayUtils;
 import org.oscim.utils.geom.LineClipper;
@@ -48,9 +44,9 @@ public final class PolygonBucket extends RenderBucket {
 
     static final Logger log = LoggerFactory.getLogger(PolygonBucket.class);
 
-    public final static int CLIP_STENCIL = 1;
-    public final static int CLIP_DEPTH = 2;
-    public final static int CLIP_TEST_DEPTH = 3;
+    public static final int CLIP_STENCIL = 1;
+    public static final int CLIP_DEPTH = 2;
+    public static final int CLIP_TEST_DEPTH = 3;
 
     public static boolean enableTexture = true;
 
@@ -157,7 +153,7 @@ public final class PolygonBucket extends RenderBucket {
     public static final class Renderer {
 
         private static final int STENCIL_BITS = 8;
-        public final static int CLIP_BIT = 0x80;
+        public static final int CLIP_BIT = 0x80;
 
         private static PolygonBucket[] mAreaLayer;
 
@@ -173,6 +169,9 @@ public final class PolygonBucket extends RenderBucket {
             return true;
         }
 
+        /**
+         * Draw tile filling quad.
+         */
         private static void fillPolygons(GLViewport v, int start, int end,
                                          MapPosition pos, float div) {
 
@@ -228,7 +227,7 @@ public final class PolygonBucket extends RenderBucket {
                 gl.stencilFunc(GL.EQUAL, 0xff, CLIP_BIT | 1 << i);
 
                 /* draw tile fill coordinates */
-                gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
+                gl.drawArrays(GL.TRIANGLE_STRIP, 0, RenderBuckets.TILE_FILL_VERTICES);
 
                 if (a.strokeWidth <= 0)
                     continue;
@@ -273,7 +272,7 @@ public final class PolygonBucket extends RenderBucket {
 
         private static Shader setShader(Shader shader, GLMatrix mvp, boolean first) {
             if (shader.useProgram() || first) {
-                GLState.enableVertexArrays(shader.aPos, -1);
+                GLState.enableVertexArrays(shader.aPos, GLState.DISABLED);
 
                 gl.vertexAttribPointer(shader.aPos, 2,
                         GL.SHORT, false, 0, 0);
@@ -470,7 +469,7 @@ public final class PolygonBucket extends RenderBucket {
             gl.stencilOp(GL.KEEP, GL.KEEP, GL.REPLACE);
 
             /* draw a quad for the tile region */
-            gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
+            gl.drawArrays(GL.TRIANGLE_STRIP, 0, RenderBuckets.TILE_FILL_VERTICES);
 
             if (clipMode == CLIP_DEPTH) {
                 /* dont modify depth buffer */
@@ -499,7 +498,7 @@ public final class PolygonBucket extends RenderBucket {
             gl.stencilOp(GL.KEEP, GL.KEEP, GL.REPLACE);
 
             /* draw a quad for the tile region */
-            gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
+            gl.drawArrays(GL.TRIANGLE_STRIP, 0, RenderBuckets.TILE_FILL_VERTICES);
         }
 
         /**
@@ -532,7 +531,7 @@ public final class PolygonBucket extends RenderBucket {
             /* zero out area to draw to */
             gl.stencilOp(GL.KEEP, GL.KEEP, GL.ZERO);
 
-            gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
+            gl.drawArrays(GL.TRIANGLE_STRIP, 0, RenderBuckets.TILE_FILL_VERTICES);
 
             if (color == 0)
                 gl.colorMask(true, true, true, true);

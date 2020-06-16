@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Hannes Janetzek
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2019 devemux86
  * Copyright 2018 boldtrn
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
@@ -25,8 +25,8 @@ import org.oscim.tiling.source.UrlTileSource;
 
 public class OpenMapTilesMvtTileSource extends UrlTileSource {
 
-    private final static String DEFAULT_URL = "https://free.tilehosting.com/data/v3";
-    private final static String DEFAULT_PATH = "/{Z}/{X}/{Y}.pbf.pict";
+    private static final String DEFAULT_URL = "https://api.maptiler.com/tiles/v3";
+    private static final String DEFAULT_PATH = "/{Z}/{X}/{Y}.pbf";
 
     public static class Builder<T extends Builder<T>> extends UrlTileSource.Builder<T> {
         private String locale = "";
@@ -41,6 +41,7 @@ public class OpenMapTilesMvtTileSource extends UrlTileSource {
             return self();
         }
 
+        @Override
         public OpenMapTilesMvtTileSource build() {
             return new OpenMapTilesMvtTileSource(this);
         }
@@ -68,6 +69,6 @@ public class OpenMapTilesMvtTileSource extends UrlTileSource {
 
     @Override
     public ITileDataSource getDataSource() {
-        return new OverzoomTileDataSource(new UrlTileDataSource(this, new MvtTileDecoder(locale), getHttpEngine()), mOverZoom);
+        return new OverzoomTileDataSource(new UrlTileDataSource(this, new TileDecoder(locale), getHttpEngine()), mOverZoom);
     }
 }

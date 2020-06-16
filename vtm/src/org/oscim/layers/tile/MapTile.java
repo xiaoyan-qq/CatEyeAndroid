@@ -49,45 +49,45 @@ public class MapTile extends Tile {
     }
 
     public static final class State {
-        public final static byte NONE = (1 << 0);
+        public static final byte NONE = (1 << 0);
 
         /**
          * STATE_LOADING means the tile is about to be loaded / loading.
          * Tile belongs to TileLoader thread.
          */
-        public final static byte LOADING = (1 << 1);
+        public static final byte LOADING = (1 << 1);
 
         /**
          * STATE_NEW_DATA: tile data is prepared for rendering.
          * While 'locked' it belongs to GL Thread.
          */
-        public final static byte NEW_DATA = (1 << 2);
+        public static final byte NEW_DATA = (1 << 2);
 
         /**
          * STATE_READY: tile data is uploaded to GL.
          * While 'locked' it belongs to GL Thread.
          */
-        public final static byte READY = (1 << 3);
+        public static final byte READY = (1 << 3);
 
         /**
          * STATE_CANCEL: tile is removed from TileManager,
          * but may still be processed by TileLoader.
          */
-        public final static byte CANCEL = (1 << 4);
+        public static final byte CANCEL = (1 << 4);
 
         /**
          * Dont touch if you find some.
          */
-        public final static byte DEADBEEF = (1 << 6);
+        public static final byte DEADBEEF = (1 << 6);
     }
 
-    public final static int PROXY_CHILD00 = (1 << 0);
-    public final static int PROXY_CHILD01 = (1 << 1);
-    public final static int PROXY_CHILD10 = (1 << 2);
-    public final static int PROXY_CHILD11 = (1 << 3);
-    public final static int PROXY_PARENT = (1 << 4);
-    public final static int PROXY_GRAMPA = (1 << 5);
-    public final static int PROXY_HOLDER = (1 << 6);
+    public static final int PROXY_CHILD00 = (1 << 0);
+    public static final int PROXY_CHILD01 = (1 << 1);
+    public static final int PROXY_CHILD10 = (1 << 2);
+    public static final int PROXY_CHILD11 = (1 << 3);
+    public static final int PROXY_PARENT = (1 << 4);
+    public static final int PROXY_GRAMPA = (1 << 5);
+    public static final int PROXY_HOLDER = (1 << 6);
 
     /**
      * Tile state
@@ -150,11 +150,12 @@ public class MapTile extends Tile {
      */
     MapTile holder;
 
-    public static abstract class TileData extends Inlist<TileData> {
+    public abstract static class TileData extends Inlist<TileData> {
         Object id;
 
         protected abstract void dispose();
 
+        @Override
         public TileData next() {
             return (TileData) next;
         }
@@ -253,8 +254,11 @@ public class MapTile extends Tile {
         }
 
         for (int i = 0; i < 4; i++) {
-            if ((proxy & (1 << i)) != 0)
-                node.child(i).refs--;
+            if ((proxy & (1 << i)) != 0) {
+                MapTile c = node.child(i);
+                if (c != null)
+                    c.refs--;
+            }
         }
 
         /* removed all proxy references for this tile */

@@ -2,6 +2,7 @@
  * Copyright 2014 Hannes Janetzek
  * Copyright 2017 Longri
  * Copyright 2017 devemux86
+ * Copyright 2018-2019 Gustl22
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -19,11 +20,13 @@
 package org.oscim.theme;
 
 import org.oscim.core.GeometryBuffer.GeometryType;
+import org.oscim.core.Tag;
 import org.oscim.core.TagSet;
 import org.oscim.theme.rule.Rule;
 import org.oscim.theme.rule.Rule.Element;
 import org.oscim.theme.rule.Rule.RuleVisitor;
 import org.oscim.theme.styles.RenderStyle;
+import org.oscim.utils.ArrayUtils;
 import org.oscim.utils.LRUCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class RenderTheme implements IRenderTheme {
     static final Logger log = LoggerFactory.getLogger(RenderTheme.class);
@@ -43,6 +47,9 @@ public class RenderTheme implements IRenderTheme {
     private final int mLevels;
     private final Rule[] mRules;
     private final boolean mMapsforgeTheme;
+
+    private final Map<String, String> mTransformBackwardKeyMap, mTransformForwardKeyMap;
+    private final Map<Tag, Tag> mTransformBackwardTagMap, mTransformForwardTagMap;
 
     class RenderStyleCache {
         final int matchType;
@@ -79,7 +86,17 @@ public class RenderTheme implements IRenderTheme {
         this(mapBackground, baseTextSize, rules, levels, false);
     }
 
+    public RenderTheme(int mapBackground, float baseTextSize, Rule[] rules, int levels,
+                       Map<String, String> transformKeyMap, Map<Tag, Tag> transformTagMap) {
+        this(mapBackground, baseTextSize, rules, levels, transformKeyMap, transformTagMap, false);
+    }
+
     public RenderTheme(int mapBackground, float baseTextSize, Rule[] rules, int levels, boolean mapsforgeTheme) {
+        this(mapBackground, baseTextSize, rules, levels, null, null, mapsforgeTheme);
+    }
+
+    public RenderTheme(int mapBackground, float baseTextSize, Rule[] rules, int levels,
+                       Map<String, String> transformKeyMap, Map<Tag, Tag> transformTagMap, boolean mapsforgeTheme) {
         if (rules == null)
             throw new IllegalArgumentException("rules missing");
 
@@ -88,6 +105,11 @@ public class RenderTheme implements IRenderTheme {
         mLevels = levels;
         mRules = rules;
         mMapsforgeTheme = mapsforgeTheme;
+
+        mTransformForwardKeyMap = transformKeyMap;
+        mTransformBackwardKeyMap = ArrayUtils.swap(transformKeyMap);
+        mTransformForwardTagMap = transformTagMap;
+        mTransformBackwardTagMap = ArrayUtils.swap(transformTagMap);
 
         mStyleCache = new RenderStyleCache[3];
         mStyleCache[0] = new RenderStyleCache(Element.NODE);
@@ -270,6 +292,34 @@ public class RenderTheme implements IRenderTheme {
     public void scaleTextSize(float scaleFactor) {
         for (Rule rule : mRules)
             rule.scaleTextSize(scaleFactor * mBaseTextSize);
+    }
+
+    @Override
+    public String transformBackwardKey(String key) {
+        if (mTransformBackwardKeyMap != null)
+            return mTransformBackwardKeyMap.get(key);
+        return null;
+    }
+
+    @Override
+    public String transformForwardKey(String key) {
+        if (mTransformForwardKeyMap != null)
+            return mTransformForwardKeyMap.get(key);
+        return null;
+    }
+
+    @Override
+    public Tag transformBackwardTag(Tag tag) {
+        if (mTransformBackwardTagMap != null)
+            return mTransformBackwardTagMap.get(tag);
+        return null;
+    }
+
+    @Override
+    public Tag transformForwardTag(Tag tag) {
+        if (mTransformForwardTagMap != null)
+            return mTransformForwardTagMap.get(tag);
+        return null;
     }
 
     @Override

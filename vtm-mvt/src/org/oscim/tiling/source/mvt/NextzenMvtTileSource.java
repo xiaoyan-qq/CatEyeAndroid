@@ -21,8 +21,8 @@ import org.oscim.tiling.source.UrlTileSource;
 
 public class NextzenMvtTileSource extends UrlTileSource {
 
-    private final static String DEFAULT_URL = "https://tile.nextzen.org/tilezen/vector/v1/all";
-    private final static String DEFAULT_PATH = "/{Z}/{X}/{Y}.mvt";
+    private static final String DEFAULT_URL = "https://tile.nextzen.org/tilezen/vector/v1/all";
+    private static final String DEFAULT_PATH = "/{Z}/{X}/{Y}.mvt";
 
     public static class Builder<T extends Builder<T>> extends UrlTileSource.Builder<T> {
         private String locale = "";
@@ -38,6 +38,7 @@ public class NextzenMvtTileSource extends UrlTileSource {
             return self();
         }
 
+        @Override
         public NextzenMvtTileSource build() {
             return new NextzenMvtTileSource(this);
         }
@@ -65,6 +66,6 @@ public class NextzenMvtTileSource extends UrlTileSource {
 
     @Override
     public ITileDataSource getDataSource() {
-        return new OverzoomTileDataSource(new UrlTileDataSource(this, new MvtTileDecoder(locale), getHttpEngine()), mOverZoom);
+        return new OverzoomTileDataSource(new UrlTileDataSource(this, new TileDecoder(locale), getHttpEngine()), mOverZoom);
     }
 }

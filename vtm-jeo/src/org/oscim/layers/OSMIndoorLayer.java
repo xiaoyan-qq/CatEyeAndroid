@@ -21,13 +21,12 @@ package org.oscim.layers;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
-
-import org.jeo.map.CartoCSS;
-import org.jeo.map.RGB;
-import org.jeo.map.Rule;
-import org.jeo.map.Style;
-import org.jeo.vector.Feature;
-import org.jeo.vector.VectorDataset;
+import io.jeo.map.CartoCSS;
+import io.jeo.map.RGB;
+import io.jeo.map.Rule;
+import io.jeo.map.Style;
+import io.jeo.vector.Feature;
+import io.jeo.vector.VectorDataset;
 import org.oscim.backend.canvas.Color;
 import org.oscim.jeo.JeoUtils;
 import org.oscim.map.Map;
@@ -65,6 +64,7 @@ public class OSMIndoorLayer extends JeoVectorLayer {
         mTextLayer.prepare();
     }
 
+    @Override
     protected void addLine(Task t, Feature f, Rule rule, Geometry g) {
 
         if (((LineString) g).isClosed()) {
@@ -86,6 +86,7 @@ public class OSMIndoorLayer extends JeoVectorLayer {
         addLine(t, g, ll);
     }
 
+    @Override
     protected void addPolygon(Task t, Feature f, Rule rule, Geometry g) {
         int level = getLevel(f);
 

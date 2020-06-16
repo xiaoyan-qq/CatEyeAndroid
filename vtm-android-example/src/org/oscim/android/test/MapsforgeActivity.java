@@ -65,11 +65,9 @@ public class MapsforgeActivity extends MapActivity {
     private static final Tag SEA_TAG = new Tag("natural", "sea");
 
     private TileGridLayer mGridLayer;
-    private DefaultMapScaleBar mMapScaleBar;
     private Menu mMenu;
     private boolean mS3db;
-    private VectorTileLayer mTileLayer;
-    MapFileTileSource mTileSource;
+    VectorTileLayer mTileLayer;
 
     public MapsforgeActivity() {
         this(false);
@@ -80,20 +78,17 @@ public class MapsforgeActivity extends MapActivity {
         mS3db = s3db;
     }
 
+    public MapsforgeActivity(boolean s3db, int contentView) {
+        super(contentView);
+        mS3db = s3db;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         startActivityForResult(new Intent(this, MapFilePicker.class),
                 SELECT_MAP_FILE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mMapScaleBar != null)
-            mMapScaleBar.destroy();
-
-        super.onDestroy();
     }
 
     public static class MapFilePicker extends FilePicker {
@@ -178,7 +173,7 @@ public class MapsforgeActivity extends MapActivity {
                 return;
             }
 
-            mTileSource = new MapFileTileSource();
+            MapFileTileSource mTileSource = new MapFileTileSource();
             //mTileSource.setPreferredLanguage("en");
             String file = intent.getStringExtra(FilePicker.SELECTED_FILE);
             if (mTileSource.setMapFile(file)) {
@@ -192,7 +187,7 @@ public class MapsforgeActivity extends MapActivity {
                     mMap.layers().add(new BuildingLayer(mMap, mTileLayer));
                 mMap.layers().add(new LabelLayer(mMap, mTileLayer));
 
-                mMapScaleBar = new DefaultMapScaleBar(mMap);
+                DefaultMapScaleBar mMapScaleBar = new DefaultMapScaleBar(mMap);
                 mMapScaleBar.setScaleBarMode(DefaultMapScaleBar.ScaleBarMode.BOTH);
                 mMapScaleBar.setDistanceUnitAdapter(MetricUnitAdapter.INSTANCE);
                 mMapScaleBar.setSecondaryDistanceUnitAdapter(ImperialUnitAdapter.INSTANCE);

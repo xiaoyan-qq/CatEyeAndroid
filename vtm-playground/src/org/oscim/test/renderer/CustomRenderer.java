@@ -97,7 +97,7 @@ public class CustomRenderer extends LayerRenderer {
         GLState.test(false, false);
 
         // unbind previously bound VBOs
-        gl.bindBuffer(GL.ARRAY_BUFFER, 0);
+        GLState.bindBuffer(GL.ARRAY_BUFFER, GLState.UNBIND);
 
         // Load the vertex data
         //mVertices.position(0);
@@ -105,7 +105,7 @@ public class CustomRenderer extends LayerRenderer {
         //mVertices.position(2);
         //GL.vertexAttribPointer(hVertexPosition, 2, GL20.FLOAT, false, 4, mVertices);
 
-        GLState.enableVertexArrays(hVertexPosition, -1);
+        GLState.enableVertexArrays(hVertexPosition, GLState.DISABLED);
 
         /* apply view and projection matrices */
         // set mvp (tmp) matrix relative to mMapPosition
@@ -120,7 +120,7 @@ public class CustomRenderer extends LayerRenderer {
         // Draw the triangle
         gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
 
-        GLUtils.checkGlError("...");
+        GLUtils.checkGlError(getClass().getName() + ": render() end");
     }
 
     private boolean init() {
@@ -144,7 +144,7 @@ public class CustomRenderer extends LayerRenderer {
         return true;
     }
 
-    private final static String vShaderStr = "" +
+    private static final String vShaderStr = "" +
             "precision mediump float;"
             + "uniform mat4 u_mvp;"
             + "attribute vec4 a_pos;"
@@ -155,7 +155,7 @@ public class CustomRenderer extends LayerRenderer {
             + "   alpha = a_pos.z;"
             + "}";
 
-    private final static String fShaderStr = "" +
+    private static final String fShaderStr = "" +
             "precision mediump float;"
             + "varying float alpha;"
             + "void main()"

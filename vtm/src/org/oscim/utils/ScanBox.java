@@ -88,8 +88,20 @@ public abstract class ScanBox {
 
     protected int mZoom;
 
+    /**
+     * @param y  the y-number of tile to be set visible.
+     * @param x1 the start x-number of tile to be set visible.
+     * @param x2 the end x-number of tile to be set visible (excluded).
+     */
     protected abstract void setVisible(int y, int x1, int x2);
 
+    /**
+     * @param x     Projected map position x in 0..1.
+     * @param y     Projected map position y in 0..1.
+     * @param scale Absolute scale.
+     * @param zoom  Tile zoom level for current scale.
+     * @param box   Current visible cut-out (8 floats).
+     */
     public void scan(double x, double y, double scale, int zoom, float[] box) {
         mZoom = zoom;
         // this does not modify 'box' parameter
@@ -116,20 +128,20 @@ public abstract class ScanBox {
         xmin = (int) min;
         xmax = (int) max;
 
-        // top-left -> top-right
-        ab.set(box[0], box[1], box[2], box[3]);
-        // top-right ->  bottom-right
-        bc.set(box[2], box[3], box[4], box[5]);
         // bottom-right -> bottom-left
+        ab.set(box[0], box[1], box[2], box[3]);
+        // bottom-left -> top-left
+        bc.set(box[2], box[3], box[4], box[5]);
+        // top-left -> bottom-right
         ca.set(box[4], box[5], box[0], box[1]);
 
         scanTriangle();
 
-        // top-left -> bottom-right
+        // bottom-right -> top-left
         ab.set(box[0], box[1], box[4], box[5]);
-        // bottom-right -> bottom-left
+        // top-left -> top-right
         bc.set(box[4], box[5], box[6], box[7]);
-        // bottom-left -> top-left
+        // top-right -> bottom-right
         ca.set(box[6], box[7], box[0], box[1]);
 
         scanTriangle();
@@ -154,7 +166,7 @@ public abstract class ScanBox {
             ca = t;
         }
 
-        // shouldnt be possible, anyway
+        // shouldn't be possible, anyway
         if (ca.dy == 0)
             return;
 

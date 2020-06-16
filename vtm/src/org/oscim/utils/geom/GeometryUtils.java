@@ -1,6 +1,6 @@
 /*
  * Copyright 2012, 2013 Hannes Janetzek
- * Copyright 2018 Gustl22
+ * Copyright 2018-2019 Gustl22
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -66,6 +66,17 @@ public final class GeometryUtils {
         return inside;
     }
 
+    /**
+     * Returns the unsigned area of polygon.
+     *
+     * @param size the number of point coordinates
+     * @return unsigned polygon area
+     */
+    public static float area(float[] points, int size) {
+        float area = isClockwise(points, size);
+        return area < 0 ? -area : area;
+    }
+
     public static float area(float ax, float ay, float bx, float by, float cx, float cy) {
 
         float area = ((ax - cx) * (by - cy)
@@ -105,6 +116,44 @@ public final class GeometryUtils {
             bisection[1] = -v1[0];
         }
         return bisection;
+    }
+
+    /**
+     * Calculates the center of a set of points.
+     *
+     * @param points   the points array
+     * @param pointPos the start position of points
+     * @param n        the number of points
+     * @param out      the center output
+     * @return the center of points
+     */
+    public static float[] center(float[] points, int pointPos, int n, float[] out) {
+        if (out == null)
+            out = new float[2];
+
+        for (int i = 0; i < n; i += 2, pointPos += 2) {
+            out[0] += points[pointPos];
+            out[1] += points[pointPos + 1];
+        }
+        out[0] = out[0] * 2 / n;
+        out[1] = out[1] * 2 / n;
+
+        return out;
+    }
+
+    /**
+     * Calculate the closest point on a line.
+     * See: https://en.wikipedia.org/wiki/Vector_projection#Vector_projection_2
+     *
+     * @param pP point
+     * @param pL point of line
+     * @param vL vector of line
+     * @return the closest point on line
+     */
+    public static float[] closestPointOnLine2D(float[] pP, float[] pL, float[] vL) {
+        float[] vPL = diffVec(pL, pP);
+        float[] vPS = diffVec(vPL, scale(vL, dotProduct(vPL, vL) / dotProduct(vL, vL)));
+        return sumVec(pP, vPS);
     }
 
     /**
@@ -184,6 +233,9 @@ public final class GeometryUtils {
     }
 
     /**
+     * Calculate the distance from a point to a line.
+     * See: https://en.wikipedia.org/wiki/Vector_projection#Vector_projection_2
+     *
      * @param pP point
      * @param pL point of line
      * @param vL vector of line
@@ -191,7 +243,7 @@ public final class GeometryUtils {
      */
     public static float distancePointLine2D(float[] pP, float[] pL, float[] vL) {
         float[] vPL = diffVec(pL, pP);
-        float[] vPS = diffVec(vPL, scale(vL, dotProduct(vPL, vL)));
+        float[] vPS = diffVec(vPL, scale(vL, dotProduct(vPL, vL) / dotProduct(vL, vL)));
         return (float) Math.sqrt(dotProduct(vPS, vPS));
     }
 
@@ -273,11 +325,54 @@ public final class GeometryUtils {
     }
 
     /**
-     * @return a positive value, if pA-pB-pC makes a counter-clockwise turn,
-     * negative for clockwise turn, and zero if the points are collinear.
+     * Is polygon clockwise.
+     * Note that the coordinate system is left hand side.
+     *
+     * @param points the points array
+     * @param size   the number of point coordinates
+     * @return the signed area of the polygon
+     * positive: clockwise
+     * negative: counter-clockwise
+     * 0: collinear
+     */
+    public static float isClockwise(float[] points, int size) {
+        float area = 0f;
+        for (int i = 0; i < size - 2; i += 2) {
+            area += (points[i] * points[i + 3]) - (points[i + 1] * points[i + 2]);
+        }
+        area += (points[size - 2] * points[1]) - (points[size - 1] * points[0]);
+
+        return 0.5f * area;
+    }
+
+    /**
+     * Indicates the turn of tris pA-pB-pC.
+     * Note that the coordinate system is left hand side.
+     *
+     * @return positive: clockwise
+     * negative: counter-clockwise
+     * 0: collinear
      */
     public static float isTrisClockwise(float[] pA, float[] pB, float[] pC) {
         return (pB[0] - pA[0]) * (pC[1] - pA[1]) - (pB[1] - pA[1]) * (pC[0] - pA[0]);
+    }
+
+    /**
+     * @return the length of the vector
+     */
+    public static double length(float[] vec) {
+        float length = 0f;
+        for (float coord : vec) {
+            length += coord * coord;
+        }
+        return Math.sqrt(length);
+    }
+
+    /**
+     * @return the normalized vector (with length 1)
+     */
+    public static float[] normalize(float[] vec) {
+        return scale(vec, 1f / (float) length(vec));
     }
 
     /**
@@ -339,16 +434,5 @@ public final class GeometryUtils {
             scaled[i] = v[i] * scale;
         }
         return scaled;
-    }
-
-    public static void main(String[] args) {
-        float[] p = {-1, 0, 0, 0, 0, 0};
-
-        for (int i = 0; i < 9; i++) {
-            p[4] = (float) Math.cos(Math.toRadians(i * 45));
-            p[5] = (float) Math.sin(Math.toRadians(i * 45));
-            System.out.println("\n> " + (i * 45) + " " + p[3] + ":" + p[4] + "\n="
-                    + dotProduct(p, 0, 2, 4));
-        }
     }
 }

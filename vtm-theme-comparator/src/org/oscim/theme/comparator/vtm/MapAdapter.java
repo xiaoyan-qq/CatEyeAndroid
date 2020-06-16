@@ -1,5 +1,6 @@
 /*
  * Copyright 2017 Longri
+ * Copyright 2019 devemux86
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class MapAdapter extends Map implements Map.UpdateListener {
 
-    private final static Logger log = LoggerFactory.getLogger(MapAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(MapAdapter.class);
 
     MapAdapter() {
         super();
@@ -70,6 +71,11 @@ public class MapAdapter extends Map implements Map.UpdateListener {
     };
 
     @Override
+    public void updateMap() {
+        updateMap(true);
+    }
+
+    @Override
     public void updateMap(boolean forceRender) {
         synchronized (mRedrawCb) {
             if (!mRenderRequest) {
@@ -80,7 +86,6 @@ public class MapAdapter extends Map implements Map.UpdateListener {
             }
         }
     }
-
 
     @Override
     public void render() {
@@ -124,6 +129,7 @@ public class MapAdapter extends Map implements Map.UpdateListener {
     }
 
 
+    @Override
     public boolean handleGesture(Gesture g, MotionEvent e) {
         this.updateMap(true);
         return super.handleGesture(g, e);

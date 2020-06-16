@@ -52,11 +52,11 @@ public class MapRenderer {
     /**
      * Number of Quads that can be rendered with bindQuadIndicesVBO()
      */
-    public final static int MAX_QUADS = 512;
+    public static final int MAX_QUADS = 512;
     /**
      * Number of Indices that can be rendered with bindQuadIndicesVBO()
      */
-    public final static int MAX_INDICES = MAX_QUADS * 6;
+    public static final int MAX_INDICES = MAX_QUADS * 6;
 
     public static long frametime;
     private static boolean rerender;
@@ -117,10 +117,10 @@ public class MapRenderer {
 
         GLState.test(false, false);
         GLState.blend(false);
-        GLState.bindTex2D(-1);
-        GLState.useProgram(-1);
-        GLState.bindElementBuffer(-1);
-        GLState.bindVertexBuffer(-1);
+        GLState.bindTex2D(GLState.DISABLED);
+        GLState.useProgram(GLState.DISABLED);
+        GLState.bindElementBuffer(GLState.DISABLED);
+        GLState.bindVertexBuffer(GLState.DISABLED);
 
         mViewport.setFrom(mMap);
 
@@ -143,6 +143,8 @@ public class MapRenderer {
 
         for (int i = 0, n = layers.length; i < n; i++) {
             LayerRenderer renderer = layers[i];
+            if (renderer == null)
+                continue;
 
             if (!renderer.isInitialized) {
                 renderer.setup();
@@ -158,7 +160,7 @@ public class MapRenderer {
                 GLUtils.checkGlError(renderer.getClass().getName());
         }
 
-        if (GLUtils.checkGlOutOfMemory("finish")) {
+        if (GLUtils.checkGlError(getClass().getName() + ": finish", GL.OUT_OF_MEMORY)) {
             BufferObject.checkBufferUsage(true);
             // FIXME also throw out some textures etc
         }
@@ -170,7 +172,7 @@ public class MapRenderer {
         if (width <= 0 || height <= 0)
             return;
 
-        gl.viewport(0, 0, width, height);
+        GLState.viewport(width, height);
 
         //GL.scissor(0, 0, width, height);
         //GL.enable(GL20.SCISSOR_TEST);
@@ -213,7 +215,7 @@ public class MapRenderer {
         gl.bufferData(GL.ELEMENT_ARRAY_BUFFER,
                 indices.length * 2, buf,
                 GL.STATIC_DRAW);
-        GLState.bindElementBuffer(0);
+        GLState.bindElementBuffer(GLState.UNBIND);
 
         /* initialize default quad */
         FloatBuffer floatBuffer = MapRenderer.getFloatBuffer(8);
@@ -226,7 +228,7 @@ public class MapRenderer {
         gl.bufferData(GL.ARRAY_BUFFER,
                 quad.length * 4, floatBuffer,
                 GL.STATIC_DRAW);
-        GLState.bindVertexBuffer(0);
+        GLState.bindVertexBuffer(GLState.UNBIND);
 
         GLState.init();
 
@@ -269,7 +271,7 @@ public class MapRenderer {
 
         if (location >= 0) {
             GLState.bindVertexBuffer(mQuadVerticesID);
-            GLState.enableVertexArrays(location, -1);
+            GLState.enableVertexArrays(location, GLState.DISABLED);
             gl.vertexAttribPointer(location, 2, GL.FLOAT, false, 0, 0);
         }
     }

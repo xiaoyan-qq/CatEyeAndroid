@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Hannes Janetzek
- * Copyright 2017 devemux86
+ * Copyright 2017-2019 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -91,6 +91,7 @@ public class MeshBucket extends RenderBucket {
         //tess.addContour2D(geom.index, geom.points);
     }
 
+    @Override
     protected void prepare() {
         if (tess == null)
             return;
@@ -101,7 +102,7 @@ public class MeshBucket extends RenderBucket {
         }
         if (!tess.tesselate()) {
             tess.dispose();
-            log.debug("error in tessellation {}", numPoints);
+            log.error("error in tessellation {}", numPoints);
             return;
         }
 
@@ -174,7 +175,7 @@ public class MeshBucket extends RenderBucket {
             Shader s = shader;
 
             s.useProgram();
-            GLState.enableVertexArrays(s.aPos, -1);
+            GLState.enableVertexArrays(s.aPos, GLState.DISABLED);
 
             v.mvp.setAsUniform(s.uMVP);
 
@@ -190,8 +191,7 @@ public class MeshBucket extends RenderBucket {
                 if (ml.heightOffset != heightOffset) {
                     heightOffset = ml.heightOffset;
 
-                    gl.uniform1f(s.uHeight, heightOffset /
-                            MercatorProjection.groundResolution(v.pos));
+                    gl.uniform1f(s.uHeight, (float) (heightOffset / MercatorProjection.groundResolution(v.pos)));
                 }
 
                 if (ml.area == null)
@@ -211,7 +211,7 @@ public class MeshBucket extends RenderBucket {
                     int c = (ml.area == null) ? Color.BLUE : ml.area.color;
                     gl.lineWidth(1);
                     //c = ColorUtil.shiftHue(c, 0.5);
-                    c = ColorUtil.modHsv(c, 1.1, 1.0, 0.8, true);
+                    c = ColorUtil.modHsv(c, 0.1, 1.0, 0.8, true);
                     GLUtils.setColor(s.uColor, c, 1);
                     gl.drawElements(GL.LINES,
                             ml.numIndices,

@@ -1,7 +1,7 @@
 /*
  * Copyright 2013 Hannes Janetzek
  * Copyright 2016 Stephan Leuschner
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2019 devemux86
  * Copyright 2016 Izumi Kawashima
  * Copyright 2017 Wolfgang Schramm
  * Copyright 2018 Gustl22
@@ -22,11 +22,7 @@
 package org.oscim.map;
 
 import org.oscim.backend.CanvasAdapter;
-import org.oscim.core.BoundingBox;
-import org.oscim.core.GeoPoint;
-import org.oscim.core.MapPosition;
-import org.oscim.core.Point;
-import org.oscim.core.Tile;
+import org.oscim.core.*;
 import org.oscim.renderer.MapRenderer;
 import org.oscim.utils.ThreadUtils;
 import org.oscim.utils.animation.Easing;
@@ -41,12 +37,12 @@ import static org.oscim.utils.FastMath.clamp;
 public class Animator {
     static final Logger log = LoggerFactory.getLogger(Animator.class);
 
-    public final static int ANIM_NONE = 0;
-    public final static int ANIM_MOVE = 1 << 0;
-    public final static int ANIM_SCALE = 1 << 1;
-    public final static int ANIM_ROTATE = 1 << 2;
-    public final static int ANIM_TILT = 1 << 3;
-    public final static int ANIM_FLING = 1 << 4;
+    public static final int ANIM_NONE = 0;
+    public static final int ANIM_MOVE = 1 << 0;
+    public static final int ANIM_SCALE = 1 << 1;
+    public static final int ANIM_ROTATE = 1 << 2;
+    public static final int ANIM_TILT = 1 << 3;
+    public static final int ANIM_FLING = 1 << 4;
 
     final Map mMap;
 
@@ -350,7 +346,7 @@ public class Animator {
     };
 
     double doScale(ViewController v, float adv) {
-        double newScale = mStartPos.scale + mDeltaPos.scale * Math.sqrt(adv);
+        double newScale = mStartPos.scale + mDeltaPos.scale * adv;
 
         v.scaleMap((float) (newScale / mCurPos.scale),
                 (float) mPivot.x, (float) mPivot.y);

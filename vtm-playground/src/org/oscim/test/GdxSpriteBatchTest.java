@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
 import org.oscim.backend.GL;
 import org.oscim.core.Point;
 import org.oscim.gdx.GdxMapApp;
@@ -86,16 +85,16 @@ public class GdxSpriteBatchTest extends GdxMapApp {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ?
                 GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 
-        GLState.enableVertexArrays(-1, -1);
+        GLState.enableVertexArrays(GLState.DISABLED, GLState.DISABLED);
 
-        gl.viewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        GLState.viewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         gl.frontFace(GL.CW);
 
         mMapRenderer.onDrawFrame();
 
         gl.flush();
-        GLState.bindVertexBuffer(0);
-        GLState.bindElementBuffer(0);
+        GLState.bindVertexBuffer(GLState.UNBIND);
+        GLState.bindElementBuffer(GLState.UNBIND);
         gl.frontFace(GL.CCW);
 
         spriteBatch.setProjectionMatrix(camera.combined);

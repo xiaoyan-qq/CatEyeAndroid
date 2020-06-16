@@ -1,8 +1,8 @@
 /*
  * Copyright 2013 Hannes Janetzek
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2019 devemux86
  * Copyright 2016 Robin Boldt
- * Copyright 2017-2018 Gustl22
+ * Copyright 2017-2019 Gustl22
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -19,6 +19,8 @@
  */
 package org.oscim.layers.tile.buildings;
 
+import org.oscim.backend.CanvasAdapter;
+import org.oscim.backend.Platform;
 import org.oscim.core.MapElement;
 import org.oscim.core.Tag;
 import org.oscim.layers.Layer;
@@ -27,26 +29,40 @@ import org.oscim.layers.tile.ZoomLimiter;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer.TileLoaderThemeHook;
 import org.oscim.map.Map;
+import org.oscim.renderer.ExtrusionRenderer;
 import org.oscim.renderer.OffscreenRenderer;
 import org.oscim.renderer.OffscreenRenderer.Mode;
 import org.oscim.renderer.bucket.ExtrusionBuckets;
 import org.oscim.renderer.bucket.RenderBuckets;
+import org.oscim.renderer.light.ShadowRenderer;
 import org.oscim.theme.styles.ExtrusionStyle;
 import org.oscim.theme.styles.RenderStyle;
+import org.oscim.utils.geom.GeometryUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLimiter.IZoomLimiter {
 
-    protected final static int BUILDING_LEVEL_HEIGHT = 280; // cm
+    protected static final int BUILDING_LEVEL_HEIGHT = 280; // cm
 
-    public final static int MIN_ZOOM = 17;
+    public static final int MIN_ZOOM = 17;
 
+    /**
+     * Use Fast Approximate Anti-Aliasing (FXAA) and Screen Space Ambient Occlusion (SSAO).
+     */
     public static boolean POST_AA = false;
+
+    /**
+     * Use real time calculations to pre-process data.
+     */
+    public static boolean RAW_DATA = false;
+
+    /**
+     * Let vanish extrusions / meshes which are covered by others.
+     * {@link org.oscim.renderer.bucket.RenderBucket#EXTRUSION}: roofs are always translucent.
+     * <p>
+     * To better notice the difference, reduce the alpha value of extrusion colors in themes.
+     */
     public static boolean TRANSLUCENT = true;
 
     private static final Object BUILDING_DATA = BuildingLayer.class.getName();
@@ -54,7 +70,11 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
     // Can be replaced with Multimap in Java 8
     protected java.util.Map<Integer, List<BuildingElement>> mBuildings = new HashMap<>();
 
+    protected final ExtrusionRenderer mExtrusionRenderer;
+
     private final ZoomLimiter mZoomLimiter;
+
+    protected final VectorTileLayer mTileLayer;
 
     class BuildingElement {
         MapElement element;
@@ -67,25 +87,39 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
     }
 
     public BuildingLayer(Map map, VectorTileLayer tileLayer) {
-        this(map, tileLayer, false);
+        this(map, tileLayer, false, false);
     }
 
-    public BuildingLayer(Map map, VectorTileLayer tileLayer, boolean mesh) {
-        this(map, tileLayer, MIN_ZOOM, map.viewport().getMaxZoomLevel(), mesh);
+    public BuildingLayer(Map map, VectorTileLayer tileLayer, boolean mesh, boolean shadow) {
+        this(map, tileLayer, MIN_ZOOM, map.viewport().getMaxZoomLevel(), mesh, shadow);
     }
 
-    public BuildingLayer(Map map, VectorTileLayer tileLayer, int zoomMin, int zoomMax, boolean mesh) {
-
+    /**
+     * @param map       The map data to add
+     * @param tileLayer The vector tile layer which contains the tiles and the map elements
+     * @param zoomMin   The minimum zoom at which the layer appears
+     * @param zoomMax   The maximum zoom at which the layer appears
+     * @param mesh      Declare if using mesh or polygon renderer
+     * @param shadow    Declare if using shadow renderer
+     */
+    public BuildingLayer(Map map, VectorTileLayer tileLayer, int zoomMin, int zoomMax, boolean mesh, boolean shadow) {
         super(map);
 
-        tileLayer.addHook(this);
+        mTileLayer = tileLayer;
+        mTileLayer.addHook(this);
 
         // Use zoomMin as zoomLimit to render buildings only once
         mZoomLimiter = new ZoomLimiter(tileLayer.getManager(), zoomMin, zoomMax, zoomMin);
 
-        mRenderer = new BuildingRenderer(tileLayer.tileRenderer(), mZoomLimiter,
-                mesh, !mesh && TRANSLUCENT); // alpha must be disabled for mesh renderer
-        if (POST_AA)
+        // Buildings translucency does not work on macOS, see #61
+        if (CanvasAdapter.platform == Platform.MACOS)
+            TRANSLUCENT = false;
+
+        mRenderer = mExtrusionRenderer = new BuildingRenderer(tileLayer.tileRenderer(), mZoomLimiter, mesh, TRANSLUCENT);
+        // TODO Allow shadow and POST_AA at same time
+        if (shadow)
+            mRenderer = new ShadowRenderer(mExtrusionRenderer);
+        else if (POST_AA)
             mRenderer = new OffscreenRenderer(Mode.SSAO_FXAA, mRenderer);
     }
 
@@ -123,6 +157,10 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
                 mBuildings.put(tile.hashCode(), buildingElements);
             }
             element = new MapElement(element); // Deep copy, because element will be cleared
+            if (RAW_DATA && element.isClockwise() < 0) {
+                // Buildings must be counter clockwise in VTM (mirrored to OSM)
+                element.reverse();
+            }
             buildingElements.add(new BuildingElement(element, extrusion));
             return true;
         }
@@ -144,22 +182,22 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
         int height = 0; // cm
         int minHeight = 0; // cm
 
-        Float f = element.getHeight();
+        Float f = element.getHeight(mTileLayer.getTheme());
         if (f != null)
             height = (int) (f * 100);
         else {
             // #TagFromTheme: generalize level/height tags
-            String v = element.tags.getValue(Tag.KEY_BUILDING_LEVELS);
+            String v = getValue(element, Tag.KEY_BUILDING_LEVELS);
             if (v != null)
                 height = (int) (Float.parseFloat(v) * BUILDING_LEVEL_HEIGHT);
         }
 
-        f = element.getMinHeight();
+        f = element.getMinHeight(mTileLayer.getTheme());
         if (f != null)
             minHeight = (int) (f * 100);
         else {
             // #TagFromTheme: level/height tags
-            String v = element.tags.getValue(Tag.KEY_BUILDING_MIN_LEVEL);
+            String v = getValue(element, Tag.KEY_BUILDING_MIN_LEVEL);
             if (v != null)
                 minHeight = (int) (Float.parseFloat(v) * BUILDING_LEVEL_HEIGHT);
         }
@@ -186,15 +224,19 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
             if (!partBuilding.element.isBuildingPart())
                 continue;
 
-            String refId = partBuilding.element.tags.getValue(Tag.KEY_REF); // #TagFromTheme
-            refId = refId == null ? partBuilding.element.tags.getValue("root_id") : refId; // Mapzen
+            String refId = getValue(partBuilding.element, Tag.KEY_REF);
             if (refId == null)
                 continue;
 
             // Search buildings which inherit parts
             for (BuildingElement rootBuilding : tileBuildings) {
-                if (rootBuilding.element.isBuildingPart()
-                        || !(refId.equals(rootBuilding.element.tags.getValue(Tag.KEY_ID))))
+                if (rootBuilding.element.isBuildingPart())
+                    continue;
+                if (RAW_DATA) {
+                    float[] center = GeometryUtils.center(partBuilding.element.points, 0, partBuilding.element.pointNextPos, null);
+                    if (!GeometryUtils.pointInPoly(center[0], center[1], rootBuilding.element.points, rootBuilding.element.index[0], 0))
+                        continue;
+                } else if (!(refId.equals(getValue(rootBuilding.element, Tag.KEY_ID))))
                     continue;
 
                 rootBuildings.add(rootBuilding);
@@ -221,6 +263,56 @@ public class BuildingLayer extends Layer implements TileLoaderThemeHook, ZoomLim
             tile.addData(BUILDING_DATA, ebs);
         }
         return ebs;
+    }
+
+    /**
+     * Get the ExtrusionRenderer for customization.
+     */
+    public ExtrusionRenderer getExtrusionRenderer() {
+        return mExtrusionRenderer;
+    }
+
+    /**
+     * @return the tile source tag key or library tag key as fallback
+     */
+    protected String getKeyOrDefault(String key) {
+        if (mTileLayer.getTheme() == null)
+            return key;
+        String res = mTileLayer.getTheme().transformBackwardKey(key);
+        return res != null ? res : key;
+    }
+
+    /**
+     * Get the forward transformed value from tile source tag via the library tag key.
+     *
+     * @param key the library tag key
+     * @return the tile source tag value transformed to library tag value
+     */
+    protected String getTransformedValue(MapElement element, String key) {
+        if (mTileLayer.getTheme() == null)
+            return element.tags.getValue(key);
+        /* Get tile source key of specified lib key from theme or fall back to lib key */
+        key = getKeyOrDefault(key);
+        /* Get element tag with tile source key, if exists */
+        Tag tsTag = element.tags.get(key);
+        if (tsTag == null)
+            return null;
+        /* Transform tile source tag to lib tag */
+        Tag libTag = mTileLayer.getTheme().transformForwardTag(tsTag);
+        if (libTag != null)
+            return libTag.value;
+        /* Use tile source value, if transformation rule not exists */
+        return tsTag.value;
+    }
+
+    /**
+     * Get the tile source tag value via the library tag key.
+     *
+     * @param key the library tag key
+     * @return the tile source tag value of specified library tag key
+     */
+    protected String getValue(MapElement element, String key) {
+        return element.tags.getValue(getKeyOrDefault(key));
     }
 
     @Override

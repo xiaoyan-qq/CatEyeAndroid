@@ -1,6 +1,6 @@
 /*
  * Copyright 2014 Hannes Janetzek
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2020 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -17,9 +17,10 @@
  */
 package org.oscim.android.test;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
-
+import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
@@ -27,26 +28,25 @@ import org.oscim.event.GestureListener;
 import org.oscim.event.MotionEvent;
 import org.oscim.layers.Layer;
 import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerInterface;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.marker.MarkerSymbol.HotspotPlace;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.map.Map;
-import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.oscim.tiling.source.UrlTileSource;
 import org.oscim.tiling.source.bitmap.DefaultSources;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.oscim.android.canvas.AndroidGraphics.drawableToBitmap;
-
-public class MarkerOverlayActivity extends MapActivity
-        implements ItemizedLayer.OnItemGestureListener<MarkerItem> {
+public class MarkerOverlayActivity extends MapActivity implements ItemizedLayer.OnItemGestureListener<MarkerInterface> {
 
     static final boolean BILLBOARDS = true;
     MarkerSymbol mFocusMarker;
-    ItemizedLayer<MarkerItem> mMarkerLayer;
+    ItemizedLayer mMarkerLayer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,28 +59,29 @@ public class MarkerOverlayActivity extends MapActivity
         // Map events receiver
         mMap.layers().add(new MapEventsReceiver(mMap));
 
-        TileSource tileSource = DefaultSources.OPENSTREETMAP
+        UrlTileSource tileSource = DefaultSources.OPENSTREETMAP
                 .httpFactory(new OkHttpEngine.OkHttpFactory())
                 .build();
+        tileSource.setHttpRequestHeaders(Collections.singletonMap("User-Agent", "vtm-android-example"));
         mMap.layers().add(new BitmapTileLayer(mMap, tileSource));
 
-        Bitmap bitmapPoi = drawableToBitmap(getResources().getDrawable(R.drawable.marker_poi));
+        Bitmap bitmapPoi = new AndroidBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.marker_poi));
         MarkerSymbol symbol;
         if (BILLBOARDS)
             symbol = new MarkerSymbol(bitmapPoi, HotspotPlace.BOTTOM_CENTER);
         else
             symbol = new MarkerSymbol(bitmapPoi, HotspotPlace.CENTER, false);
 
-        Bitmap bitmapFocus = drawableToBitmap(getResources().getDrawable(R.drawable.marker_focus));
+        Bitmap bitmapFocus = new AndroidBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.marker_focus));
         if (BILLBOARDS)
             mFocusMarker = new MarkerSymbol(bitmapFocus, HotspotPlace.BOTTOM_CENTER);
         else
             mFocusMarker = new MarkerSymbol(bitmapFocus, HotspotPlace.CENTER, false);
 
-        mMarkerLayer = new ItemizedLayer<>(mMap, new ArrayList<MarkerItem>(), symbol, this);
+        mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), symbol, this);
         mMap.layers().add(mMarkerLayer);
 
-        List<MarkerItem> pts = new ArrayList<>();
+        List<MarkerInterface> pts = new ArrayList<>();
 
         for (double lat = -90; lat <= 90; lat += 5) {
             for (double lon = -180; lon <= 180; lon += 5)
@@ -99,24 +100,26 @@ public class MarkerOverlayActivity extends MapActivity
     }
 
     @Override
-    public boolean onItemSingleTapUp(int index, MarkerItem item) {
-        if (item.getMarker() == null)
-            item.setMarker(mFocusMarker);
+    public boolean onItemSingleTapUp(int index, MarkerInterface item) {
+        MarkerItem markerItem = (MarkerItem) item;
+        if (markerItem.getMarker() == null)
+            markerItem.setMarker(mFocusMarker);
         else
-            item.setMarker(null);
+            markerItem.setMarker(null);
 
-        Toast.makeText(this, "Marker tap\n" + item.getTitle(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Marker tap\n" + markerItem.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
     }
 
     @Override
-    public boolean onItemLongPress(int index, MarkerItem item) {
-        if (item.getMarker() == null)
-            item.setMarker(mFocusMarker);
+    public boolean onItemLongPress(int index, MarkerInterface item) {
+        MarkerItem markerItem = (MarkerItem) item;
+        if (markerItem.getMarker() == null)
+            markerItem.setMarker(mFocusMarker);
         else
-            item.setMarker(null);
+            markerItem.setMarker(null);
 
-        Toast.makeText(this, "Marker long press\n" + item.getTitle(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Marker long press\n" + markerItem.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
     }
 

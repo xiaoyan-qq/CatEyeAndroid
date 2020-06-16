@@ -1,11 +1,7 @@
 package org.oscim.theme.carto;
 
-import org.jeo.carto.Carto;
-import org.jeo.map.CartoCSS;
-import org.jeo.map.RGB;
-import org.jeo.map.Rule;
-import org.jeo.map.RuleList;
-import org.jeo.map.Style;
+import io.jeo.carto.Carto;
+import io.jeo.map.*;
 import org.oscim.core.GeometryBuffer.GeometryType;
 import org.oscim.core.MapElement;
 import org.oscim.core.Tag;
@@ -19,9 +15,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.jeo.map.CartoCSS.BACKGROUND_COLOR;
+import static io.jeo.map.CartoCSS.OPACITY;
 import static java.lang.System.out;
-import static org.jeo.map.CartoCSS.BACKGROUND_COLOR;
-import static org.jeo.map.CartoCSS.OPACITY;
 
 public class RenderTheme implements IRenderTheme {
 
@@ -251,6 +247,30 @@ public class RenderTheme implements IRenderTheme {
     public void scaleTextSize(float scaleFactor) {
     }
 
+    @Override
+    public String transformBackwardKey(String key) {
+        return null;
+    }
+
+    @Override
+    public String transformForwardKey(String key) {
+        return null;
+    }
+
+    @Override
+    public Tag transformBackwardTag(Tag tag) {
+        return null;
+    }
+
+    @Override
+    public Tag transformForwardTag(Tag tag) {
+        return null;
+    }
+
+    @Override
+    public void updateStyles() {
+    }
+
     public static void main(String[] args) {
         RenderTheme t = new RenderTheme();
 
@@ -261,11 +281,4 @@ public class RenderTheme implements IRenderTheme {
         t.matchElement(GeometryType.POLY, e.tags, 16);
         t.matchElement(GeometryType.POLY, e.tags, 15);
     }
-
-    @Override
-    public void updateStyles() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

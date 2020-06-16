@@ -7,7 +7,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -23,16 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Animator2Activity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".AtlasMarkerOverlayActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
             android:name=".AtlasMultiTextureActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".AtlasThemeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".BitmapTileActivity"
@@ -47,10 +40,10 @@
             android:name=".GdxActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".JeoIndoorActivity"
+            android:name=".GdxPoi3DActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".LayerGroupActivity"
+            android:name=".JeoIndoorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".LineTexActivity"
@@ -62,7 +55,7 @@
             android:name=".LocationTextureActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".MapEventLayer2Activity"
+            android:name=".MapilionMvtActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".MapsforgeActivity"
@@ -72,9 +65,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".MapsforgeActivity$ThemeFilePicker"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".MapsforgePolyLabelActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".MapsforgeS3DBActivity"
@@ -92,7 +82,10 @@
             android:name=".MarkerOverlayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".MultiMapViewActivity"
+            android:name=".MBTilesBitmapActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".MBTilesMvtActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".NextzenGeojsonActivity"
@@ -104,7 +97,7 @@
             android:name=".OpenMapTilesMvtActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".OSciMapS3DBActivity"
+            android:name=".OverpassActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PathOverlayActivity"
@@ -116,13 +109,10 @@
             android:name=".PoiSearchActivity$PoiFilePicker"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".POTTextureActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
             android:name=".ReverseGeocodeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".RotateMarkerOverlayActivity"
+            android:name=".ShadowActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".SimpleMapActivity"

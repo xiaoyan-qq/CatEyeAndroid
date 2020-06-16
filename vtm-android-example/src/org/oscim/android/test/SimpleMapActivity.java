@@ -1,6 +1,7 @@
 /*
  * Copyright 2013 Hannes Janetzek
- * Copyright 2016-2018 devemux86
+ * Copyright 2016-2019 devemux86
+ * Copyright 2019 Gustl22
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -37,7 +38,23 @@ import org.oscim.theme.ThemeLoader;
 import org.oscim.theme.VtmThemes;
 
 public class SimpleMapActivity extends BaseMapActivity {
-    private DefaultMapScaleBar mapScaleBar;
+
+    BuildingLayer mBuildingLayer;
+    private boolean mShadow;
+
+    public SimpleMapActivity() {
+        this(false);
+    }
+
+    public SimpleMapActivity(boolean shadow) {
+        super();
+        mShadow = shadow;
+    }
+
+    public SimpleMapActivity(boolean shadow, int contentView) {
+        super(contentView);
+        mShadow = shadow;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,11 +65,12 @@ public class SimpleMapActivity extends BaseMapActivity {
 
     void createLayers() {
         GroupLayer groupLayer = new GroupLayer(mMap);
-        groupLayer.layers.add(new BuildingLayer(mMap, mBaseLayer));
+        mBuildingLayer = new BuildingLayer(mMap, mBaseLayer, false, mShadow);
+        groupLayer.layers.add(mBuildingLayer);
         groupLayer.layers.add(new LabelLayer(mMap, mBaseLayer));
         mMap.layers().add(groupLayer);
 
-        mapScaleBar = new DefaultMapScaleBar(mMap);
+        DefaultMapScaleBar mapScaleBar = new DefaultMapScaleBar(mMap);
         mapScaleBar.setScaleBarMode(DefaultMapScaleBar.ScaleBarMode.BOTH);
         mapScaleBar.setDistanceUnitAdapter(MetricUnitAdapter.INSTANCE);
         mapScaleBar.setSecondaryDistanceUnitAdapter(ImperialUnitAdapter.INSTANCE);
@@ -65,14 +83,6 @@ public class SimpleMapActivity extends BaseMapActivity {
         mMap.layers().add(mapScaleBarLayer);
 
         mMap.setTheme(VtmThemes.DEFAULT);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mapScaleBar != null)
-            mapScaleBar.destroy();
-
-        super.onDestroy();
     }
 
     void runTheMonkey() {

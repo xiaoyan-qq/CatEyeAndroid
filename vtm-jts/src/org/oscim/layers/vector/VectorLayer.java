@@ -1,6 +1,6 @@
 /*
  * Copyright 2014 Hannes Janetzek
- * Copyright 2016-2017 devemux86
+ * Copyright 2016-2019 devemux86
  *
  * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
@@ -17,18 +17,11 @@
  */
 package org.oscim.layers.vector;
 
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.oscim.backend.canvas.Color;
-import org.oscim.core.Box;
-import org.oscim.core.GeoPoint;
-import org.oscim.core.GeometryBuffer;
-import org.oscim.core.MapPosition;
-import org.oscim.core.Tile;
+import org.oscim.core.*;
 import org.oscim.event.Gesture;
 import org.oscim.event.GestureListener;
 import org.oscim.event.MotionEvent;
@@ -64,6 +57,8 @@ import static org.oscim.core.MercatorProjection.longitudeToX;
 public class VectorLayer extends AbstractVectorLayer<Drawable> implements GestureListener {
 
     public static final Logger log = LoggerFactory.getLogger(VectorLayer.class);
+
+    private static final int STROKE_MIN_ZOOM = 12;
 
     //private final SpatialIndex<Drawable> mDrawables = new RTree<Drawable>();
     protected final SpatialIndex<Drawable> mDrawables = new QuadTree<Drawable>(1 << 30, 18);
@@ -122,7 +117,7 @@ public class VectorLayer extends AbstractVectorLayer<Drawable> implements Gestur
      *
      * @param drawable
      */
-    public void add(Drawable drawable) {
+    public synchronized void add(Drawable drawable) {
         mDrawables.insert(bbox(drawable.getGeometry(), drawable.getStyle()), drawable);
     }
 
@@ -133,7 +128,7 @@ public class VectorLayer extends AbstractVectorLayer<Drawable> implements Gestur
      * @param geometry
      * @param style
      */
-    public synchronized void add(Geometry geometry, Style style) {
+    synchronized void add(Geometry geometry, Style style) {
         mDrawables.insert(bbox(geometry, style), new GeometryWithStyle(geometry, style));
     }
 
@@ -263,6 +258,7 @@ public class VectorLayer extends AbstractVectorLayer<Drawable> implements Gestur
         if (ll.line == null) {
             ll.line = LineStyle.builder()
                     .reset()
+                    .blur(style.blur)
                     .cap(style.cap)
                     .color(style.strokeColor)
                     .fixed(style.fixed)
@@ -272,10 +268,14 @@ public class VectorLayer extends AbstractVectorLayer<Drawable> implements Gestur
                     .stipple(style.stipple)
                     .stippleColor(style.stippleColor)
                     .stippleWidth(style.stippleWidth)
+                    .strokeIncrease(style.strokeIncrease)
                     .strokeWidth(style.strokeWidth)
                     .texture(style.texture)
                     .build();
         }
+
+        if (!style.fixed && style.strokeIncrease > 1)
+            ll.scale = (float) Math.pow(style.strokeIncrease, Math.max(t.position.getZoom() - STROKE_MIN_ZOOM, 0));
 
         if (style.generalization != Style.GENERALIZATION_NONE) {
             line = DouglasPeuckerSimplifier.simplify(line, mMinX * style.generalization);
