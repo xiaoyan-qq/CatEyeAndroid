@@ -57,7 +57,7 @@ public class CatEyeMapScaleBar extends MapScaleBar {
     }
 
     public CatEyeMapScaleBar(Map map, float scale) {
-        super(map, (int) (BITMAP_WIDTH * scale), (int) (BITMAP_HEIGHT * scale));
+        super(map, (int) (BITMAP_WIDTH * scale), (int) (BITMAP_HEIGHT * scale), scale);
 
         setMarginHorizontal((int) (DEFAULT_HORIZONTAL_MARGIN * scale));
         setMarginVertical((int) (DEFAULT_VERTICAL_MARGIN * scale));

@@ -225,8 +225,4 @@ public class VectorTileLayer extends TileLayer {
             ph = ph.next;
         }
     }
-
-    public TileSource getTileSource() {
-        return mTileSource;
-    }
 }
