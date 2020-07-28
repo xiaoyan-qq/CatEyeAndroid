@@ -258,9 +258,9 @@ public class BaseDrawFragment extends BaseFragment {
                     }
                     markerLayer.map().updateMap(true);
                     if (currentDrawState == DRAW_STATE.DRAW_POINT) { // 如果当前正在绘制点
-                        Message msg=Message.obtain();
+                        Message msg = Message.obtain();
                         msg.what = SystemConstant.MSG_WHAT_DRAW_POINT;
-                        msg.obj=p;
+                        msg.obj = p;
                         EventBus.getDefault().post(msg);
                     }
                     return true;

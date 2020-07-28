@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/rowItem"
-    android:background="@drawable/ripple_bg"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             style="@style/rowItem"
+                                             android:background="@drawable/ripple_bg"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content"
+                                             android:descendantFocusability="blocksDescendants">
 
     <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/btn_polygon_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="移除"
-        app:bootstrapBrand="danger"
-        app:bootstrapSize="md"
-        app:buttonMode="regular"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:roundedCorners="true"
-        app:showOutline="false" />
+            android:id="@+id/btn_polygon_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="移除"
+            app:bootstrapBrand="danger"
+            app:bootstrapSize="md"
+            app:buttonMode="regular"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:roundedCorners="true"
+            app:showOutline="false"/>
 
 
     <TextView
-        android:id="@+id/tv_polygon_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/button_padding_default"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete" />
+            android:id="@+id/tv_polygon_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/button_padding_default"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete"/>
 
     <TextView
-        android:id="@+id/tv_polygon_updatetime"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/button_padding_default"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete"
-        app:layout_constraintTop_toBottomOf="@id/tv_polygon_name" />
+            android:id="@+id/tv_polygon_updatetime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/button_padding_default"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btn_polygon_delete"
+            app:layout_constraintTop_toBottomOf="@id/tv_polygon_name"/>
 
 </android.support.constraint.ConstraintLayout>

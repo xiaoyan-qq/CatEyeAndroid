@@ -123,7 +123,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     private MultiPathLayer highLightPathLayer;
     private MultiPolygonLayer highLightPolygonLayer;
 
-    private AwesomeTextView atv_upload, atv_download,atv_export;
+    private AwesomeTextView atv_upload, atv_download, atv_export;
     private RxDialogLoading rxDialogLoading;
 
     private List<DrawPointLinePolygonEntity> checkedListData;
@@ -134,7 +134,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         super.onCreate(savedInstanceState);
         this.mMap = CatEyeMapManager.getMapView().map();
         this.dbManager = ((MainActivity) getActivity()).getDbManager();
-        this.rxDialogLoading= new RxDialogLoading(getActivity());
+        this.rxDialogLoading = new RxDialogLoading(getActivity());
 
         //初始化点线面的显示图层
         if (highLightPointLayer == null) {
@@ -334,7 +334,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                     public void onError(Throwable e) {
                                         rxDialogLoading.dismiss();
                                     }
-                        });
+                                });
                     }
                 } catch (DbException e) {
                     e.printStackTrace();
@@ -345,7 +345,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         atv_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final RxDialogSureCancel rxDialogSureCancel=new RxDialogSureCancel(getActivity());
+                final RxDialogSureCancel rxDialogSureCancel = new RxDialogSureCancel(getActivity());
                 rxDialogSureCancel.show();
                 rxDialogSureCancel.setTitle("提示");
                 rxDialogSureCancel.setContent("下载同步数据后，本地未上传的数据可能会被覆盖，确认仍然下载吗？");
@@ -361,7 +361,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     @Override
                     public void onClick(View v) {
                         rxDialogSureCancel.dismiss();
-                        OkGo.<String>get(SystemConstant.DATA_LIST).params("projectId",SystemConstant.CURRENT_PROJECTS_ID).tag(this).converter(new StringConvert())
+                        OkGo.<String>get(SystemConstant.DATA_LIST).params("projectId", SystemConstant.CURRENT_PROJECTS_ID).tag(this).converter(new StringConvert())
                                 .adapt(new ObservableResponse<String>())
                                 .subscribeOn(Schedulers.newThread())
                                 .doOnSubscribe(new Consumer<Disposable>() {
@@ -378,35 +378,35 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
 
                                     @Override
                                     public void onNext(com.lzy.okgo.model.Response<String> stringResponse) {
-                                        if (stringResponse != null && stringResponse.body() != null){
-                                            String result=stringResponse.body();
-                                            if (result!=null){
+                                        if (stringResponse != null && stringResponse.body() != null) {
+                                            String result = stringResponse.body();
+                                            if (result != null) {
 //                                System.out.println(result);
-                                                java.util.Map<String,Object> resultMap= (java.util.Map<String, Object>) JSON.parse(result);
-                                                if (resultMap!=null&&resultMap.get("errcode").toString().equals("0")&&resultMap.get("data")!=null){
-                                                    List<java.util.Map> dataList= (List<java.util.Map>) JSONArray.parse(resultMap.get("data").toString());
-                                                    if (dataList!=null&&!dataList.isEmpty()){
-                                                        for (java.util.Map<String,Object> data:dataList){
-                                                            if (Integer.parseInt(data.get("type").toString()) == 0){ // 只处理type=0的数据，即用户绘制数据
-                                                                DrawPointLinePolygonEntity entity=new DrawPointLinePolygonEntity();
-                                                                if (data.get("uuid")==null){
+                                                java.util.Map<String, Object> resultMap = (java.util.Map<String, Object>) JSON.parse(result);
+                                                if (resultMap != null && resultMap.get("errcode").toString().equals("0") && resultMap.get("data") != null) {
+                                                    List<java.util.Map> dataList = (List<java.util.Map>) JSONArray.parse(resultMap.get("data").toString());
+                                                    if (dataList != null && !dataList.isEmpty()) {
+                                                        for (java.util.Map<String, Object> data : dataList) {
+                                                            if (Integer.parseInt(data.get("type").toString()) == 0) { // 只处理type=0的数据，即用户绘制数据
+                                                                DrawPointLinePolygonEntity entity = new DrawPointLinePolygonEntity();
+                                                                if (data.get("uuid") == null) {
                                                                     continue;
                                                                 }
                                                                 entity.set_id(data.get("uuid").toString());
                                                                 entity.setUserName(data.get("userName").toString());
-                                                                if (data.get("wkt")==null){
+                                                                if (data.get("wkt") == null) {
                                                                     continue;
                                                                 }
                                                                 entity.setGeometry(data.get("wkt").toString());
                                                                 entity.setName(data.get("name").toString());
                                                                 entity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
-                                                                if (!RxDataTool.isEmpty(data.get("prop"))){
-                                                                    java.util.Map<String,Object> propMap = (java.util.Map<String, Object>) JSON.parse(data.get("prop").toString());
-                                                                    if (propMap.containsKey("img")&&propMap.get("img")!=null){
-                                                                        List<String> imgList=Arrays.asList(propMap.get("img").toString().split(";"));
+                                                                if (!RxDataTool.isEmpty(data.get("prop"))) {
+                                                                    java.util.Map<String, Object> propMap = (java.util.Map<String, Object>) JSON.parse(data.get("prop").toString());
+                                                                    if (propMap.containsKey("img") && propMap.get("img") != null) {
+                                                                        List<String> imgList = Arrays.asList(propMap.get("img").toString().split(";"));
                                                                         entity.setImgUrlList(imgList);
                                                                     }
-                                                                    if (propMap.containsKey("remark")){
+                                                                    if (propMap.containsKey("remark")) {
                                                                         entity.setRemark(propMap.get("remark").toString());
                                                                     }
                                                                 }
@@ -433,10 +433,10 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
 
                                                         //通知地图重新绘制数据
                                                         Message msg = Message.obtain();
-                                                        msg.what=SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA;
+                                                        msg.what = SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA;
                                                         EventBus.getDefault().post(msg);
                                                     }
-                                                }else {
+                                                } else {
                                                     RxToast.error("无法获取数据！");
                                                 }
                                             }
@@ -462,15 +462,15 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         atv_export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkedListData == null||checkedListData.isEmpty()){
+                if (checkedListData == null || checkedListData.isEmpty()) {
                     RxToast.error("请至少勾选一条数据");
                     return;
                 }
-                final RxDialogSureCancel rxDialogSureCancel=new RxDialogSureCancel(getActivity());
-                View rootView=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_export_customer_data, null);
+                final RxDialogSureCancel rxDialogSureCancel = new RxDialogSureCancel(getActivity());
+                View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_export_customer_data, null);
                 rxDialogSureCancel.setContentView(rootView);
                 rxDialogSureCancel.show();
-                final AppCompatSpinner spinnerFormate=rootView.findViewById(R.id.spn_file_format);
+                final AppCompatSpinner spinnerFormate = rootView.findViewById(R.id.spn_file_format);
                 final EditText edt_fileName = rootView.findViewById(R.id.edt_export_file_name);
 //                rxDialogSureCancel.setCancel("取消");
                 rxDialogSureCancel.findViewById(R.id.btn_export_shp_cancel).setOnClickListener(new View.OnClickListener() {
@@ -483,32 +483,32 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                 rxDialogSureCancel.findViewById(R.id.btn_export_shp_confirm).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String fileName=edt_fileName.getText().toString().trim();
-                        if (fileName.equals("")){
+                        String fileName = edt_fileName.getText().toString().trim();
+                        if (fileName.equals("")) {
                             RxToast.error("文件名不能为空！");
                             return;
                         }
-                        if (".json".equals(spinnerFormate.getSelectedItem().toString())){
-                            File saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+".geojson");
-                            if (!saveFile.getParentFile().exists()){
+                        if (".json".equals(spinnerFormate.getSelectedItem().toString())) {
+                            File saveFile = new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH + File.separator + fileName + ".geojson");
+                            if (!saveFile.getParentFile().exists()) {
                                 saveFile.getParentFile().mkdirs();
                             }
-                            if (saveFile.exists()){
+                            if (saveFile.exists()) {
                                 RxToast.error("存在同名文件，请重新命名！");
                                 return;
                             }
-                            FeatureCollection featureCollection=new FeatureCollection();
-                            for (DrawPointLinePolygonEntity entity: checkedListData){
-                                Feature feature=GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
+                            FeatureCollection featureCollection = new FeatureCollection();
+                            for (DrawPointLinePolygonEntity entity : checkedListData) {
+                                Feature feature = GeometryTools.wkt2Feature(GeometryTools.createGeometry(entity.getGeometry()));
                                 feature.setIdentifier(entity.get_id());
-                                JSONObject prop=new JSONObject();
+                                JSONObject prop = new JSONObject();
                                 try {
-                                    prop.put("remark",entity.getRemark());
-                                    prop.put("userName",entity.getUserName());
-                                    prop.put("id",entity.get_id());
-                                    prop.put("img",entity.getImgUrlListStr());
-                                    prop.put("name",entity.getName());
-                                    prop.put("projectId",entity.getProjectId());
+                                    prop.put("remark", entity.getRemark());
+                                    prop.put("userName", entity.getUserName());
+                                    prop.put("id", entity.get_id());
+                                    prop.put("img", entity.getImgUrlListStr());
+                                    prop.put("name", entity.getName());
+                                    prop.put("projectId", entity.getProjectId());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -516,20 +516,20 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 featureCollection.addFeature(feature);
                             }
                             try {
-                                JSONObject jsonObject=featureCollection.toJSON();
-                                jsonObject.put("crs",new JSONObject("{ \"type\": \"name\", \"properties\": { \"name\": \"urn:ogc:def:crs:OGC:1.3:CRS84\" } }"));
-                                jsonObject.put("name",fileName);
-                                RxFileTool.write(saveFile.getAbsolutePath(),jsonObject.toString());
-                                RxToast.info("保存成功："+saveFile.getAbsolutePath());
+                                JSONObject jsonObject = featureCollection.toJSON();
+                                jsonObject.put("crs", new JSONObject("{ \"type\": \"name\", \"properties\": { \"name\": \"urn:ogc:def:crs:OGC:1.3:CRS84\" } }"));
+                                jsonObject.put("name", fileName);
+                                RxFileTool.write(saveFile.getAbsolutePath(), jsonObject.toString());
+                                RxToast.info("保存成功：" + saveFile.getAbsolutePath());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         } else { // 导出为shp文件
                             // 分别筛选勾选的数据中的点、线、面数据
-                            List<DrawPointLinePolygonEntity> pointEntityList = new ArrayList<>(),lineEntityList = new ArrayList<>(),polygonEntityList = new ArrayList<>();
-                            SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
-                            for (DrawPointLinePolygonEntity entity:checkedListData){
-                                Geometry geometry=GeometryTools.createGeometry(entity.getGeometry());
+                            List<DrawPointLinePolygonEntity> pointEntityList = new ArrayList<>(), lineEntityList = new ArrayList<>(), polygonEntityList = new ArrayList<>();
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                            for (DrawPointLinePolygonEntity entity : checkedListData) {
+                                Geometry geometry = GeometryTools.createGeometry(entity.getGeometry());
                                 if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
                                     pointEntityList.add(entity);
                                 } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
@@ -538,10 +538,10 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                     polygonEntityList.add(entity);
                                 }
                             }
-                            if (!pointEntityList.isEmpty()){
+                            if (!pointEntityList.isEmpty()) {
                                 StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_SHP_PATH).append(File.separator).append(fileName).append("_point").append(sdf.format(new Date())).append(".shp");
-                                File saveFile=new File(fileNameBuilder.toString());
-                                if (!saveFile.getParentFile().exists()){
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
@@ -549,12 +549,12 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                RxToast.info("保存成功,文件保存在:"+saveFile.getParent());
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
                             }
-                            if (!lineEntityList.isEmpty()){
+                            if (!lineEntityList.isEmpty()) {
                                 StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_SHP_PATH).append(File.separator).append(fileName).append("_line").append(sdf.format(new Date())).append(".shp");
-                                File saveFile=new File(fileNameBuilder.toString());
-                                if (!saveFile.getParentFile().exists()){
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
@@ -562,12 +562,12 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                RxToast.info("保存成功,文件保存在:"+saveFile.getParent());
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
                             }
-                            if (!polygonEntityList.isEmpty()){
+                            if (!polygonEntityList.isEmpty()) {
                                 StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_SHP_PATH).append(File.separator).append(fileName).append("_polygon").append(sdf.format(new Date())).append(".shp");
-                                File saveFile=new File(fileNameBuilder.toString());
-                                if (!saveFile.getParentFile().exists()){
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
@@ -575,7 +575,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                RxToast.info("保存成功,文件保存在:"+saveFile.getParent());
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
                             }
                         }
                         rxDialogSureCancel.dismiss();
@@ -586,60 +586,60 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
     }
 
 
-    private void write2ShpFile(String fileName, String geometryType){
+    private void write2ShpFile(String fileName, String geometryType) {
         try {
-            if (fileName==null||"".equals(fileName)){
+            if (fileName == null || "".equals(fileName)) {
                 RxToast.error("文件名不能为空！");
                 return;
             }
-            if (geometryType==null||"".equals(geometryType)){
+            if (geometryType == null || "".equals(geometryType)) {
                 RxToast.error("文件类型不能为空！");
                 return;
             }
             File saveFile = null;
-            if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
-                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_point"+".shp");
-            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
-                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_line"+".shp");
-            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
-                saveFile=new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH+File.separator+fileName+"_polygon"+".shp");
+            if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)) {
+                saveFile = new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH + File.separator + fileName + "_point" + ".shp");
+            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)) {
+                saveFile = new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH + File.separator + fileName + "_line" + ".shp");
+            } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)) {
+                saveFile = new File(SystemConstant.CACHE_EXPORT_GEOJSON_PATH + File.separator + fileName + "_polygon" + ".shp");
             }
-            if (saveFile!=null){
+            if (saveFile != null) {
                 java.util.Map<String, Serializable> params = new HashMap<String, Serializable>();
-                params.put( ShapefileDataStoreFactory.URLP.key, saveFile.toURI().toURL() );
+                params.put(ShapefileDataStoreFactory.URLP.key, saveFile.toURI().toURL());
                 ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
                 //定义图形信息和属性信息
                 SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
                 tb.setCRS(DefaultGeographicCRS.WGS84);
                 tb.setName(fileName);
-                tb.add("id",String.class);
-                tb.add("name",String.class);
-                tb.add("userName",String.class);
-                tb.add("remark",String.class);
-                tb.add("img",String.class);
-                tb.add("projectId",String.class);
-                if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)){
+                tb.add("id", String.class);
+                tb.add("name", String.class);
+                tb.add("userName", String.class);
+                tb.add("remark", String.class);
+                tb.add("img", String.class);
+                tb.add("projectId", String.class);
+                if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometryType)) {
                     tb.add("geometry", Point.class);
-                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)) {
                     tb.add("geometry", LineString.class);
-                }  else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)){
+                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometryType)) {
                     tb.add("geometry", Polygon.class);
                 }
                 ds.createSchema(tb.buildFeatureType());
                 ds.setCharset(Charset.forName("UTF-8"));
                 //设置Writer
                 FeatureWriter<SimpleFeatureType, SimpleFeature> writer = ds.getFeatureWriter(ds.getTypeNames()[0], Transaction.AUTO_COMMIT);
-                for (DrawPointLinePolygonEntity entity: checkedListData){
-                    Geometry geometry=GeometryTools.createGeometry(entity.getGeometry());
-                    SimpleFeature feature=writer.next();
-                    feature.setAttribute("id",entity.get_id());
-                    feature.setAttribute("name",entity.getName());
-                    feature.setAttribute("userName",entity.getUserName());
-                    feature.setAttribute("remark",entity.getRemark());
-                    feature.setAttribute("img",entity.getImgUrlListStr());
-                    feature.setAttribute("projectId",entity.getProjectId());
-                    if (geometryType.equals(geometry.getGeometryType())){
-                        feature.setAttribute("geometry",geometry);
+                for (DrawPointLinePolygonEntity entity : checkedListData) {
+                    Geometry geometry = GeometryTools.createGeometry(entity.getGeometry());
+                    SimpleFeature feature = writer.next();
+                    feature.setAttribute("id", entity.get_id());
+                    feature.setAttribute("name", entity.getName());
+                    feature.setAttribute("userName", entity.getUserName());
+                    feature.setAttribute("remark", entity.getRemark());
+                    feature.setAttribute("img", entity.getImgUrlListStr());
+                    feature.setAttribute("projectId", entity.getProjectId());
+                    if (geometryType.equals(geometry.getGeometryType())) {
+                        feature.setAttribute("geometry", geometry);
                     }
                     writer.write();
                 }
@@ -764,9 +764,9 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
 //                        checkedSet.add(i);
                         atv_export.setVisibility(View.VISIBLE);
                     } else {
-                        if (checkedListData!=null&&checkedListData.contains(listData.get(i))){
+                        if (checkedListData != null && checkedListData.contains(listData.get(i))) {
                             checkedListData.remove(listData.get(i));
-                            if (checkedListData.isEmpty()){
+                            if (checkedListData.isEmpty()) {
                                 atv_export.setVisibility(View.GONE);
                             }
                         }

@@ -8,7 +8,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.io.Serializable;
 import java.util.List;
 
-public class MapSourceFromNet implements Serializable{
+public class MapSourceFromNet implements Serializable {
 
     /**
      * success : true
@@ -53,8 +53,9 @@ public class MapSourceFromNet implements Serializable{
     public void setData(List<DataBean> data) {
         this.data = data;
     }
-    @JSONType(serialzeFeatures= SerializerFeature.BeanToArray, parseFeatures= Feature.SupportArrayToBean)
-    public static class DataBean implements Serializable{
+
+    @JSONType(serialzeFeatures = SerializerFeature.BeanToArray, parseFeatures = Feature.SupportArrayToBean)
+    public static class DataBean implements Serializable {
         /**
          * group : L2
          * id : 3
@@ -72,7 +73,7 @@ public class MapSourceFromNet implements Serializable{
         private String name;
         private int type;
         private List<MapsBean> maps;
-        private boolean isShow=false;//是否显示，只在本地使用
+        private boolean isShow = false;//是否显示，只在本地使用
 
         public String getGroup() {
             return group;
@@ -137,7 +138,8 @@ public class MapSourceFromNet implements Serializable{
         public void setShow(boolean show) {
             isShow = show;
         }
-        public static class MapsBean implements Serializable{
+
+        public static class MapsBean implements Serializable {
             /**
              * abstract : 中国城市面
              * extension : png

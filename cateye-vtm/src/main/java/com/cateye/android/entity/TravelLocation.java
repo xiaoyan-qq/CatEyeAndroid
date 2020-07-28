@@ -2,9 +2,10 @@ package com.cateye.android.entity;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
+
 /**
  * 轨迹记录表，用户采集的轨迹记录在当前表中
- * */
+ */
 @Table(name = "travel")
 public class TravelLocation {
     @Column(name = "_id", isId = true, autoGen = true)

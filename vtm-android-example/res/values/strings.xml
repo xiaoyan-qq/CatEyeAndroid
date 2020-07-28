@@ -26,7 +26,9 @@
     <string name="search_value">void or value</string>
     <string name="now">Now</string>
     <string name="warning">Warning</string>
-    <string name="startup_message_mbtiles">To run this sample activity, you need an MBTiles database installed on storage.\n\nadb push %s %s</string>
+    <string name="startup_message_mbtiles">To run this sample activity, you need an MBTiles database installed on
+        storage.\n\nadb push %s %s
+    </string>
     <string name="exit">Exit</string>
 
 </resources>

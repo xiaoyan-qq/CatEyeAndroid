@@ -156,9 +156,9 @@ public class TileDownloader {
         dialog.setTitle("缓存tile地图数据");
         dialog.show();
 //        dialog = new CanDialog.Builder(mContext).setCancelable(false).setView(downloadProgressView).setTitle("缓存tile地图数据").show();
-        IntentFilter filter=new IntentFilter("catEye_tile_download");
-        receiver=new CatEyeTileDownloadReceiver();
-        mContext.registerReceiver(receiver,filter);
+        IntentFilter filter = new IntentFilter("catEye_tile_download");
+        receiver = new CatEyeTileDownloadReceiver();
+        mContext.registerReceiver(receiver, filter);
 
         final ProgressBar pb_download = downloadProgressView.findViewById(R.id.pb_tile_download);
         final TextView tv_download = downloadProgressView.findViewById(R.id.tv_tile_download);
@@ -167,7 +167,7 @@ public class TileDownloader {
 
         final List<UrlTileSource> urlTileSourceList = new ArrayList<>();
 
-        final Intent tileDownloaderIntent=new Intent("catEye_tile_download");
+        final Intent tileDownloaderIntent = new Intent("catEye_tile_download");
         tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         Flowable.create(new FlowableOnSubscribe<Tile>() {
@@ -224,9 +224,9 @@ public class TileDownloader {
                 tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
                 System.out.println("进度:" + pb_download.getProgress() + "/" + pb_download.getMax());
 
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress() + 1,pb_download.getMax(),"下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT))
-                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT)).show();
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH, R.mipmap.ic_launcher_foreground, "正在下载", pb_download.getProgress() + 1, pb_download.getMax(), "下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT))
+                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT)).show();
 
                 subscription.request(1);
             }
@@ -258,7 +258,7 @@ public class TileDownloader {
                 msg.what = MSG_DOWNLOAD_TILE_FINISH;
                 EventBus.getDefault().post(msg);
 
-                if (receiver!=null){
+                if (receiver != null) {
                     mContext.unregisterReceiver(receiver);
                 }
             }
@@ -267,20 +267,20 @@ public class TileDownloader {
         bbtn_mini.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH,R.mipmap.ic_launcher_foreground,"正在下载",pb_download.getProgress() + 1,pb_download.getMax(),"下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT))
-                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext,MSG_DOWNLOAD_TILE_FINISH,tileDownloaderIntent,PendingIntent.FLAG_ONE_SHOT)).show();
+                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH, R.mipmap.ic_launcher_foreground, "正在下载", pb_download.getProgress() + 1, pb_download.getMax(), "下载进度:%d%%")
+                        .setContentIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT))
+                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT)).show();
                 dialog.hide();
             }
         });
     }
 
-    public class CatEyeTileDownloadReceiver extends BroadcastReceiver{
+    public class CatEyeTileDownloadReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() == "catEye_tile_download") {
-                if (dialog!=null){
+                if (dialog != null) {
                     dialog.show();
                     context.startActivity(intent);//显示主界面，主界面设置了clear_top的tag，如果当前已经在显示了，不会重复显示
                 }

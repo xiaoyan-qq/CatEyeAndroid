@@ -36,6 +36,7 @@ public class GeoJsonLayer extends OSMIndoorLayer {
     private double mMinX;
     private double mMinY;
     private static final boolean dbg = false;
+
     public GeoJsonLayer(Map map, VectorDataset data, Style style, TextStyle textStyle) {
         super(map, data, style, textStyle);
         this.mDataset = data;

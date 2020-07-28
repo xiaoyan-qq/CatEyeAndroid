@@ -493,7 +493,7 @@ public class CatEyeMainFragment extends BaseFragment {
         });
     }
 
-    private void redrawUserData(){ /*重新绘制用户绘制的数据*/
+    private void redrawUserData() { /*重新绘制用户绘制的数据*/
         markerLayer.removeAllItems();
         markerLayer.update();
         multiPathLayer.removeAllPathDrawable();
@@ -504,17 +504,17 @@ public class CatEyeMainFragment extends BaseFragment {
         //读取数据库中当前用户存储的点数据，添加到图层上
         try {
 //            String currentUserName=RxSPTool.getContent(getActivity(), SystemConstant.SP_LOGIN_USERNAME);
-            List<DrawPointLinePolygonEntity> entityList=((MainActivity)getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("projectId","=", SystemConstant.CURRENT_PROJECTS_ID).findAll();
-            if (entityList!=null&&!entityList.isEmpty()){
-                for (DrawPointLinePolygonEntity entity:entityList) {
-                    if (entity.getGeometry()!=null){
+            List<DrawPointLinePolygonEntity> entityList = ((MainActivity) getActivity()).getDbManager().selector(DrawPointLinePolygonEntity.class).where("projectId", "=", SystemConstant.CURRENT_PROJECTS_ID).findAll();
+            if (entityList != null && !entityList.isEmpty()) {
+                for (DrawPointLinePolygonEntity entity : entityList) {
+                    if (entity.getGeometry() != null) {
                         String geometryType = GeometryTools.createGeometry(entity.getGeometry()).getGeometryType();
-                        if (geometryType == "Point"){
-                            MarkerItem markerItem=new MarkerItem(entity.getName(),entity.getRemark(),GeometryTools.createGeoPoint(entity.getGeometry()));
+                        if (geometryType == "Point") {
+                            MarkerItem markerItem = new MarkerItem(entity.getName(), entity.getRemark(), GeometryTools.createGeoPoint(entity.getGeometry()));
                             markerLayer.addItem(markerItem);
-                        } else if (geometryType == "LineString"){
+                        } else if (geometryType == "LineString") {
                             multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
-                        } else if (geometryType == "Polygon"){
+                        } else if (geometryType == "Polygon") {
                             multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
                         }
                     }
@@ -737,17 +737,15 @@ public class CatEyeMainFragment extends BaseFragment {
                         }).show();
                     }
                 }
-            }
-            else if (view.getId() == R.id.img_trail_record){//查看轨迹列表
-                if (tv_switch_track.isSelected()){
+            } else if (view.getId() == R.id.img_trail_record) {//查看轨迹列表
+                if (tv_switch_track.isSelected()) {
                     RxToast.warning("请先结束轨迹采集！");
                     return;
                 }
                 //右侧弹出选中的polygon列表，支持上下拖动调整顺序
                 TrailRecordListFragment trailRecordListFragment = (TrailRecordListFragment) TrailRecordListFragment.newInstance(new Bundle());
                 ((MainActivity) getActivity()).showSlidingLayout(0.4f, trailRecordListFragment);
-            }
-            else if (view.getId() == R.id.img_draw_record) {
+            } else if (view.getId() == R.id.img_draw_record) {
                 DrawPointLinePolygonListFragment drawPointLinePolygonListFragment = (DrawPointLinePolygonListFragment) DrawPointLinePolygonListFragment.newInstance(new Bundle());
                 ((MainActivity) getActivity()).showSlidingLayout(0.4f, drawPointLinePolygonListFragment);
             }
@@ -790,7 +788,7 @@ public class CatEyeMainFragment extends BaseFragment {
                             public void accept(List<MapSourceFromNet.DataBean> dataBeanList) throws Exception {
                                 if (dataBeanList != null) {
                                     if (isChangeProject) {
-                                        for (MapSourceFromNet.DataBean db:dataBeanList) {
+                                        for (MapSourceFromNet.DataBean db : dataBeanList) {
                                             db.setShow(true);
                                         }
                                         //调用显示选中图层的功能
@@ -840,7 +838,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
     private void showLayerManagerDialog(final List<MapSourceFromNet.DataBean> dataBeanList) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA, (ArrayList)layerDataBeanList);
+        bundle.putSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA, (ArrayList) layerDataBeanList);
         LayerManagerFragment layerManagerFragment = (LayerManagerFragment) LayerManagerFragment.newInstance(bundle);
         ((MainActivity) getActivity()).showSlidingLayout(0.4f, layerManagerFragment);
     }
@@ -1342,67 +1340,67 @@ public class CatEyeMainFragment extends BaseFragment {
                 }
                 break;
             case SystemConstant.MSG_WHAT_DRAW_POINT:
-                if (msg.obj!=null){ //弹出对话框，提示用户输入内容
-                    GeoPoint point= (GeoPoint) msg.obj;
+                if (msg.obj != null) { //弹出对话框，提示用户输入内容
+                    GeoPoint point = (GeoPoint) msg.obj;
                     markerLayer.addItem(new MarkerItem(null, null, point));
                     mMap.updateMap(true);
 
-                    DrawPointLinePolygonEntity pointEntity=new DrawPointLinePolygonEntity();
+                    DrawPointLinePolygonEntity pointEntity = new DrawPointLinePolygonEntity();
                     pointEntity.setGeometry(GeometryTools.createGeometry(point).toString());
                     DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_POINT, pointEntity);
                 }
                 break;
             case SystemConstant.MSG_WHAT_DRAW_LINE:
                 List<GeoPoint> lineGeoPointList = (List<GeoPoint>) msg.obj;
-                if (lineGeoPointList!=null&&lineGeoPointList.size()>=2){
-                    if (lineGeoPointList!=null&&!lineGeoPointList.isEmpty()){
+                if (lineGeoPointList != null && lineGeoPointList.size() >= 2) {
+                    if (lineGeoPointList != null && !lineGeoPointList.isEmpty()) {
                         multiPathLayer.addPathDrawable(GeometryTools.getLineStrinGeo(lineGeoPointList));
                     }
                     mMap.updateMap(true);
 
-                    DrawPointLinePolygonEntity lineEntity=new DrawPointLinePolygonEntity();
+                    DrawPointLinePolygonEntity lineEntity = new DrawPointLinePolygonEntity();
                     lineEntity.setGeometry(GeometryTools.getLineStrinGeo(lineGeoPointList).toString());
                     DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_LINE, lineEntity);
                 }
                 break;
             case SystemConstant.MSG_WHAT_DRAW_POLYGON:
                 List<GeoPoint> polygonGeoPointList = (List<GeoPoint>) msg.obj;
-                if (polygonGeoPointList!=null&&polygonGeoPointList.size()>=3){
-                    if (polygonGeoPointList!=null&&!polygonGeoPointList.isEmpty()){
+                if (polygonGeoPointList != null && polygonGeoPointList.size() >= 3) {
+                    if (polygonGeoPointList != null && !polygonGeoPointList.isEmpty()) {
                         multiPolygonLayer.addPolygonDrawable(polygonGeoPointList);
                     }
                     mMap.updateMap(true);
 
-                    DrawPointLinePolygonEntity polygonEntity=new DrawPointLinePolygonEntity();
+                    DrawPointLinePolygonEntity polygonEntity = new DrawPointLinePolygonEntity();
                     polygonEntity.setGeometry(GeometryTools.getPolygonString(polygonGeoPointList));
                     DrawPointLinePolygonDialog.getInstance(getActivity()).showDialog(BaseDrawFragment.DRAW_STATE.DRAW_POLYGON, polygonEntity);
                 }
                 break;
             case SystemConstant.MSG_WHAT_DELETE_DRAW_DATA:
-                if (msg.obj!=null){
-                   Geometry removeGeometry = GeometryTools.createGeometry(msg.obj.toString());
-                   if (GeometryTools.POINT_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
-                       DrawLayerUtils.getInstance().removeItemFromList(GeometryTools.createGeoPoint(msg.obj.toString()),markerLayer.getItemList());
-                       markerLayer.populate();
-                       markerLayer.update();
-                   } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
+                if (msg.obj != null) {
+                    Geometry removeGeometry = GeometryTools.createGeometry(msg.obj.toString());
+                    if (GeometryTools.POINT_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())) {
+                        DrawLayerUtils.getInstance().removeItemFromList(GeometryTools.createGeoPoint(msg.obj.toString()), markerLayer.getItemList());
+                        markerLayer.populate();
+                        markerLayer.update();
+                    } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())) {
 //                        DrawLayerUtils.getInstance().removeGeoPointListFromMultiPath(GeometryTools.getGeoPoints(msg.obj.toString()),multiPathLayer.getAllPathGeoPointList());
-                       multiPathLayer.removePathDrawable(msg.obj.toString());
-                       multiPathLayer.update();
-                   } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())){
+                        multiPathLayer.removePathDrawable(msg.obj.toString());
+                        multiPathLayer.update();
+                    } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(removeGeometry.getGeometryType())) {
 //                       DrawLayerUtils.getInstance().removeGeoPointListFromMultiPath(GeometryTools.getGeoPoints(msg.obj.toString()),multiPolygonLayer.getAllPolygonGeoPointList());
-                       multiPolygonLayer.removePolygonDrawable(msg.obj.toString());
-                       multiPolygonLayer.update();
-                   }
-                   mMap.updateMap(true);
+                        multiPolygonLayer.removePolygonDrawable(msg.obj.toString());
+                        multiPolygonLayer.update();
+                    }
+                    mMap.updateMap(true);
                 }
                 break;
             case SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA:
                 redrawUserData();
                 break;
             case TileDownloader.MSG_DOWNLOAD_TILE_FINISH:
-                PolygonLayer drawRectTileLayer= (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
-                if (drawRectTileLayer!=null){
+                PolygonLayer drawRectTileLayer = (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
+                if (drawRectTileLayer != null) {
                     mMap.layers().remove(drawRectTileLayer);
                     mMap.updateMap(true);
                 }
@@ -1579,7 +1577,6 @@ public class CatEyeMainFragment extends BaseFragment {
         }
         super.onDestroyView();
     }
-
 
 
     /**

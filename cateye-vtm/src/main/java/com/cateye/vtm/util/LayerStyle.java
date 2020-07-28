@@ -21,8 +21,9 @@ public class LayerStyle {
     private static MarkerSymbol geoJsonMarkerSymbol;
     private static Style geoJsonLineStyle;
     private static Style geoJsonPolygonStyle;
+
     public static MarkerSymbol getDefaultMarkerSymbol(Context mContext) {
-        if (defaultMarkerSymbol == null){
+        if (defaultMarkerSymbol == null) {
             Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.marker_poi));
             defaultMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
         }
@@ -44,7 +45,7 @@ public class LayerStyle {
         return defaultLineStyle;
     }
 
-    public static Style getDefaultPolygonStyle(){
+    public static Style getDefaultPolygonStyle() {
         if (defaultPolygonStyle == null) {
             defaultPolygonStyle = Style.builder()
                     .stippleColor(Color.RED)
@@ -60,7 +61,7 @@ public class LayerStyle {
     }
 
     public static MarkerSymbol getGeoJsonMarkerSymbol(Context mContext) {
-        if (geoJsonMarkerSymbol == null){
+        if (geoJsonMarkerSymbol == null) {
             Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.geojson_point));
             geoJsonMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
         }
@@ -82,7 +83,7 @@ public class LayerStyle {
         return geoJsonLineStyle;
     }
 
-    public static Style getGeoJsonPolygonStyle(){
+    public static Style getGeoJsonPolygonStyle() {
         if (geoJsonPolygonStyle == null) {
             geoJsonPolygonStyle = Style.builder()
                     .stippleColor(Color.parseColor("#A020F0"))
@@ -98,7 +99,7 @@ public class LayerStyle {
     }
 
     public static MarkerSymbol getHighLightMarkerSymbol(Context mContext) {
-        if (highlightMarkerSymbol == null){
+        if (highlightMarkerSymbol == null) {
             Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.marker_focus));
             highlightMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
         }
@@ -120,7 +121,7 @@ public class LayerStyle {
         return highlightLineStyle;
     }
 
-    public static Style getHighLightPolygonStyle(){
+    public static Style getHighLightPolygonStyle() {
         if (highlightPolygonStyle == null) {
             highlightPolygonStyle = Style.builder()
                     .stippleColor(Color.YELLOW)

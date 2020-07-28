@@ -1,282 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layer_main_cateye_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/layer_main_cateye_main"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <org.oscim.android.MapView
-        android:id="@+id/mapView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+            android:id="@+id/mapView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
 
     <!--用于显示操作工具栏的布局-->
     <RelativeLayout
-        android:id="@+id/layer_main_cateye_fragment_operate"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:id="@+id/layer_main_cateye_fragment_operate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/layer_main_fragment_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/activity_vertical_margin">
+                android:id="@+id/layer_main_fragment_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
 
             <LinearLayout
-                android:id="@+id/layer_main_fragment_center_bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal">
+                    android:id="@+id/layer_main_fragment_center_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/img_map_source_select"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/main_fragment_menu_style"
-                    android:drawableTop="@drawable/selector_map_add"
-                    android:text="图层管理" />
+                        android:id="@+id/img_map_source_select"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/main_fragment_menu_style"
+                        android:drawableTop="@drawable/selector_map_add"
+                        android:text="图层管理"/>
 
                 <LinearLayout
-                    android:id="@+id/layer_main_cateye_operate_main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/chk_draw_vector_point"
+                        android:id="@+id/layer_main_cateye_operate_main"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_vector_point"
-                        android:text=" 绘制点 " />
-
+                        android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/chk_draw_vector_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_vector_polyline"
-                        android:text=" 绘制线 " />
+                            android:id="@+id/chk_draw_vector_point"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_vector_point"
+                            android:text=" 绘制点 "/>
 
 
                     <TextView
-                        android:id="@+id/chk_draw_vector_polygon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_vector_polygon"
-                        android:text=" 绘制面 " />
+                            android:id="@+id/chk_draw_vector_line"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_vector_polyline"
+                            android:text=" 绘制线 "/>
+
 
                     <TextView
-                        android:id="@+id/img_contour_select"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_contour_line"
-                        android:text="等高线" />
+                            android:id="@+id/chk_draw_vector_polygon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_vector_polygon"
+                            android:text=" 绘制面 "/>
 
                     <TextView
-                        android:id="@+id/img_download_tile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_tile_download"
-                        android:text="缓存地图" />
+                            android:id="@+id/img_contour_select"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_contour_line"
+                            android:text="等高线"/>
 
                     <TextView
-                        android:id="@+id/img_trail_record"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_travel_record"
-                        android:text="轨迹列表" />
+                            android:id="@+id/img_download_tile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_tile_download"
+                            android:text="缓存地图"/>
 
                     <TextView
-                        android:id="@+id/img_draw_record"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_draw_list"
-                        android:text="绘制列表" />
+                            android:id="@+id/img_trail_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_travel_record"
+                            android:text="轨迹列表"/>
+
+                    <TextView
+                            android:id="@+id/img_draw_record"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_draw_list"
+                            android:text="绘制列表"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/layer_main_cateye_operate_contour"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/img_change_contour_color"
+                        android:id="@+id/layer_main_cateye_operate_contour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_vector_polyline"
-                        android:text="等高线色"
-                        android:visibility="gone" />
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                    <TextView
+                            android:id="@+id/img_change_contour_color"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_vector_polyline"
+                            android:text="等高线色"
+                            android:visibility="gone"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/layer_main_cateye_operate_airplan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/chk_draw_airplan"
+                        android:id="@+id/layer_main_cateye_operate_airplan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_air_plan_draw"
-                        android:text="航线绘制" />
+                        android:visibility="gone"
+                        android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/chk_set_airplan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_air_plan_set"
-                        android:text="航线设置" />
+                            android:id="@+id/chk_draw_airplan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_air_plan_draw"
+                            android:text="航线绘制"/>
 
-                    <!--保存航区绘制内容按钮-->
                     <TextView
-                        android:id="@+id/img_save_airplan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_save"
-                        android:text="保存航线" />
+                            android:id="@+id/chk_set_airplan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_air_plan_set"
+                            android:text="航线设置"/>
 
                     <!--保存航区绘制内容按钮-->
                     <TextView
-                        android:id="@+id/img_open_airplan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/button_padding_default"
-                        style="@style/main_fragment_menu_style"
-                        android:drawableTop="@drawable/selector_air_plan_open"
-                        android:text="查看航线" />
+                            android:id="@+id/img_save_airplan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_save"
+                            android:text="保存航线"/>
+
+                    <!--保存航区绘制内容按钮-->
+                    <TextView
+                            android:id="@+id/img_open_airplan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/button_padding_default"
+                            style="@style/main_fragment_menu_style"
+                            android:drawableTop="@drawable/selector_air_plan_open"
+                            android:text="查看航线"/>
                 </LinearLayout>
 
             </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/layer_main_fragment_left"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_above="@id/layer_main_fragment_bottom"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin">
+                android:id="@+id/layer_main_fragment_left"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_above="@id/layer_main_fragment_bottom"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
 
             <ImageView
-                android:id="@+id/img_exit_app"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/default_padding_side"
-                android:padding="@dimen/button_padding_default"
-                android:src="@drawable/selector_exit_app" />
-
-
-            <LinearLayout
-                android:id="@+id/layer_main_fragment_left_bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_switch_track"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/selector_travel_location"
-                    style="@style/main_fragment_menu_style"
-                    android:layout_marginBottom="@dimen/button_padding_default"
-                    android:text="采集轨迹"/>
-
-                <TextView
-                    android:id="@+id/img_project"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/button_padding_default"
-                    style="@style/main_fragment_menu_style"
-                    android:text="项目管理"
-                    android:drawableTop="@drawable/selector_icon_project" />
-
-                <ImageView
-                    android:id="@+id/img_location"
+                    android:id="@+id/img_exit_app"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
                     android:clickable="true"
                     android:focusable="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/default_padding_side"
                     android:padding="@dimen/button_padding_default"
-                    android:src="@drawable/selector_icon_location" />
+                    android:src="@drawable/selector_exit_app"/>
+
+
+            <LinearLayout
+                    android:id="@+id/layer_main_fragment_left_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/tv_switch_track"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/selector_travel_location"
+                        style="@style/main_fragment_menu_style"
+                        android:layout_marginBottom="@dimen/button_padding_default"
+                        android:text="采集轨迹"/>
+
+                <TextView
+                        android:id="@+id/img_project"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/button_padding_default"
+                        style="@style/main_fragment_menu_style"
+                        android:text="项目管理"
+                        android:drawableTop="@drawable/selector_icon_project"/>
+
+                <ImageView
+                        android:id="@+id/img_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/button_padding_default"
+                        android:src="@drawable/selector_icon_location"/>
 
             </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/layer_main_fragment_right"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_above="@id/layer_main_fragment_bottom"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/default_slider_height"
-            android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:id="@+id/layer_main_fragment_right"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_above="@id/layer_main_fragment_bottom"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/default_slider_height"
+                android:layout_marginRight="@dimen/activity_horizontal_margin">
 
             <LinearLayout
-                android:id="@+id/layer_main_fragment_right_bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical">
+                    android:id="@+id/layer_main_fragment_right_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
 
             </LinearLayout>
         </RelativeLayout>
 
         <!--用来显示fragment的布局文件,底部-->
         <FrameLayout
-            android:id="@+id/layer_main_cateye_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/layer_main_fragment_left"
-            android:layout_margin="@dimen/button_padding_default"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:layout_gravity="bottom"></FrameLayout>
+                android:id="@+id/layer_main_cateye_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/layer_main_fragment_left"
+                android:layout_margin="@dimen/button_padding_default"
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_gravity="bottom"></FrameLayout>
         <!--用来显示fragment的布局文件,头部-->
         <FrameLayout
-            android:id="@+id/layer_main_cateye_top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/layer_main_fragment_left"
-            android:layout_marginRight="@dimen/button_padding_default"
-            android:layout_gravity="top"></FrameLayout>
+                android:id="@+id/layer_main_cateye_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/layer_main_fragment_left"
+                android:layout_marginRight="@dimen/button_padding_default"
+                android:layout_gravity="top"></FrameLayout>
     </RelativeLayout>
 
 </FrameLayout>

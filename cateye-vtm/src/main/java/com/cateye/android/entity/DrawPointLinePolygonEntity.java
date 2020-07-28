@@ -67,12 +67,12 @@ public class DrawPointLinePolygonEntity {
 
     public List<String> getImgUrlList() {
         List<String> imgArrayList = new ArrayList<>();
-        if (getImgUrlListStr()!=null&&getImgUrlListStr().length()>0) {
-            if (getImgUrlListStr().contains(";")){
-                for (String imgUrl:getImgUrlListStr().split(";")) {
+        if (getImgUrlListStr() != null && getImgUrlListStr().length() > 0) {
+            if (getImgUrlListStr().contains(";")) {
+                for (String imgUrl : getImgUrlListStr().split(";")) {
                     imgArrayList.add(imgUrl);
                 }
-            }else {
+            } else {
                 imgArrayList.add(getImgUrlListStr());
             }
             return imgArrayList;
@@ -81,14 +81,14 @@ public class DrawPointLinePolygonEntity {
     }
 
     public void setImgUrlList(List<String> imgUrlList) {
-        if (imgUrlList!=null&&!imgUrlList.isEmpty()){
-            StringBuilder sb=new StringBuilder("");
-            for (String img: imgUrlList){
+        if (imgUrlList != null && !imgUrlList.isEmpty()) {
+            StringBuilder sb = new StringBuilder("");
+            for (String img : imgUrlList) {
                 sb.append(img);
                 sb.append(";");
             }
-            this.setImgUrlListStr(sb.toString().substring(0,sb.length()-1));
-        }else {
+            this.setImgUrlListStr(sb.toString().substring(0, sb.length() - 1));
+        } else {
             this.imgUrlListStr = null;
         }
         this.isUpload = false; // 用户修改照片数据，则数据被修改，将当前数据状态重置为未上传

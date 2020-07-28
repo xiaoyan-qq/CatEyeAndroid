@@ -50,8 +50,8 @@ public class DrawPointLinePolygonDialog {
     private Context mContext;
     private static DrawPointLinePolygonDialog instance;
 
-    private BootstrapEditText edt_name,edt_remark;
-    private BootstrapButton btn_save,btn_cancel;
+    private BootstrapEditText edt_name, edt_remark;
+    private BootstrapButton btn_save, btn_cancel;
     private RecyclerView rcv_img;
     private View layer_photo;
     private ImgRecycleAdapter recycleAdapter;
@@ -64,24 +64,24 @@ public class DrawPointLinePolygonDialog {
         this.mContext = mContext;
         this.currentDialog = new RxDialog(mContext);
         this.currentDialog.setContentView(R.layout.dialog_draw_point_line_polygon_info);
-        this.layer_photo=this.currentDialog.findViewById(R.id.draw_photo_layer);
+        this.layer_photo = this.currentDialog.findViewById(R.id.draw_photo_layer);
         this.edt_name = this.currentDialog.findViewById(R.id.edt_name);
         this.edt_remark = this.currentDialog.findViewById(R.id.edt_remark);
         this.btn_addImg = this.currentDialog.findViewById(R.id.btn_addImg);
-        this.rcv_img=this.currentDialog.findViewById(R.id.rcv_img);
-        this.btn_save=this.currentDialog.findViewById(R.id.btn_save);
-        this.btn_cancel=this.currentDialog.findViewById(R.id.btn_cancel);
+        this.rcv_img = this.currentDialog.findViewById(R.id.rcv_img);
+        this.btn_save = this.currentDialog.findViewById(R.id.btn_save);
+        this.btn_cancel = this.currentDialog.findViewById(R.id.btn_cancel);
 
         this.imgUrlList = new ArrayList<>();
-        this.recycleAdapter = new ImgRecycleAdapter(this.mContext,imgUrlList);
+        this.recycleAdapter = new ImgRecycleAdapter(this.mContext, imgUrlList);
         this.rcv_img.setAdapter(this.recycleAdapter);
-        RecyclerView.LayoutManager gridLayoutManager=new GridLayoutManager(this.mContext,3,GridLayoutManager.VERTICAL,false);
+        RecyclerView.LayoutManager gridLayoutManager = new GridLayoutManager(this.mContext, 3, GridLayoutManager.VERTICAL, false);
         this.rcv_img.setLayoutManager(gridLayoutManager);
         this.imageOptions = new ImageOptions.Builder().setFailureDrawableId(R.drawable.ic_launcher).setFadeIn(true).setForceLoadingDrawable(true).setImageScaleType(ImageView.ScaleType.FIT_CENTER).setUseMemCache(true).build();
     }
 
-    public static DrawPointLinePolygonDialog getInstance(Context mContext){
-        if (instance==null){
+    public static DrawPointLinePolygonDialog getInstance(Context mContext) {
+        if (instance == null) {
             instance = new DrawPointLinePolygonDialog();
         }
         instance.mContext = mContext;
@@ -89,30 +89,30 @@ public class DrawPointLinePolygonDialog {
         return instance;
     }
 
-    public void showDialog(BaseDrawFragment.DRAW_STATE draw_state, DrawPointLinePolygonEntity entity){
+    public void showDialog(BaseDrawFragment.DRAW_STATE draw_state, DrawPointLinePolygonEntity entity) {
         this.currentEntity = entity;
-        if (draw_state == BaseDrawFragment.DRAW_STATE.DRAW_POINT){
+        if (draw_state == BaseDrawFragment.DRAW_STATE.DRAW_POINT) {
             this.layer_photo.setVisibility(View.VISIBLE);
             this.btn_addImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (instance.imgUrlList!=null && instance.imgUrlList.size() >= 9){
+                    if (instance.imgUrlList != null && instance.imgUrlList.size() >= 9) {
                         return;
                     }
-                    RxPhotoTool.openCameraImage((MainActivity)mContext);
+                    RxPhotoTool.openCameraImage((MainActivity) mContext);
                 }
             });
-        }else {
+        } else {
             this.layer_photo.setVisibility(View.GONE);
         }
 
-        if (!EventBus.getDefault().isRegistered(instance)){
+        if (!EventBus.getDefault().isRegistered(instance)) {
             EventBus.getDefault().register(instance);
         }
         this.currentDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if (EventBus.getDefault().isRegistered(instance)){
+                if (EventBus.getDefault().isRegistered(instance)) {
                     EventBus.getDefault().unregister(instance);
                 }
             }
@@ -122,10 +122,10 @@ public class DrawPointLinePolygonDialog {
             @Override
             public void onClick(View v) {
                 DrawPointLinePolygonDialog.this.currentDialog.dismiss();
-                if (instance.currentEntity!=null&&instance.currentEntity.getGeometry()!=null&&instance.currentEntity.get_id() == null /*id为null，说明是新增过程*/){
+                if (instance.currentEntity != null && instance.currentEntity.getGeometry() != null && instance.currentEntity.get_id() == null /*id为null，说明是新增过程*/) {
                     // 通知主界面，从地图上删除指定的元素
                     Message msg = Message.obtain();
-                    msg.what= SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
+                    msg.what = SystemConstant.MSG_WHAT_DELETE_DRAW_DATA;
                     msg.obj = instance.currentEntity.getGeometry();
                     EventBus.getDefault().post(msg);
                 }
@@ -140,22 +140,22 @@ public class DrawPointLinePolygonDialog {
                     return;
                 }
                 if (instance.currentEntity == null) {
-                    instance.currentEntity=new DrawPointLinePolygonEntity();
+                    instance.currentEntity = new DrawPointLinePolygonEntity();
                 }
-                if (instance.currentEntity.get_id() == null){
-                    instance.currentEntity.set_id(UUID.randomUUID().toString().replace("-",""));
+                if (instance.currentEntity.get_id() == null) {
+                    instance.currentEntity.set_id(UUID.randomUUID().toString().replace("-", ""));
                 }
                 instance.currentEntity.setName(edt_name.getText().toString().trim());
                 instance.currentEntity.setRemark(edt_remark.getText().toString().trim());
                 instance.currentEntity.setProjectId(SystemConstant.CURRENT_PROJECTS_ID);
-                if (instance.rcv_img.isShown()){
+                if (instance.rcv_img.isShown()) {
                     instance.currentEntity.setImgUrlList(DrawPointLinePolygonDialog.this.imgUrlList);
-                }else {
+                } else {
                     instance.currentEntity.setImgUrlList(null);
                 }
                 instance.currentEntity.setUserName(RxSPTool.getContent(mContext, SystemConstant.SP_LOGIN_USERNAME));
                 try {
-                    ((MainActivity)mContext).getDbManager().saveOrUpdate(instance.currentEntity);
+                    ((MainActivity) mContext).getDbManager().saveOrUpdate(instance.currentEntity);
                     // 保存当前用户填写的信息
                     DrawPointLinePolygonDialog.this.currentDialog.dismiss();
                     RxToast.info("保存成功");
@@ -166,15 +166,15 @@ public class DrawPointLinePolygonDialog {
             }
         });
 
-        if (entity!=null){
+        if (entity != null) {
             if (!RxDataTool.isNullString(entity.getName())) {
                 edt_name.setText(entity.getName());
             }
             if (!RxDataTool.isNullString(entity.getRemark())) {
                 edt_remark.setText(entity.getRemark());
             }
-            if (entity.getImgUrlList()!=null&&!entity.getImgUrlList().isEmpty()){
-                for (String imgUrl:entity.getImgUrlList()) {
+            if (entity.getImgUrlList() != null && !entity.getImgUrlList().isEmpty()) {
+                for (String imgUrl : entity.getImgUrlList()) {
                     this.imgUrlList.add(imgUrl);
                 }
                 this.recycleAdapter.notifyDataSetChanged();
@@ -183,18 +183,18 @@ public class DrawPointLinePolygonDialog {
         this.currentDialog.show();
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder{
+    private class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
         public ImageView img_delete;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            img=itemView.findViewById(R.id.img_draw_photo);
-            img_delete=itemView.findViewById(R.id.img_delete);
+            img = itemView.findViewById(R.id.img_draw_photo);
+            img_delete = itemView.findViewById(R.id.img_delete);
         }
     }
 
-    private class ImgRecycleAdapter extends RecyclerView.Adapter<ViewHolder>{
+    private class ImgRecycleAdapter extends RecyclerView.Adapter<ViewHolder> {
         private Context mContext;
         private List<String> imgUrlList;
 
@@ -206,23 +206,23 @@ public class DrawPointLinePolygonDialog {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View imgViewHolder = LayoutInflater.from(this.mContext).inflate(R.layout.item_draw_photo, null);
-            ViewHolder vh=new ViewHolder(imgViewHolder);
+            ViewHolder vh = new ViewHolder(imgViewHolder);
             return vh;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder,final int position) {
-            x.image().bind(holder.img, imgUrlList.get(position),DrawPointLinePolygonDialog.this.imageOptions);
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            x.image().bind(holder.img, imgUrlList.get(position), DrawPointLinePolygonDialog.this.imageOptions);
             holder.img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Uri imgUri = null;
-                    if (!imgUrlList.get(position).startsWith("http")){
-                        imgUri=RxFileTool.getUriForFile(mContext,new File(imgUrlList.get(position)));
+                    if (!imgUrlList.get(position).startsWith("http")) {
+                        imgUri = RxFileTool.getUriForFile(mContext, new File(imgUrlList.get(position)));
                     } else {
-                        imgUri=Uri.parse(imgUrlList.get(position));
+                        imgUri = Uri.parse(imgUrlList.get(position));
                     }
-                    RxDialogScaleView imgDialog = new RxDialogScaleView(mContext,imgUri);
+                    RxDialogScaleView imgDialog = new RxDialogScaleView(mContext, imgUri);
                     imgDialog.show();
                 }
             });
@@ -244,11 +244,11 @@ public class DrawPointLinePolygonDialog {
                         public void onClick(View v) {
                             confirmDialog.dismiss();
 
-                            if (!imgUrlList.get(position).startsWith("http")){
+                            if (!imgUrlList.get(position).startsWith("http")) {
 //                                boolean deleteResult=RxFileTool.deleteFile(imgUrlList.get(position));
 //                                if (deleteResult){
-                                    imgUrlList.remove(position);
-                                    ImgRecycleAdapter.this.notifyDataSetChanged();
+                                imgUrlList.remove(position);
+                                ImgRecycleAdapter.this.notifyDataSetChanged();
 //                                }else {
 //                                    RxToast.error("删除失败，请重试!");
 //                                }
@@ -262,7 +262,7 @@ public class DrawPointLinePolygonDialog {
 
         @Override
         public int getItemCount() {
-            if (imgUrlList!=null){
+            if (imgUrlList != null) {
                 return imgUrlList.size();
             }
             return 0;
@@ -273,7 +273,7 @@ public class DrawPointLinePolygonDialog {
     public void onEventMainThread(Message msg) {
         switch (msg.what) {
             case SystemConstant.MSG_WHAT_DRAW_PHOTO_FINISH:
-                if (msg.obj!=null&&this.currentDialog!=null&&this.currentDialog.isShowing()){
+                if (msg.obj != null && this.currentDialog != null && this.currentDialog.isShowing()) {
                     this.imgUrlList.add((String) msg.obj);
                     this.recycleAdapter.notifyDataSetChanged();
                 }

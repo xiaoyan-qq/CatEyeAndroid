@@ -1,317 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/CardView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/button_padding_default">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/CardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/button_padding_default">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@color/bootstrap_gray_lighter"
-        android:padding="@dimen/button_padding_default">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/bootstrap_gray_lighter"
+            android:padding="@dimen/button_padding_default">
 
         <android.support.constraint.Guideline
-            android:id="@+id/guide_mid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
-
-        <LinearLayout
-            android:id="@+id/layer_air_plan_camera_set"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/whitesmoke"
-            android:orientation="vertical"
-            android:padding="@dimen/bootstrap_badge_default_size"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/guide_mid">
-
-            <com.beardedhen.androidbootstrap.BootstrapLabel
+                android:id="@+id/guide_mid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="相机设置"
-                app:bootstrapHeading="h5"
-                app:roundedCorners="true" />
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5"/>
+
+        <LinearLayout
+                android:id="@+id/layer_air_plan_camera_set"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/whitesmoke"
+                android:orientation="vertical"
+                android:padding="@dimen/bootstrap_badge_default_size"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/guide_mid">
+
+            <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="相机设置"
+                    app:bootstrapHeading="h5"
+                    app:roundedCorners="true"/>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_F"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_F"
+                    android:id="@+id/til_F"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="焦距"
-                    android:inputType="number"
-                    android:text="55"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_F"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="焦距"
+                        android:inputType="number"
+                        android:text="55"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_PicHeight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_picHeight"
+                    android:id="@+id/til_PicHeight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="相片高"
-                    android:inputType="number"
-                    android:text="7760"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_picHeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="相片高"
+                        android:inputType="number"
+                        android:text="7760"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_picWidth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_picWidth"
+                    android:id="@+id/til_picWidth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="相片宽"
-                    android:inputType="number"
-                    android:text="10328"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_picWidth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="相片宽"
+                        android:inputType="number"
+                        android:text="10328"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_pixelSize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_pixelSize"
+                    android:id="@+id/til_pixelSize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="相元大小"
-                    android:inputType="number|numberDecimal"
-                    android:text="5.2"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_pixelSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="相元大小"
+                        android:inputType="number|numberDecimal"
+                        android:text="5.2"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layer_air_plan_user_set"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/button_padding_default"
-            android:background="@color/whitesmoke"
-            android:orientation="vertical"
-            android:padding="@dimen/bootstrap_badge_default_size"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintLeft_toRightOf="@id/guide_mid"
-            app:layout_constraintRight_toRightOf="parent">
+                android:id="@+id/layer_air_plan_user_set"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/button_padding_default"
+                android:background="@color/whitesmoke"
+                android:orientation="vertical"
+                android:padding="@dimen/bootstrap_badge_default_size"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@id/guide_mid"
+                app:layout_constraintRight_toRightOf="parent">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="自定义设置"
-                app:bootstrapHeading="h5"
-                app:roundedCorners="true" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="自定义设置"
+                    app:bootstrapHeading="h5"
+                    app:roundedCorners="true"/>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_ratio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_ratio"
+                    android:id="@+id/til_ratio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="地面分辨率"
-                    android:inputType="number|numberDecimal"
-                    android:text="0.1"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_ratio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="地面分辨率"
+                        android:inputType="number|numberDecimal"
+                        android:text="0.1"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_overlap"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_overlap"
+                    android:id="@+id/til_overlap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="航向重叠率"
-                    android:inputType="number|numberDecimal"
-                    android:text="30"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_overlap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="航向重叠率"
+                        android:inputType="number|numberDecimal"
+                        android:text="30"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_overlap_crossStrip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_overlap_crossStrip"
+                    android:id="@+id/til_overlap_crossStrip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="旁向重叠率"
-                    android:inputType="number|numberDecimal"
-                    android:text="70"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_overlap_crossStrip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="旁向重叠率"
+                        android:inputType="number|numberDecimal"
+                        android:text="70"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_guidePointDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_guidePointDistance"
+                    android:id="@+id/til_guidePointDistance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="引导点距离"
-                    android:inputType="number"
-                    android:text="100"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_guidePointDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="引导点距离"
+                        android:inputType="number"
+                        android:text="100"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_RedudantBaselines"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_RedudantBaselines"
+                    android:id="@+id/til_RedudantBaselines"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="冗余基数"
-                    android:inputType="number"
-                    android:text="0"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_RedudantBaselines"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="冗余基数"
+                        android:inputType="number"
+                        android:text="0"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layer_air_plan_altitude_set"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/button_padding_default"
-            android:layout_marginTop="@dimen/button_padding_default"
-            android:background="@color/whitesmoke"
-            android:orientation="vertical"
-            android:padding="@dimen/bootstrap_badge_default_size"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/guide_mid"
-            app:layout_constraintTop_toBottomOf="@id/layer_air_plan_user_set">
+                android:id="@+id/layer_air_plan_altitude_set"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/button_padding_default"
+                android:layout_marginTop="@dimen/button_padding_default"
+                android:background="@color/whitesmoke"
+                android:orientation="vertical"
+                android:padding="@dimen/bootstrap_badge_default_size"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/guide_mid"
+                app:layout_constraintTop_toBottomOf="@id/layer_air_plan_user_set">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="地形设置"
-                app:bootstrapHeading="h5"
-                app:roundedCorners="true" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地形设置"
+                    app:bootstrapHeading="h5"
+                    app:roundedCorners="true"/>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_overlap_base_altitude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_base_altitude"
+                    android:id="@+id/til_overlap_base_altitude"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="基准面高度"
-                    android:inputType="number|numberDecimal"
-                    android:text="800"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_base_altitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="基准面高度"
+                        android:inputType="number|numberDecimal"
+                        android:text="800"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/button_padding_default"
-                android:text="@string/airplan_fly_set_base_altitude_tips" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/button_padding_default"
+                    android:text="@string/airplan_fly_set_base_altitude_tips"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layer_air_plan_save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/button_padding_default"
-            android:background="@color/whitesmoke"
-            android:orientation="vertical"
-            android:padding="@dimen/bootstrap_badge_default_size"
-            android:layout_marginTop="@dimen/button_padding_default"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintLeft_toRightOf="@+id/guide_mid"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layer_air_plan_user_set">
+                android:id="@+id/layer_air_plan_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/button_padding_default"
+                android:background="@color/whitesmoke"
+                android:orientation="vertical"
+                android:padding="@dimen/bootstrap_badge_default_size"
+                android:layout_marginTop="@dimen/button_padding_default"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@+id/guide_mid"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layer_air_plan_user_set">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="输出文件"
-                app:bootstrapHeading="h5"
-                app:roundedCorners="true" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="输出文件"
+                    app:bootstrapHeading="h5"
+                    app:roundedCorners="true"/>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_save_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/button_padding_default">
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/edt_air_plan_save_name"
+                    android:id="@+id/til_save_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="保存名称"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="true" />
+                    android:padding="@dimen/button_padding_default">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/edt_air_plan_save_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="保存名称"
+                        app:bootstrapSize="md"
+                        app:roundedCorners="true"/>
 
             </android.support.design.widget.TextInputLayout>
 

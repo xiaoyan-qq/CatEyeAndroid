@@ -9,52 +9,50 @@
 package org.gdal.osr;
 
 public class osr implements osrConstants {
-  public static void UseExceptions() {
-    osrJNI.UseExceptions();
-  }
+    public static void UseExceptions() {
+        osrJNI.UseExceptions();
+    }
 
-  public static void DontUseExceptions() {
-    osrJNI.DontUseExceptions();
-  }
-
+    public static void DontUseExceptions() {
+        osrJNI.DontUseExceptions();
+    }
 
 
     /* Uninstanciable class */
-    private osr()
-    {
+    private osr() {
     }
 
-  public static String GetWellKnownGeogCSAsWKT(String name) {
-    return osrJNI.GetWellKnownGeogCSAsWKT__SWIG_0(name);
-  }
+    public static String GetWellKnownGeogCSAsWKT(String name) {
+        return osrJNI.GetWellKnownGeogCSAsWKT__SWIG_0(name);
+    }
 
-  public static String GetUserInputAsWKT(String name) {
-    return osrJNI.GetUserInputAsWKT__SWIG_0(name);
-  }
+    public static String GetUserInputAsWKT(String name) {
+        return osrJNI.GetUserInputAsWKT__SWIG_0(name);
+    }
 
-  public static int GetWellKnownGeogCSAsWKT(String name, String[] argout) {
-    return osrJNI.GetWellKnownGeogCSAsWKT__SWIG_1(name, argout);
-  }
+    public static int GetWellKnownGeogCSAsWKT(String name, String[] argout) {
+        return osrJNI.GetWellKnownGeogCSAsWKT__SWIG_1(name, argout);
+    }
 
-  public static int GetUserInputAsWKT(String name, String[] argout) {
-    return osrJNI.GetUserInputAsWKT__SWIG_1(name, argout);
-  }
+    public static int GetUserInputAsWKT(String name, String[] argout) {
+        return osrJNI.GetUserInputAsWKT__SWIG_1(name, argout);
+    }
 
-  public static java.util.Vector GetProjectionMethods() {
-    return osrJNI.GetProjectionMethods();
-  }
+    public static java.util.Vector GetProjectionMethods() {
+        return osrJNI.GetProjectionMethods();
+    }
 
-  public static String[] GetProjectionMethodParameterList(String method, String[] username) {
-    return osrJNI.GetProjectionMethodParameterList(method, username);
-  }
+    public static String[] GetProjectionMethodParameterList(String method, String[] username) {
+        return osrJNI.GetProjectionMethodParameterList(method, username);
+    }
 
-  public static void GetProjectionMethodParamInfo(String method, String param, String[] usrname, String[] type, double[] defaultval) {
-    osrJNI.GetProjectionMethodParamInfo(method, param, usrname, type, defaultval);
-  }
+    public static void GetProjectionMethodParamInfo(String method, String param, String[] usrname, String[] type, double[] defaultval) {
+        osrJNI.GetProjectionMethodParamInfo(method, param, usrname, type, defaultval);
+    }
 
-  public static CoordinateTransformation CreateCoordinateTransformation(SpatialReference src, SpatialReference dst) {
-    long cPtr = osrJNI.CreateCoordinateTransformation(SpatialReference.getCPtr(src), src, SpatialReference.getCPtr(dst), dst);
-    return (cPtr == 0) ? null : new CoordinateTransformation(cPtr, true);
-  }
+    public static CoordinateTransformation CreateCoordinateTransformation(SpatialReference src, SpatialReference dst) {
+        long cPtr = osrJNI.CreateCoordinateTransformation(SpatialReference.getCPtr(src), src, SpatialReference.getCPtr(dst), dst);
+        return (cPtr == 0) ? null : new CoordinateTransformation(cPtr, true);
+    }
 
 }

@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
-        android:id="@+id/styles"
-        android:checkableBehavior="single">
+            android:id="@+id/styles"
+            android:checkableBehavior="single">
         <item
-            android:id="@+id/style_1"
-            android:checked="true"
-            android:title="@string/style_1" />
+                android:id="@+id/style_1"
+                android:checked="true"
+                android:title="@string/style_1"/>
         <item
-            android:id="@+id/style_2"
-            android:title="@string/style_2" />
+                android:id="@+id/style_2"
+                android:title="@string/style_2"/>
     </group>
 
 </menu>

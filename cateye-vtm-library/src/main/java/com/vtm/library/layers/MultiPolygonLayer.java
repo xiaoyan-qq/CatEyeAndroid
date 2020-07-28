@@ -161,7 +161,7 @@ public class MultiPolygonLayer extends PathLayer {
         this.polygonDrawableList = polygonDrawableList;
     }
 
-    public void removeAllPathDrawable(){
+    public void removeAllPathDrawable() {
         if (polygonDrawableList != null && !polygonDrawableList.isEmpty()) {
             Iterator iterator = polygonDrawableList.iterator();
             while (iterator.hasNext()) {

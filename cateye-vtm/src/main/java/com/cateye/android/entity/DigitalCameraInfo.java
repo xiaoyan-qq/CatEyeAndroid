@@ -5,11 +5,11 @@ package com.cateye.android.entity;
  */
 
 public class DigitalCameraInfo {
-    private double x0,y0;					//主点坐标为主点的像素坐标
-    private double f;						//focus length, mm
+    private double x0, y0;                    //主点坐标为主点的像素坐标
+    private double f;                        //focus length, mm
     private double pixelsize;               //像素（象元）大小，mm
-    private long   height;                  //height, in pixels
-    private long   width;                   //width , in pixels
+    private long height;                  //height, in pixels
+    private long width;                   //width , in pixels
 
     public double getX0() {
         return x0;

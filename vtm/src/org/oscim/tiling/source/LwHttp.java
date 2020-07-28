@@ -279,7 +279,7 @@ public class LwHttp implements HttpEngine {
                 (len = is.read(buf, read, BUFFER_SIZE - read)) >= 0); len = 0) {
 
             read += len;
-            String bufStr=new String(buf);
+            String bufStr = new String(buf);
             /* end of header lines */
             while (end < read && (buf[end] != '\n'))
                 end++;
@@ -372,9 +372,9 @@ public class LwHttp implements HttpEngine {
         System.arraycopy(REQUEST_GET_END, 0, mRequestBuffer, pos, len);
         len += pos;
 
-        if (dbg){
+        if (dbg) {
             log.debug("request: {}", new String(mRequestBuffer, 0, len));
-            System.out.println("request: {}"+new String(mRequestBuffer, 0, len));
+            System.out.println("request: {}" + new String(mRequestBuffer, 0, len));
         }
 
 

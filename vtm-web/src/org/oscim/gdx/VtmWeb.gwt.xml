@@ -2,7 +2,7 @@
 <module>
     <!-- <entry-point class="org.oscim.gdx.client.GwtLauncher" /> -->
 
-    <inherits name="com.google.gwt.xml.XML" />
+    <inherits name="com.google.gwt.xml.XML"/>
 
     <!--   <set-property name='gwt.logging.enabled' value='TRUE' />
       <set-property name='gwt.logging.consoleHandler' value='ENABLED' />
@@ -10,12 +10,12 @@
       <set-property name='gwt.logging.popupHandler' value='DISABLED' />
       <set-property name="gwt.logging.logLevel" value="FINE"/>
      -->
-    <inherits name="VtmGdx" />
+    <inherits name="VtmGdx"/>
     <!-- <inherits name="com.badlogic.gdx.backends.gdx_backends_gwt" /> -->
-    <inherits name="com.badlogic.gdx.backends.Gdx" />
-    <inherits name="com.google.gwt.user.theme.chrome.Chrome" />
+    <inherits name="com.badlogic.gdx.backends.Gdx"/>
+    <inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
 
-    <clear-configuration-property name="gdx.reflect.include" />
+    <clear-configuration-property name="gdx.reflect.include"/>
     <!--   <extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.scenes.scene2d" />
       <extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.math" />
       <extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.graphics.g2d.TextureRegion" />
@@ -32,24 +32,24 @@
      -->
 
     <extend-configuration-property name="gdx.reflect.include"
-        value="com.badlogic.gdx.graphics.VertexAttribute" />
+                                   value="com.badlogic.gdx.graphics.VertexAttribute"/>
     <extend-configuration-property name="gdx.reflect.include"
-        value="com.badlogic.gdx.graphics.g3d.model" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.util.List" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.util.ArrayList" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.util.Map" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.util.HashMap" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.String" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Boolean" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Byte" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Short" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Character" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Integer" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Float" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Double" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.CharSequence" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Enum" />
-    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Object" />
+                                   value="com.badlogic.gdx.graphics.g3d.model"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.util.List"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.util.ArrayList"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.util.Map"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.util.HashMap"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.String"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Boolean"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Byte"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Short"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Character"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Integer"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Float"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Double"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.CharSequence"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Enum"/>
+    <extend-configuration-property name="gdx.reflect.include" value="java.lang.Object"/>
 
     <!-- super dev mode -->
     <!--
@@ -64,9 +64,9 @@
     <script src="tessellate.js"/>
     -->
 
-    <public path="resources" />
+    <public path="resources"/>
 
-    <super-source path="emu" />
+    <super-source path="emu"/>
 
     <!-- <set-configuration-property name="gdx.assetpath" value="./assets" /> -->
     <!-- for gradle build, commend out for eclipse build/devmode -->

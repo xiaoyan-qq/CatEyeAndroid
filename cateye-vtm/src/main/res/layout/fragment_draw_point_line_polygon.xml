@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="@dimen/button_padding_default">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:padding="@dimen/button_padding_default">
 
     <TextView
-        android:id="@+id/tv_draw_last"
-        style="@style/button_4_radius"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/draw_last_paint" />
+            android:id="@+id/tv_draw_last"
+            style="@style/button_4_radius"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/draw_last_paint"/>
 
     <TextView
-        android:id="@+id/tv_draw_clear"
-        style="@style/button_4_radius"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/button_padding_default"
-        android:layout_marginRight="@dimen/button_padding_default"
-        android:layout_weight="1"
-        android:text="@string/draw_clear_paint" />
+            android:id="@+id/tv_draw_clear"
+            style="@style/button_4_radius"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/button_padding_default"
+            android:layout_marginRight="@dimen/button_padding_default"
+            android:layout_weight="1"
+            android:text="@string/draw_clear_paint"/>
 
     <TextView
-        android:id="@+id/tv_draw_finish"
-        style="@style/button_4_radius"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/draw_finish" />
+            android:id="@+id/tv_draw_finish"
+            style="@style/button_4_radius"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/draw_finish"/>
 </LinearLayout>

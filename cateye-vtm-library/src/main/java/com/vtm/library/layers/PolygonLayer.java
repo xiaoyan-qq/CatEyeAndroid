@@ -87,18 +87,18 @@ public class PolygonLayer extends PathLayer {
     }
 
     /**
+     * @param :
+     * @return :
      * @method : getPolygon
      * @Author : xiaoxiao
      * @Describe : 获取当前polygon的wkt
-     * @param :
-     * @return :
      * @Date : 2018/12/18
-    */
-    public Polygon getPolygon(){
-        if (mPoints==null||mPoints.size()<3){
+     */
+    public Polygon getPolygon() {
+        if (mPoints == null || mPoints.size() < 3) {
             return null;
         }
-        if (mPoints.get(0).distance(mPoints.get(mPoints.size()-1))>0){
+        if (mPoints.get(0).distance(mPoints.get(mPoints.size() - 1)) > 0) {
             mPoints.add(mPoints.get(0));
         }
         return GeometryTools.createPolygon(mPoints);

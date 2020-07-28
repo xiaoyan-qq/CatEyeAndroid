@@ -1,133 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/CardView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/CardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:padding="@dimen/bootstrap_badge_default_size">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:padding="@dimen/bootstrap_badge_default_size">
 
         <LinearLayout
-            style="@style/rowItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                style="@style/rowItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:id="@+id/tv_air_plan_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
-                android:padding="@dimen/button_padding_default"
-                android:text="测区名称"
-                app:bootstrapSize="md" />
+                    android:id="@+id/tv_air_plan_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                    android:padding="@dimen/button_padding_default"
+                    android:text="测区名称"
+                    app:bootstrapSize="md"/>
 
             <com.beardedhen.androidbootstrap.BootstrapEditText
-                android:id="@+id/edt_air_plan_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:bootstrapBrand="info"
-                app:bootstrapSize="md"
-                app:roundedCorners="true" />
+                    android:id="@+id/edt_air_plan_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="info"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"/>
         </LinearLayout>
 
         <LinearLayout
-            style="@style/rowItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                style="@style/rowItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:id="@+id/tv_air_plan_altitude"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
-                android:padding="@dimen/button_padding_default"
-                android:text="海拔高度"
-                app:bootstrapSize="md" />
+                    android:id="@+id/tv_air_plan_altitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                    android:padding="@dimen/button_padding_default"
+                    android:text="海拔高度"
+                    app:bootstrapSize="md"/>
 
             <com.beardedhen.androidbootstrap.BootstrapEditText
-                android:id="@+id/edt_air_plan_altitude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                app:bootstrapSize="md"
-                app:roundedCorners="true" />
+                    android:id="@+id/edt_air_plan_altitude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"/>
         </LinearLayout>
 
         <LinearLayout
-            style="@style/rowItem"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                style="@style/rowItem"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:id="@+id/tv_air_plan_seqnum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
-                android:padding="@dimen/button_padding_default"
-                android:text="测区顺序"
-                app:bootstrapSize="md" />
+                    android:id="@+id/tv_air_plan_seqnum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                    android:padding="@dimen/button_padding_default"
+                    android:text="测区顺序"
+                    app:bootstrapSize="md"/>
 
             <com.beardedhen.androidbootstrap.BootstrapEditText
-                android:id="@+id/edt_air_plan_seqnum"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                app:bootstrapSize="md"
-                app:roundedCorners="true" />
+                    android:id="@+id/edt_air_plan_seqnum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"/>
         </LinearLayout>
 
         <LinearLayout
-            style="@style/rowItem"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content">
+                style="@style/rowItem"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:id="@+id/tv_air_plan_alt_ai"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
-                android:padding="@dimen/button_padding_default"
-                android:text="智能分区"
-                app:bootstrapSize="md" />
+                    android:id="@+id/tv_air_plan_alt_ai"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                    android:padding="@dimen/button_padding_default"
+                    android:text="智能分区"
+                    app:bootstrapSize="md"/>
 
             <com.beardedhen.androidbootstrap.BootstrapEditText
-                android:id="@+id/edt_air_plan_alt_ai"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                app:bootstrapSize="md"
-                app:roundedCorners="true" />
+                    android:id="@+id/edt_air_plan_alt_ai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"/>
         </LinearLayout>
 
         <LinearLayout
-            style="@style/rowItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                style="@style/rowItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <com.beardedhen.androidbootstrap.BootstrapLabel
-                android:id="@+id/tv_air_plan_describe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/bootstrap_badge_default_size"
-                android:padding="@dimen/button_padding_default"
-                android:text="测区描述"
-                app:bootstrapSize="md" />
+                    android:id="@+id/tv_air_plan_describe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/bootstrap_badge_default_size"
+                    android:padding="@dimen/button_padding_default"
+                    android:text="测区描述"
+                    app:bootstrapSize="md"/>
 
             <com.beardedhen.androidbootstrap.BootstrapEditText
-                android:id="@+id/edt_air_plan_describe"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minLines="3"
-                android:gravity="top"
-                app:bootstrapSize="md"
-                app:roundedCorners="true" />
+                    android:id="@+id/edt_air_plan_describe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="3"
+                    android:gravity="top"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cateye.android.vtm">
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+          package="com.cateye.android.vtm">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 通过GPS得到精确位置 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- 通过网络得到粗略位置 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 访问网络，某些位置信息需要从网络服务器获取 -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- 访问WiFi状态，需要WiFi信息用于网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 修改WiFi状态，发起WiFi扫描, 需要WiFi信息用于网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <!-- 访问网络状态, 检测网络的可用性，需要网络运营商相关信息用于网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 访问网络的变化, 需要某些信息用于网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <!-- 访问手机当前状态, 需要某些信息用于网络定位 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <!--<uses-permission android:name="android.permission.WRITE_SETTINGS"/>-->
 
     <application
-        android:name="com.cateye.android.vtm.MainApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+            android:name="com.cateye.android.vtm.MainApplication"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:largeHeap="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.cateye.android.vtm.LoginActivity"
-            android:screenOrientation="sensorLandscape">
+                android:name="com.cateye.android.vtm.LoginActivity"
+                android:screenOrientation="sensorLandscape">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name="com.cateye.android.vtm.MainActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="sensorLandscape">
+                android:name="com.cateye.android.vtm.MainActivity"
+                android:launchMode="singleInstance"
+                android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="catEye_tile_download"/>
                 <category android:name="android.intent.category.DEFAULT"></category>
@@ -50,28 +50,28 @@
         </activity>
         <!--地图文件选择筛选类-->
         <activity
-            android:name="com.cateye.android.vtm.MainActivity$MapFilePicker"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensorLandscape" />
+                android:name="com.cateye.android.vtm.MainActivity$MapFilePicker"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="sensorLandscape"/>
         <!--地图样式文件选择筛选类-->
         <activity
-            android:name="com.cateye.android.vtm.MainActivity$ThemeFilePicker"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensorLandscape" />
+                android:name="com.cateye.android.vtm.MainActivity$ThemeFilePicker"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="sensorLandscape"/>
         <!--GeoJson文件选择筛选类-->
         <activity
-            android:name="com.cateye.android.vtm.MainActivity$GeoJsonFilePicker"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensorLandscape" />
+                android:name="com.cateye.android.vtm.MainActivity$GeoJsonFilePicker"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="sensorLandscape"/>
         <!--等高线文件选择筛选类-->
         <activity
-            android:name="com.cateye.android.vtm.MainActivity$ContourFilePicker"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensorLandscape" />
+                android:name="com.cateye.android.vtm.MainActivity$ContourFilePicker"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="sensorLandscape"/>
 
         <meta-data
-            android:name="TencentMapSDK"
-            android:value="FN4BZ-P6IC6-ENKSQ-MVCMP-MGAX6-FYFUW" />
+                android:name="TencentMapSDK"
+                android:value="FN4BZ-P6IC6-ENKSQ-MVCMP-MGAX6-FYFUW"/>
 
         <meta-data android:value="5b14feeaf29d980959000093" android:name="UMENG_APPKEY"/>
         <meta-data android:value="Native" android:name="UMENG_CHANNEL"/>

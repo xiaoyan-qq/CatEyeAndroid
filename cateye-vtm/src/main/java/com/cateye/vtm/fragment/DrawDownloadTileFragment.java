@@ -27,8 +27,8 @@ public class DrawDownloadTileFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //当前界面显示时，自动隐藏主界面的所有按钮
-        Message msg=new Message();
-        msg.what=SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_START;
+        Message msg = new Message();
+        msg.what = SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_START;
         EventBus.getDefault().post(msg);
     }
 
@@ -37,9 +37,9 @@ public class DrawDownloadTileFragment extends BaseFragment {
         super.onDetach();
 
         //绘制结束，将绘制的rect传递给主界面，开始下载rect对应的tile数据
-        Message msg=new Message();
-        msg.what=SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH;
-        msg.obj=tileDownloadRectDrawView.getRect();
+        Message msg = new Message();
+        msg.what = SystemConstant.MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH;
+        msg.obj = tileDownloadRectDrawView.getRect();
         EventBus.getDefault().post(msg);
     }
 

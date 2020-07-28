@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bootstrap_gray"
-        android:padding="@dimen/button_padding_default"
-        android:layout_marginTop="5dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bootstrap_gray"
+            android:padding="@dimen/button_padding_default"
+            android:layout_marginTop="5dp">
 
         <TextView
-            android:id="@+id/tv_group_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="18dp"
-            android:layout_centerVertical="true"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:gravity="center_vertical"/>
+                android:id="@+id/tv_group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center_vertical"/>
 
 
         <ImageView
-            android:id="@+id/iv_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/button_padding_default"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:visibility="gone"
-            android:layout_marginRight="20dp"
-            android:src="@drawable/selector_expandable_listview_group"/>
+                android:id="@+id/iv_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/button_padding_default"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/selector_expandable_listview_group"/>
 
     </RelativeLayout>
-
 
 
 </LinearLayout>

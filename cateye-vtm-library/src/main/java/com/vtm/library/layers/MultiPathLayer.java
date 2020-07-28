@@ -158,7 +158,7 @@ public class MultiPathLayer extends PathLayer {
         this.pathDrawableList = pathDrawableList;
     }
 
-    public void removeAllPathDrawable(){
+    public void removeAllPathDrawable() {
         if (pathDrawableList != null && !pathDrawableList.isEmpty()) {
             Iterator iterator = pathDrawableList.iterator();
             while (iterator.hasNext()) {

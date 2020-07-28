@@ -155,7 +155,7 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
 //                            EventBus.getDefault().post(msg);
 //                        }
 //                    } else
-                        if (getCurrentDrawState() == DRAW_STATE.DRAW_LINE) {
+                    if (getCurrentDrawState() == DRAW_STATE.DRAW_LINE) {
                         msg.what = SystemConstant.MSG_WHAT_DRAW_LINE;
                         msg.obj = polylineOverlay.getPoints();
                         EventBus.getDefault().post(msg);
@@ -206,17 +206,17 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
         super.onDestroy();
         //判断绘制的用途，某些用途下，绘制结束后就不需要再显示，也需要移除掉layer
         if (drawUsage == SystemConstant.DRAW_CONTOUR_LINE) {
-            if (markerLayer!=null){
+            if (markerLayer != null) {
                 CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(markerLayer);
-                markerLayer=null;
+                markerLayer = null;
             }
-            if (polylineOverlay!=null){
+            if (polylineOverlay != null) {
                 CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polylineOverlay);
-                polylineOverlay=null;
+                polylineOverlay = null;
             }
-            if (polygonOverlay!=null){
+            if (polygonOverlay != null) {
                 CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polygonOverlay);
-                polygonOverlay=null;
+                polygonOverlay = null;
             }
         }
 

@@ -68,7 +68,7 @@ public class JeoIndoorActivity extends BaseMapActivity {
 //                    URL url = new URL(PATH);
 //                    URLConnection conn = url.openConnection();
 //                    is = conn.getInputStream();
-                    is=getResources().openRawResource(R.raw.test123);
+                    is = getResources().openRawResource(R.raw.test123);
                     loadJson(is);
                 } catch (Exception e) {
                     e.printStackTrace();

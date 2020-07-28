@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/layer_manager_operate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_layerlist_add"
+            android:id="@+id/layer_manager_operate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/button_padding_default"
-            android:text="添加本地map数据"
-            android:textSize="@dimen/bootstrap_h4_text_size" />
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/tv_layerlist_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/button_padding_default"
+                android:text="添加本地map数据"
+                android:textSize="@dimen/bootstrap_h4_text_size"/>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="0.1dp"
-            android:background="@color/divider"></View>
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/divider"></View>
 
         <TextView
-            android:id="@+id/tv_layerlist_geojson"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/button_padding_default"
-            android:text="添加本地GeoJson数据"
-            android:textSize="@dimen/bootstrap_h4_text_size" />
+                android:id="@+id/tv_layerlist_geojson"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/button_padding_default"
+                android:text="添加本地GeoJson数据"
+                android:textSize="@dimen/bootstrap_h4_text_size"/>
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/btn_layer_manager_confirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="确定"
-            android:layout_marginVertical="@dimen/button_padding_default"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-            android:layout_gravity="center"
-            app:bootstrapSize="xl"
-            app:bootstrapBrand="primary" />
+                android:id="@+id/btn_layer_manager_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="确定"
+                android:layout_marginVertical="@dimen/button_padding_default"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center"
+                app:bootstrapSize="xl"
+                app:bootstrapBrand="primary"/>
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/layer_layer_manager_header"
-        style="@style/headStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:id="@+id/layer_layer_manager_header"
+            style="@style/headStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/img_layer_manager_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/button_padding_default"
-            android:scaleType="fitCenter"
-            android:background="@drawable/ripple_bg_drawable"
-            android:src="@drawable/selector_back" />
+                android:id="@+id/img_layer_manager_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/button_padding_default"
+                android:scaleType="fitCenter"
+                android:background="@drawable/ripple_bg_drawable"
+                android:src="@drawable/selector_back"/>
 
     </RelativeLayout>
 
     <ExpandableListView
-        android:id="@+id/sadLv_layerlist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layer_layer_manager_header"
-        android:layout_above="@id/layer_manager_operate"></ExpandableListView>
+            android:id="@+id/sadLv_layerlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layer_layer_manager_header"
+            android:layout_above="@id/layer_manager_operate"></ExpandableListView>
 </RelativeLayout>

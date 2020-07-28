@@ -72,13 +72,13 @@ public class TrailRecordMultiPathLayer extends MultiPathLayer {
         return true;
     }
 
-    public void clearAllPath(){
-        if (trailLocationDBEntityMap!=null){
-            Iterator keyIterator=trailLocationDBEntityMap.keySet().iterator();
-            while (keyIterator.hasNext()){
-                String key= (String) keyIterator.next();
-                LineDrawable lineDrawable=trailLocationDBEntityMap.get(key);
-                if (lineDrawable!=null){
+    public void clearAllPath() {
+        if (trailLocationDBEntityMap != null) {
+            Iterator keyIterator = trailLocationDBEntityMap.keySet().iterator();
+            while (keyIterator.hasNext()) {
+                String key = (String) keyIterator.next();
+                LineDrawable lineDrawable = trailLocationDBEntityMap.get(key);
+                if (lineDrawable != null) {
                     remove(lineDrawable);
                 }
                 trailLocationDBEntityMap.remove(key);

@@ -225,7 +225,7 @@ public class AirPlanDrawFragment extends BaseDrawFragment {
             } else {
                 RxToast.warning("绘制的点无法组成面！");
             }
-        }else {
+        } else {
             clearDrawLayers();
             if (isPop) {
                 pop();

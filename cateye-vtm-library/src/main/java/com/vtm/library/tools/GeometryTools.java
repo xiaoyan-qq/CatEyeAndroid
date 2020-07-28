@@ -18,8 +18,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.operation.linemerge.LineMerger;
 
-import org.json.JSONException;
-import org.locationtech.jts.io.ParseException;
 import org.oscim.core.GeoPoint;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -39,7 +37,7 @@ public class GeometryTools {
     static final double PI = 3.14159216;
     private static volatile GeometryTools mInstance;
 
-    public static String POINT_GEOMETRY_TYPE="Point", LINE_GEOMETRY_TYPE="LineString", POLYGON_GEOMETRY_TYPE="Polygon";
+    public static String POINT_GEOMETRY_TYPE = "Point", LINE_GEOMETRY_TYPE = "LineString", POLYGON_GEOMETRY_TYPE = "Polygon";
 
     public static GeometryTools getInstance() {
 
@@ -1309,39 +1307,39 @@ public class GeometryTools {
 //        return geoJSONObject.toString();
 //    }
 
-    public static GeoJSON getGeoJson(Geometry geometry){
+    public static GeoJSON getGeoJson(Geometry geometry) {
         try {
             GeoJSON geoJSONObject = geoJsonWriter.write(wktReader.read(geometry.toString()));
             return geoJSONObject;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static Feature wkt2Feature(Geometry geometry){
+    public static Feature wkt2Feature(Geometry geometry) {
         com.cocoahero.android.geojson.Geometry geometryValue = null;
         if (geometry.getGeometryType() == GeometryTools.POINT_GEOMETRY_TYPE) {
-            GeoPoint geoPoint=GeometryTools.createGeoPoint(geometry.toString());
-            geometryValue=new com.cocoahero.android.geojson.Point();
-            ((com.cocoahero.android.geojson.Point) geometryValue).setPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+            GeoPoint geoPoint = GeometryTools.createGeoPoint(geometry.toString());
+            geometryValue = new com.cocoahero.android.geojson.Point();
+            ((com.cocoahero.android.geojson.Point) geometryValue).setPosition(new Position(geoPoint.getLatitude(), geoPoint.getLongitude()));
         } else if (geometry.getGeometryType() == GeometryTools.LINE_GEOMETRY_TYPE) {
-            List<GeoPoint> geoPointList=GeometryTools.getGeoPoints(geometry.toString());
-            geometryValue=new com.cocoahero.android.geojson.LineString();
-            for (GeoPoint geoPoint:geoPointList) {
-                ((com.cocoahero.android.geojson.LineString) geometryValue).addPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+            List<GeoPoint> geoPointList = GeometryTools.getGeoPoints(geometry.toString());
+            geometryValue = new com.cocoahero.android.geojson.LineString();
+            for (GeoPoint geoPoint : geoPointList) {
+                ((com.cocoahero.android.geojson.LineString) geometryValue).addPosition(new Position(geoPoint.getLatitude(), geoPoint.getLongitude()));
             }
         } else if (geometry.getGeometryType() == GeometryTools.POLYGON_GEOMETRY_TYPE) {
-            List<GeoPoint> geoPointList=GeometryTools.getGeoPoints(geometry.toString());
-            geometryValue=new com.cocoahero.android.geojson.Polygon();
-            Ring ring=new Ring();
-            for (GeoPoint geoPoint:geoPointList) {
-                ring.addPosition(new Position(geoPoint.getLatitude(),geoPoint.getLongitude()));
+            List<GeoPoint> geoPointList = GeometryTools.getGeoPoints(geometry.toString());
+            geometryValue = new com.cocoahero.android.geojson.Polygon();
+            Ring ring = new Ring();
+            for (GeoPoint geoPoint : geoPointList) {
+                ring.addPosition(new Position(geoPoint.getLatitude(), geoPoint.getLongitude()));
             }
             ring.close();
             ((com.cocoahero.android.geojson.Polygon) geometryValue).addRing(ring);
         }
-        if (geometryValue!=null){
+        if (geometryValue != null) {
             // Create feature with geometry
             Feature feature = new Feature(geometryValue);
             return feature;
@@ -1353,9 +1351,9 @@ public class GeometryTools {
         return new GeoPoint(point.getY(), point.getX());
     }
 
-    public static GeoPoint position2GeoPoint(Position position){
-        if (position!=null){
-            return new GeoPoint(position.getLatitude(),position.getLongitude());
+    public static GeoPoint position2GeoPoint(Position position) {
+        if (position != null) {
+            return new GeoPoint(position.getLatitude(), position.getLongitude());
         }
         return null;
     }

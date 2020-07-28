@@ -16,7 +16,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testTileDownloadTools(){
-        TileDownloadTools tileDownloadTools=new TileDownloadTools();
+    public void testTileDownloadTools() {
+        TileDownloadTools tileDownloadTools = new TileDownloadTools();
     }
 }

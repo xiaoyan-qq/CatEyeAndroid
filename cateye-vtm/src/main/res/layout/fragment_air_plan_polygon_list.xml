@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <RelativeLayout
-        style="@style/headStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            style="@style/headStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/tv_air_plan_list_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/button_padding_default"
-            android:scaleType="fitCenter"
-            android:background="@drawable/ripple_bg_drawable"
-            android:src="@drawable/selector_back" />
+                android:id="@+id/tv_air_plan_list_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/button_padding_default"
+                android:scaleType="fitCenter"
+                android:background="@drawable/ripple_bg_drawable"
+                android:src="@drawable/selector_back"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal">
-            <com.beardedhen.androidbootstrap.AwesomeTextView
-                android:id="@+id/atv_draw_upload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:bootstrapBrand="success"
-                app:bootstrapSize="lg"
-                android:padding="@dimen/button_padding_default"
-                android:visibility="gone"
-                app:fontAwesomeIcon="fa_cloud_upload"
-                app:buttonMode="regular" />
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
             <com.beardedhen.androidbootstrap.AwesomeTextView
-                android:id="@+id/atv_draw_download"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:bootstrapBrand="success"
-                app:bootstrapSize="lg"
-                android:padding="@dimen/button_padding_default"
-                android:visibility="gone"
-                app:fontAwesomeIcon="fa_cloud_download"
-                android:layout_toLeftOf="@id/atv_draw_upload"
-                app:buttonMode="regular" />
+                    android:id="@+id/atv_draw_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="lg"
+                    android:padding="@dimen/button_padding_default"
+                    android:visibility="gone"
+                    app:fontAwesomeIcon="fa_cloud_upload"
+                    app:buttonMode="regular"/>
             <com.beardedhen.androidbootstrap.AwesomeTextView
-                android:id="@+id/atv_draw_export"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:bootstrapBrand="success"
-                app:bootstrapSize="lg"
-                android:padding="@dimen/button_padding_default"
-                android:visibility="gone"
-                app:fontAwesomeIcon="fa_share"
-                android:layout_toLeftOf="@id/atv_draw_download"
-                app:buttonMode="regular" />
+                    android:id="@+id/atv_draw_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="lg"
+                    android:padding="@dimen/button_padding_default"
+                    android:visibility="gone"
+                    app:fontAwesomeIcon="fa_cloud_download"
+                    android:layout_toLeftOf="@id/atv_draw_upload"
+                    app:buttonMode="regular"/>
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                    android:id="@+id/atv_draw_export"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="lg"
+                    android:padding="@dimen/button_padding_default"
+                    android:visibility="gone"
+                    app:fontAwesomeIcon="fa_share"
+                    android:layout_toLeftOf="@id/atv_draw_download"
+                    app:buttonMode="regular"/>
         </LinearLayout>
 
     </RelativeLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_air_plan_polygon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/bootstrap_gray_lighter"
-            android:overScrollMode="ifContentScrolls" />
+                android:id="@+id/rv_air_plan_polygon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/bootstrap_gray_lighter"
+                android:overScrollMode="ifContentScrolls"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

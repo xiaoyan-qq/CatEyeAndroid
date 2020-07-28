@@ -1,13 +1,13 @@
-tessellate = (function() {
+tessellate = (function () {
 
     Module.TOTAL_MEMORY = 1024 * 1024;
 
-    var c_tessellate = Module.cwrap('tessellate', 'void', [ 'number', 'number',
-            'number', 'number', 'number', 'number' ]);
+    var c_tessellate = Module.cwrap('tessellate', 'void', ['number', 'number',
+        'number', 'number', 'number', 'number']);
 
     // special tessellator for extrusion layer - only returns triangle indices
-    var tessellate = function(vertices, v_start, v_end, boundaries, b_start,
-            b_end, mode) {
+    var tessellate = function (vertices, v_start, v_end, boundaries, b_start,
+                               b_end, mode) {
         var i;
 
         var v_len = (v_end - v_start);
@@ -36,7 +36,7 @@ tessellate = (function() {
         var pntris = Module._malloc(4);
 
         c_tessellate(ppcoordinates_out, pnverts, pptris_out, pntris, contours,
-                contours + 4 * (b_len + 1));
+            contours + 4 * (b_len + 1));
 
         var pcoordinates_out = Module.getValue(ppcoordinates_out, 'i32');
         var ptris_out = Module.getValue(pptris_out, 'i32');
@@ -47,19 +47,19 @@ tessellate = (function() {
         var result_triangles = null;
         var result_vertices = null;
 
-        if (mode){
+        if (mode) {
             result_triangles = new Int32Array(ntris * 3);
             for (i = 0; i < 3 * ntris; ++i)
                 result_triangles[i] = Module.getValue(ptris_out + i * 4, 'i32');
-            
+
             result_vertices = new Float32Array(nverts * 2);
             for (i = 0; i < 2 * nverts; ++i)
                 result_vertices[i] = Module.getValue(pcoordinates_out + i * 8, 'double');
-        
+
         } else {
             if (nverts * 2 == v_len) {
                 result_triangles = new Int32Array(ntris * 3);
-                
+
                 for (i = 0; i < 3 * ntris; ++i) {
                     result_triangles[i] = Module.getValue(ptris_out + i * 4, 'i32') * 2;
                 }
@@ -67,39 +67,39 @@ tessellate = (function() {
                 // additional vertices will be added. so the following rings
                 // needs extra offset...
                 var start = 0;
-                for ( var j = 0, m = b_len - 1; j < m; j++) {
+                for (var j = 0, m = b_len - 1; j < m; j++) {
                     start += boundaries[b_start + j];
 
                     // even number of points?
                     if (!((boundaries[b_start + j] >> 1) & 1))
                         continue;
 
-                    for ( var n = ntris * 3, tri = 0; tri < n; tri++)
+                    for (var n = ntris * 3, tri = 0; tri < n; tri++)
                         if (result_triangles[tri] >= start)
                             result_triangles[tri] += 2;
 
                     start += 2;
                 }
-            }    
+            }
         }
-        
+
         Module._free(pnverts);
         Module._free(pntris);
-        
+
         Module._free(ppcoordinates_out);
         Module._free(pcoordinates_out);
-        
+
         Module._free(pptris_out);
         Module._free(ptris_out);
 
         Module._free(p);
         Module._free(contours);
-        
+
         if (mode)
-                 return { vertices: result_vertices, triangles: result_triangles };
-            else
-                return result_triangles;
-        
+            return {vertices: result_vertices, triangles: result_triangles};
+        else
+            return result_triangles;
+
     };
 
     return tessellate;

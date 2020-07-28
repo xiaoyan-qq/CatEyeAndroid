@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
-    android:orientation="horizontal"
-    android:padding="@dimen/button_padding_default">
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
+             android:orientation="horizontal"
+             android:padding="@dimen/button_padding_default">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/contour_chart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/button_padding_default" />
+            android:id="@+id/contour_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/button_padding_default"/>
 
     <ImageView
-        android:id="@+id/img_contour_chart_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:padding="@dimen/button_padding_default"
-        android:src="@drawable/file_select_close" />
+            android:id="@+id/img_contour_chart_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:padding="@dimen/button_padding_default"
+            android:src="@drawable/file_select_close"/>
 </FrameLayout>

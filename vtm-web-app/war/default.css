@@ -3,7 +3,7 @@
     text-align: center;
 }
 
-html,body {
+html, body {
     height: 100%;
     width: 100%;
     margin: 0 0 0 0;
@@ -47,7 +47,7 @@ html,body {
     color: #FFFFFF;
 }
 
-#nameFieldContainer,.gwt-TextBox {
+#nameFieldContainer, .gwt-TextBox {
     width: 250px;
 }
 
@@ -58,34 +58,32 @@ html,body {
 }
 
 /* Turn on single button up on top, and down on bottom */
-::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment
-    {
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
     display: block;
 }
 
 /* Turn off the down area up on top, and up area on bottom */
-::-webkit-scrollbar-button:vertical:start:increment,::-webkit-scrollbar-button:vertical:end:decrement
-    {
+::-webkit-scrollbar-button:vertical:start:increment, ::-webkit-scrollbar-button:vertical:end:decrement {
     display: none;
 }
 
 /* Place The scroll down button at the bottom */
 ::-webkit-scrollbar-button:end:increment {
     /*background-image: url(images/scroll_cntrl_dwn.png);*/
-    
+
 }
 
 /* Place The scroll up button at the up */
 ::-webkit-scrollbar-button:start:decrement {
     /*background-image: url(images/scroll_cntrl_up.png);*/
-    
+
 }
 
 /* Top area above thumb and below up button */
 ::-webkit-scrollbar-track-piece:vertical:start {
     /*background-image: url(images/scroll_gutter_top.png), url(images/scroll_gutter_mid.png);
                 background-repeat: no-repeat, repeat-y;*/
-    
+
 }
 
 /* Bottom area below thumb and down button */
@@ -93,7 +91,7 @@ html,body {
     /*background-image: url(images/scroll_gutter_btm.png), url(images/scroll_gutter_mid.png);
                 background-repeat: no-repeat, repeat-y;
                 background-position: bottom left, 0 0;*/
-    
+
 }
 
 /* The thumb itself */
@@ -105,19 +103,21 @@ html,body {
     opacity: 0.5;
 }
 
-#building-solution{
+#building-solution {
     z-index: 20001;
     position: absolute;
     top: 40px;
     left: 0px;
 }
-#camera-roll{
+
+#camera-roll {
     z-index: 20001;
     position: absolute;
     top: 220px;
     left: 0px;
 }
-input[type=range][orient=vertical]{
+
+input[type=range][orient=vertical] {
     writing-mode: bt-lr; /* IE */
     -webkit-appearance: slider-vertical; /* WebKit */
     width: 8px;

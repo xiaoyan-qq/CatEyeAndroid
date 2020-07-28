@@ -87,8 +87,8 @@ public class LayerManagerFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mMap = CatEyeMapManager.getMapView().map();
-        if (savedInstanceState!=null) {
-            layerDataBeanList= (List<MapSourceFromNet.DataBean>) savedInstanceState.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
+        if (savedInstanceState != null) {
+            layerDataBeanList = (List<MapSourceFromNet.DataBean>) savedInstanceState.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
         }
         if (getArguments() != null) {
             Bundle bundle = getArguments();
@@ -100,8 +100,8 @@ public class LayerManagerFragment extends BaseFragment {
     @Override
     public void onNewBundle(Bundle args) {
         super.onNewBundle(args);
-        if (args!=null) {
-            layerDataBeanList= (List<MapSourceFromNet.DataBean>) args.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
+        if (args != null) {
+            layerDataBeanList = (List<MapSourceFromNet.DataBean>) args.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
         }
     }
 
@@ -165,14 +165,14 @@ public class LayerManagerFragment extends BaseFragment {
 
     /**
      * 显示geoJson文件的数据
-     * */
-    private void showGeoJsonFileData(List<com.cocoahero.android.geojson.Geometry> geometryList){
-        if (geometryList!=null&&!geometryList.isEmpty()) {
-            for (com.cocoahero.android.geojson.Geometry geometry:geometryList) {
+     */
+    private void showGeoJsonFileData(List<com.cocoahero.android.geojson.Geometry> geometryList) {
+        if (geometryList != null && !geometryList.isEmpty()) {
+            for (com.cocoahero.android.geojson.Geometry geometry : geometryList) {
                 String geometryType = geometry.getType();
-                if (geometryType == "Point"){
-                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geometry;
-                    MarkerItem markerItem=new MarkerItem("","", GeometryTools.position2GeoPoint(point.getPosition()));
+                if (geometryType == "Point") {
+                    com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geometry;
+                    MarkerItem markerItem = new MarkerItem("", "", GeometryTools.position2GeoPoint(point.getPosition()));
                     if (geoJsonMarkerLayer == null) {
                         geoJsonMarkerLayer = (ItemizedLayer<MarkerItem>) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.LAYER_NAME_GEOJSON_POINT);
                     }
@@ -180,11 +180,11 @@ public class LayerManagerFragment extends BaseFragment {
                         geoJsonMarkerLayer.addItem(markerItem);
                         geoJsonMarkerLayer.update();
                     }
-                } else if (geometryType == "LineString"){
-                    LineString lineString= (LineString) geometry;
-                    List<Position> positionList=lineString.getPositions();
+                } else if (geometryType == "LineString") {
+                    LineString lineString = (LineString) geometry;
+                    List<Position> positionList = lineString.getPositions();
                     List<GeoPoint> pointList = new ArrayList<>();
-                    for (Position position:positionList) {
+                    for (Position position : positionList) {
                         pointList.add(GeometryTools.position2GeoPoint(position));
                     }
                     if (geoJsonMultiPathLayer == null) {
@@ -194,16 +194,16 @@ public class LayerManagerFragment extends BaseFragment {
                         geoJsonMultiPathLayer.addPathDrawable(pointList);
                         geoJsonMultiPathLayer.update();
                     }
-                } else if (geometryType == "Polygon"){
-                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geometry;
-                    List<Ring> positionList=polygon.getRings();
+                } else if (geometryType == "Polygon") {
+                    com.cocoahero.android.geojson.Polygon polygon = (com.cocoahero.android.geojson.Polygon) geometry;
+                    List<Ring> positionList = polygon.getRings();
                     if (geoJsonMultiPolygonLayer == null) {
                         geoJsonMultiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.LAYER_NAME_GEOJSON_POLYGON);
                     }
-                    for (Ring ring:positionList) {
+                    for (Ring ring : positionList) {
                         List<GeoPoint> pointList = new ArrayList<>();
-                        if (ring!=null&&ring.getPositions()!=null){
-                            for (Position position:ring.getPositions()) {
+                        if (ring != null && ring.getPositions() != null) {
+                            for (Position position : ring.getPositions()) {
                                 pointList.add(GeometryTools.position2GeoPoint(position));
                             }
                         }
@@ -274,31 +274,31 @@ public class LayerManagerFragment extends BaseFragment {
                     }
                 }
             }
-        }else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
+        } else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                 return;
             }
             String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
             try {
                 FileInputStream geoJsonStream = new FileInputStream(new File(filePath));
-                GeoJSONObject geoJSONObject= GeoJSON.parse(geoJsonStream);
+                GeoJSONObject geoJSONObject = GeoJSON.parse(geoJsonStream);
                 List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
                 if (geoJSONObject.getType() == "FeatureCollection") {
-                    FeatureCollection featureCollection= (FeatureCollection) geoJSONObject;
-                    for (Feature feature:featureCollection.getFeatures()) {
+                    FeatureCollection featureCollection = (FeatureCollection) geoJSONObject;
+                    for (Feature feature : featureCollection.getFeatures()) {
                         geometryList.add(feature.getGeometry());
                     }
                 } else if (geoJSONObject.getType() == "Feature") {
-                    Feature feature= (Feature) geoJSONObject;
+                    Feature feature = (Feature) geoJSONObject;
                     geometryList.add(feature.getGeometry());
                 } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Point point= (com.cocoahero.android.geojson.Point) geoJSONObject;
+                    com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geoJSONObject;
                     geometryList.add(point);
                 } else if (geoJSONObject.getType() == "LineString") {
-                    com.cocoahero.android.geojson.LineString lineString= (com.cocoahero.android.geojson.LineString) geoJSONObject;
+                    com.cocoahero.android.geojson.LineString lineString = (com.cocoahero.android.geojson.LineString) geoJSONObject;
                     geometryList.add(lineString);
                 } else if (geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Polygon polygon= (com.cocoahero.android.geojson.Polygon) geoJSONObject;
+                    com.cocoahero.android.geojson.Polygon polygon = (com.cocoahero.android.geojson.Polygon) geoJSONObject;
                     geometryList.add(polygon);
                 }
                 showGeoJsonFileData(geometryList);
@@ -309,7 +309,7 @@ public class LayerManagerFragment extends BaseFragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
+        } else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                 return;
             }
@@ -344,6 +344,7 @@ public class LayerManagerFragment extends BaseFragment {
             mMap.setTheme(externalRenderTheme);
         }
     }
+
     @Override
     public boolean onBackPressedSupport() {
         pop();

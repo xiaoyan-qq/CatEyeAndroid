@@ -202,10 +202,10 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                                     if (airplanParamOverlayer != null) {
                                         Vector<JSONObject> flightRegionList = new Vector<>();
                                         Vector<Double> flightHeightVector = new Vector<>();
-                                        if (listData!=null&&!listData.isEmpty()){
-                                            for (AirPlanDBEntity dbEntity:listData){
+                                        if (listData != null && !listData.isEmpty()) {
+                                            for (AirPlanDBEntity dbEntity : listData) {
                                                 flightRegionList.add(JSONObject.parseObject(GeometryTools.getGeoJson(GeometryTools.createGeometry(dbEntity.getGeometry())).toString()));
-                                                flightHeightVector.add((double)dbEntity.getAltitude());
+                                                flightHeightVector.add((double) dbEntity.getAltitude());
                                             }
                                         }
 
@@ -218,50 +218,50 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
                                         parameter.setAirport(airport);
 
                                         DigitalCameraInfo cameraInfo = new DigitalCameraInfo();
-                                        String cameraF=edt_F.getText().toString();
+                                        String cameraF = edt_F.getText().toString();
                                         cameraInfo.setF(StringUtils.isBlank(cameraF) ? 0 : Double.parseDouble(cameraF));
-                                        String cameraHeight=edt_PicHeight.getText().toString();
+                                        String cameraHeight = edt_PicHeight.getText().toString();
                                         cameraInfo.setHeight(StringUtils.isBlank(cameraHeight) ? 0 : Long.parseLong(cameraHeight));
-                                        String cameraWidth=edt_PicWidth.getText().toString();
+                                        String cameraWidth = edt_PicWidth.getText().toString();
                                         cameraInfo.setWidth(StringUtils.isBlank(cameraWidth) ? 0 : Long.parseLong(cameraWidth));
-                                        String cameraPixel=edt_pixelSize.getText().toString();
+                                        String cameraPixel = edt_pixelSize.getText().toString();
                                         cameraInfo.setPixelsize(StringUtils.isBlank(cameraPixel) ? 0 : Double.parseDouble(cameraPixel));
                                         parameter.setCameraInfo(cameraInfo);
 
                                         parameter.setAverageElevation(StringUtils.isBlank(baseLineStr) ? 0 : Double.parseDouble(baseLineStr));//航区平均地面高程
 
-                                        String guidePointDistance=edt_guidePointDistance.getText().toString();
+                                        String guidePointDistance = edt_guidePointDistance.getText().toString();
                                         parameter.setGuidanceEntrancePointsDistance(StringUtils.isBlank(guidePointDistance) ? 0 : Double.parseDouble(guidePointDistance));//引导点距离
 
-                                        String overlap=edt_overlap.getText().toString();
+                                        String overlap = edt_overlap.getText().toString();
                                         parameter.setOverlap(StringUtils.isBlank(overlap) ? 0 : Double.parseDouble(overlap));//航向重叠度
-                                        String overlap_crossStrip=edt_overlap_crossStrip.getText().toString();
+                                        String overlap_crossStrip = edt_overlap_crossStrip.getText().toString();
                                         parameter.setOverlap_crossStrip(StringUtils.isBlank(overlap_crossStrip) ? 0 : Double.parseDouble(overlap_crossStrip));//旁向重叠度
 
 
                                         parameter.setFightRegion(flightRegionList);
                                         parameter.setFightHeight_Vec(flightHeightVector);
                                         final String jsonResult = JSON.toJSONString(parameter);
-                                        final File outputDirectory=new File(SystemConstant.AIR_PLAN_OUTPUT_PATH+ File.separator + ((EditText) rootView.findViewById(R.id.edt_air_plan_save_name)).getText().toString() + ".skw");
-                                        if (!outputDirectory.getParentFile().exists()){
+                                        final File outputDirectory = new File(SystemConstant.AIR_PLAN_OUTPUT_PATH + File.separator + ((EditText) rootView.findViewById(R.id.edt_air_plan_save_name)).getText().toString() + ".skw");
+                                        if (!outputDirectory.getParentFile().exists()) {
                                             outputDirectory.getParentFile().mkdirs();
                                         }
-                                        if (outputDirectory.exists()){
+                                        if (outputDirectory.exists()) {
                                             //如果已经存在该文件名称，提示用户
                                             new CanDialog.Builder(getActivity()).setTitle("提示!").setMessage("存在同名文件，是否覆盖？").setPositiveButton("是", true, new CanDialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
                                                     JNINativeApi.airPlannerOutput(jsonResult, outputDirectory.getAbsolutePath());
                                                 }
-                                            }).setNegativeButton("否",true,null).show();
-                                        }else {
+                                            }).setNegativeButton("否", true, null).show();
+                                        } else {
                                             JNINativeApi.airPlannerOutput(jsonResult, outputDirectory.getAbsolutePath());
                                             dialog.dismiss();
                                         }
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                }finally {
+                                } finally {
 
                                 }
 
@@ -424,7 +424,7 @@ public class AirPlanParamListFragment extends BaseDrawFragment {
     /**
      * 显示航线飞行的轨迹
      */
-    private void showAirPlanLine(){
+    private void showAirPlanLine() {
 
     }
 }

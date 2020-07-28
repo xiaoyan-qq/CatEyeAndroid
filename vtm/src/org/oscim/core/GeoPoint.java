@@ -174,8 +174,8 @@ public class GeoPoint implements Comparable<GeoPoint>, Serializable {
             return false;
         }
         /*
-         * problem is that the Java double precision problem can cause two coordinates that represent 
-         * the same geographical position to have a different latitudeE6/longitudeE6. therefore a difference 
+         * problem is that the Java double precision problem can cause two coordinates that represent
+         * the same geographical position to have a different latitudeE6/longitudeE6. therefore a difference
          * of 1 in the latitudeE6/longitudeE6 can be the result of this rounding effect
          * see https://en.wikipedia.org/wiki/Double-precision_floating-point_format
          * see https://stackoverflow.com/questions/179427/how-to-resolve-a-java-rounding-double-issue

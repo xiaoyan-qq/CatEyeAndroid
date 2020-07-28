@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 
 public class AirPlanCRS implements Serializable {
-    private String type="name";
-    private AirPlanCRSProperties properties=new AirPlanCRSProperties();
+    private String type = "name";
+    private AirPlanCRSProperties properties = new AirPlanCRSProperties();
 
     public String getType() {
         return type;
@@ -26,8 +26,8 @@ public class AirPlanCRS implements Serializable {
         this.properties = properties;
     }
 
-    protected class AirPlanCRSProperties implements Serializable{
-        private String name="urn:ogc:def:crs:OGC:1.3:CRS84";
+    protected class AirPlanCRSProperties implements Serializable {
+        private String name = "urn:ogc:def:crs:OGC:1.3:CRS84";
 
         public String getName() {
             return name;

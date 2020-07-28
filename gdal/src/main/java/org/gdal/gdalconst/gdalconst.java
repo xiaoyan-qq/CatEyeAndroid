@@ -12,8 +12,7 @@ public class gdalconst implements gdalconstConstants {
 
 
     /* Uninstanciable class */
-    private gdalconst()
-    {
+    private gdalconst() {
     }
 
 }

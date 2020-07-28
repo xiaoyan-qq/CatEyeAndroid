@@ -5,10 +5,10 @@ import org.xutils.db.annotation.Table;
 
 /**
  * 用户轨迹的条数记录，记录轨迹的开始、结束时间
- * */
+ */
 @Table(name = "TravelRecord")
 public class TravelRecord {
-    @Column(name = "_id",autoGen = true,isId = true)
+    @Column(name = "_id", autoGen = true, isId = true)
     private int id;
     @Column(name = "travelName")
     private String travelName;//轨迹记录的名称

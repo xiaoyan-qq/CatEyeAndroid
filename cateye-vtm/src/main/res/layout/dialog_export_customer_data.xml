@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:padding="@dimen/activity_vertical_margin"
-    android:background="@color/white"
-    android:layout_height="wrap_content">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:padding="@dimen/activity_vertical_margin"
+                android:background="@color/white"
+                android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/layer_export_file_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:id="@+id/layer_export_file_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/spn_file_format"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:entries="@array/file_formate_array"
-            android:spinnerMode="dropdown"
-            android:layout_centerVertical="true">
+                android:id="@+id/spn_file_format"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:entries="@array/file_formate_array"
+                android:spinnerMode="dropdown"
+                android:layout_centerVertical="true">
 
         </android.support.v7.widget.AppCompatSpinner>
         <EditText
-            android:id="@+id/edt_export_file_name"
-            android:layout_toLeftOf="@id/spn_file_format"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></EditText>
+                android:id="@+id/edt_export_file_name"
+                android:layout_toLeftOf="@id/spn_file_format"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></EditText>
     </RelativeLayout>
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/activity_vertical_margin"
-        android:layout_below="@id/layer_export_file_input"
-        android:orientation="horizontal">
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/btn_export_shp_confirm"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="确定"
-            android:layout_marginVertical="@dimen/button_padding_default"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-            android:layout_gravity="center"
-            app:bootstrapSize="md"
-            app:bootstrapBrand="primary"></com.beardedhen.androidbootstrap.BootstrapButton>
+            android:padding="@dimen/activity_vertical_margin"
+            android:layout_below="@id/layer_export_file_input"
+            android:orientation="horizontal">
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/btn_export_shp_cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="取消"
-            android:layout_marginVertical="@dimen/button_padding_default"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-            android:layout_gravity="center"
-            app:bootstrapSize="md"
-            app:bootstrapBrand="regular"></com.beardedhen.androidbootstrap.BootstrapButton>
+                android:id="@+id/btn_export_shp_confirm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="确定"
+                android:layout_marginVertical="@dimen/button_padding_default"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center"
+                app:bootstrapSize="md"
+                app:bootstrapBrand="primary"></com.beardedhen.androidbootstrap.BootstrapButton>
+        <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btn_export_shp_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="取消"
+                android:layout_marginVertical="@dimen/button_padding_default"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center"
+                app:bootstrapSize="md"
+                app:bootstrapBrand="regular"></com.beardedhen.androidbootstrap.BootstrapButton>
     </LinearLayout>
 </RelativeLayout>

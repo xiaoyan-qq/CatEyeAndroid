@@ -2,7 +2,7 @@ package com.cateye.android.entity;
 
 import java.io.Serializable;
 
-public class DataFromNet<T> implements Serializable{
+public class DataFromNet<T> implements Serializable {
 
     /**
      * success : true

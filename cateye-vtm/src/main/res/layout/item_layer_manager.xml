@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
-    android:padding="@dimen/button_padding_default">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:descendantFocusability="blocksDescendants"
+                android:padding="@dimen/button_padding_default">
 
     <ImageView
-        android:id="@+id/img_item_layer_manager_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:scaleType="fitCenter" />
+            android:id="@+id/img_item_layer_manager_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"/>
 
     <CheckBox
-        android:id="@+id/chk_item_layer_manager_visibile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:clickable="true"
-        android:focusable="false" />
+            android:id="@+id/chk_item_layer_manager_visibile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="false"/>
 
     <TextView
-        android:id="@+id/tv_item_layer_manager_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/chk_item_layer_manager_visibile"
-        android:layout_toRightOf="@id/img_item_layer_manager_icon" />
+            android:id="@+id/tv_item_layer_manager_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/chk_item_layer_manager_visibile"
+            android:layout_toRightOf="@id/img_item_layer_manager_icon"/>
 </RelativeLayout>

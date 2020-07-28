@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <RelativeLayout
-        style="@style/headStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            style="@style/headStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/tv_air_plan_list_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/icon_back_ripple" />
+                android:id="@+id/tv_air_plan_list_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_back_ripple"/>
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/btn_air_plan_param_set_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="OK"
-            app:bootstrapSize="sm"
-            app:roundedCorners="true"
-            app:showOutline="true" />
+                android:id="@+id/btn_air_plan_param_set_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="OK"
+                app:bootstrapSize="sm"
+                app:roundedCorners="true"
+                app:showOutline="true"/>
     </RelativeLayout>
 
     <com.yydcdut.sdlv.SlideAndDragListView
-        android:id="@+id/sadLv_paramPolygonList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/gray"
-        android:dividerHeight="@dimen/default_bmb_shareLineWidth"></com.yydcdut.sdlv.SlideAndDragListView>
+            android:id="@+id/sadLv_paramPolygonList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/gray"
+            android:dividerHeight="@dimen/default_bmb_shareLineWidth"></com.yydcdut.sdlv.SlideAndDragListView>
 </LinearLayout>

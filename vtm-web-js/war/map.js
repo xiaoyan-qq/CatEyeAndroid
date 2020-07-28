@@ -1,8 +1,8 @@
 var mapconfig = {
-    zoom : 12,
-    latitude : 53.075,
-    longitude : 8.8080,
-    tileSize : 400
+    zoom: 12,
+    latitude: 53.075,
+    longitude: 8.8080,
+    tileSize: 400
 }
 
 function createLayers() {
@@ -20,11 +20,11 @@ function createLayers() {
     // map.addLayer(new vtm.BuildingLayer(m, l))
     // map.addLayer(new vtm.LabelLayer(m, l))
 
-     t = map.loadTheme("TRONRENDER")
-     ts = new vtm.OsmLanduseJsonTileSource()
-     l = new vtm.VectorTileLayer(m, ts)
-     l.setRenderTheme(t)
-     map.addLayer(l)
+    t = map.loadTheme("TRONRENDER")
+    ts = new vtm.OsmLanduseJsonTileSource()
+    l = new vtm.VectorTileLayer(m, ts)
+    l.setRenderTheme(t)
+    map.addLayer(l)
 }
 
 function canvasResize() {
@@ -38,5 +38,6 @@ function canvasResize() {
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
 }
+
 canvasResize();
 window.addEventListener('resize', canvasResize, false);
