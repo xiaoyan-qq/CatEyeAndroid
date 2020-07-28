@@ -4,22 +4,11 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 
-import org.jeo.geom.CoordinatePath;
-import org.jeo.geom.Geom;
-import org.jeo.map.CartoCSS;
-import org.jeo.map.RGB;
-import org.jeo.map.Rule;
-import org.jeo.map.RuleList;
-import org.jeo.map.Style;
-import org.jeo.vector.Feature;
-import org.jeo.vector.VectorDataset;
-import org.jeo.vector.VectorQuery;
 import org.oscim.jeo.JeoUtils;
 import org.oscim.layers.OSMIndoorLayer;
 import org.oscim.map.Map;
 import org.oscim.renderer.bucket.LineBucket;
 import org.oscim.renderer.bucket.MeshBucket;
-import org.oscim.renderer.bucket.SymbolBucket;
 import org.oscim.renderer.bucket.TextBucket;
 import org.oscim.renderer.bucket.TextItem;
 import org.oscim.theme.styles.AreaStyle;
@@ -27,6 +16,16 @@ import org.oscim.theme.styles.LineStyle;
 import org.oscim.theme.styles.TextStyle;
 
 import java.io.IOException;
+
+import io.jeo.geom.Geom;
+import io.jeo.map.CartoCSS;
+import io.jeo.map.RGB;
+import io.jeo.map.Rule;
+import io.jeo.map.RuleList;
+import io.jeo.map.Style;
+import io.jeo.vector.Feature;
+import io.jeo.vector.VectorDataset;
+import io.jeo.vector.VectorQuery;
 
 public class GeoJsonLayer extends OSMIndoorLayer {
 
@@ -62,7 +61,7 @@ public class GeoJsonLayer extends OSMIndoorLayer {
             VectorQuery q = new VectorQuery().bounds(b);
             if (dbg)
                 log.debug("query {}", b);
-            for (Feature f : mDataset.cursor(q)) {
+            for (Feature f : mDataset.read(q)) {
                 if (dbg)
                     log.debug("feature {}", f);
 

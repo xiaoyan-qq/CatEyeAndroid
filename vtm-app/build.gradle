@@ -12,6 +12,7 @@ dependencies {
 android {
     compileSdkVersion androidCompileSdk()
     buildToolsVersion "$androidBuildVersionTools"
+    ndkVersion "$ndkVersion"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7

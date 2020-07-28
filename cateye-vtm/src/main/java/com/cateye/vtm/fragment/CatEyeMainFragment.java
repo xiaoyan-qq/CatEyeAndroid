@@ -68,9 +68,6 @@ import com.vtm.library.tools.TileDownloader;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.jeo.carto.Carto;
-import org.jeo.map.Style;
-import org.jeo.vector.VectorDataset;
 import org.oscim.android.MapPreferences;
 import org.oscim.android.MapView;
 import org.oscim.android.cache.TileCache;
@@ -90,6 +87,7 @@ import org.oscim.layers.LocationLayer;
 import org.oscim.layers.MapEventLayer;
 import org.oscim.layers.MapEventLayer2;
 import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerInterface;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.layers.tile.buildings.BuildingLayer;
@@ -134,6 +132,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import io.jeo.carto.Carto;
+import io.jeo.map.Style;
+import io.jeo.vector.VectorDataset;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -174,7 +175,7 @@ public class CatEyeMainFragment extends BaseFragment {
 //    private java.util.Map<String, MapSourceFromNet.DataBean> netDataSourceMap;//用来记录用户勾选了哪些网络数据显示
 
     private LocationLayer locationLayer;//显示当前位置的图层
-    private ItemizedLayer<MarkerItem> markerLayer, geoJsonMarkerLayer/*geojson显示点元素的layer*/;
+    private ItemizedLayer markerLayer, geoJsonMarkerLayer/*geojson显示点元素的layer*/;
     private MultiPathLayer multiPathLayer, geoJsonMultiPathLayer/*geojson显示线元素的layer*/;
     private MultiPolygonLayer multiPolygonLayer, geoJsonMultiPolygonLayer/*geojson显示面元素的layer*/;
     private final MapPosition mapPosition = new MapPosition();//更新地图位置
@@ -430,7 +431,7 @@ public class CatEyeMainFragment extends BaseFragment {
         //初始化点线面的显示图层
         if (markerLayer == null) {
             //打开该fragment，则自动向地图中添加marker的overlay
-            markerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_DRAW_POINT);
+            markerLayer = new ItemizedLayer<MarkerInterface>(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_DRAW_POINT);
             mMap.layers().add(markerLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
 
         }
@@ -449,7 +450,7 @@ public class CatEyeMainFragment extends BaseFragment {
         //初始化点线面的geoJson文件的显示图层
         if (geoJsonMarkerLayer == null) {
             //打开该fragment，则自动向地图中添加marker的overlay
-            geoJsonMarkerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getGeoJsonMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_GEOJSON_POINT);
+            geoJsonMarkerLayer = new ItemizedLayer<MarkerInterface>(mMap, LayerStyle.getGeoJsonMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_GEOJSON_POINT);
             mMap.layers().add(geoJsonMarkerLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
 
         }
