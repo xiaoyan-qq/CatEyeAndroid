@@ -9,7 +9,6 @@ import com.vtm.library.tools.OverlayerManager;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
 import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.map.Map;
 
@@ -101,7 +100,7 @@ public class LayerUtils {
             //添加绘制marker的图层，用来绘制无人机起飞的位置
             Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.marker_poi));
             MarkerSymbol defaultMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
-            markerLayer = new ItemizedLayer<MarkerItem>(mMap, defaultMarkerSymbol);
+            markerLayer = new ItemizedLayer(mMap, defaultMarkerSymbol);
             markerLayer.setName(SystemConstant.AIR_PLAN_MARKER_AIR_PORT);
             mMap.layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }

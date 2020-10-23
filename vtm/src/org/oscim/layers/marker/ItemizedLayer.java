@@ -44,32 +44,40 @@ public class ItemizedLayer extends MarkerLayer implements GestureListener {
     protected int mDrawnItemsLimit = Integer.MAX_VALUE;
 
     public ItemizedLayer(Map map, MarkerSymbol defaultMarker) {
-        this(map, new ArrayList<MarkerInterface>(), defaultMarker, null);
+        this(map, new ArrayList<MarkerInterface>(), defaultMarker, null, "point-layer");
+    }
+
+    public ItemizedLayer(Map map, MarkerSymbol defaultMarker, String layerName) {
+        this(map, new ArrayList<MarkerInterface>(), defaultMarker, null, layerName);
     }
 
     public ItemizedLayer(Map map, List<MarkerInterface> list,
                          MarkerSymbol defaultMarker,
-                         OnItemGestureListener<MarkerInterface> listener) {
+                         OnItemGestureListener<MarkerInterface> listener,
+                         String layerName) {
 
         super(map, defaultMarker);
 
         mItemList = list;
         mOnItemGestureListener = listener;
         populate();
+        this.mName = layerName;
     }
 
-    public ItemizedLayer(Map map, MarkerRendererFactory markerRendererFactory) {
-        this(map, new ArrayList<MarkerInterface>(), markerRendererFactory, null);
+    public ItemizedLayer(Map map, MarkerRendererFactory markerRendererFactory, String layerName) {
+        this(map, new ArrayList<MarkerInterface>(), markerRendererFactory, null, layerName);
     }
 
     public ItemizedLayer(Map map, List<MarkerInterface> list,
                          MarkerRendererFactory markerRendererFactory,
-                         OnItemGestureListener<MarkerInterface> listener) {
+                         OnItemGestureListener<MarkerInterface> listener,
+                         String layerName) {
 
         super(map, markerRendererFactory);
 
         mItemList = list;
         mOnItemGestureListener = listener;
+        this.mName = layerName;
         populate();
     }
 

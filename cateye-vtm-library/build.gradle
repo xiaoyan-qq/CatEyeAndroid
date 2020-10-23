@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 27
+        minSdkVersion androidMinSdk()
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -57,7 +57,7 @@ dependencies {
     api "org.slf4j:slf4j-android:$slf4jVersion"
     api project(':vtm-android-gdx')
     api project(':vtm-gdx')
-    api 'com.android.support:appcompat-v7:27.0.3'
+    api 'com.android.support:appcompat-v7:29.0.2'
 
     //    compile 'com.android.support:support-v4:27.0.3'
 
@@ -139,8 +139,8 @@ dependencies {
     //    compile 'com.github.sevar83:android-spatialite:2.0.0'
 
     //友盟日志记录
-    compile 'com.umeng.sdk:common:1.5.0'
-    compile 'com.umeng.sdk:analytics:7.5.0'
+    api 'com.umeng.sdk:common:1.5.0'
+    api 'com.umeng.sdk:analytics:7.5.0'
 
     //可滑动的listview https://github.com/yydcdut/SlideAndDragListView
     api 'com.yydcdut:sdlv:0.7.5'
@@ -176,5 +176,5 @@ dependencies {
 
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     api 'com.github.hss01248:NotifyUtil:1.0.1'
-    implementation files('libs/jts-1.13.jar')
+//    implementation files('libs/jts-1.13.jar')
 }

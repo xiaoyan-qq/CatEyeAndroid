@@ -14,7 +14,7 @@ allprojects {
     version = 'master-SNAPSHOT'
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-    ext.androidBuildVersionTools = "29.0.3"
+    ext.androidBuildVersionTools = "29.0.2"
     ext.gdxVersion = "1.9.10"
     ext.gwtVersion = "2.8.2"
     ext.slf4jVersion = "1.7.28"
@@ -30,17 +30,17 @@ allprojects {
 
     repositories {
         google()
-        maven { url 'https://repo.boundlessgeo.com/main/' }
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://jitpack.io" }
+//        maven { url 'https://repo.boundlessgeo.com/main/' }
     }
 }
 
 static def androidCompileSdk() { return 29 }
 
 // 14 for Support Library, 16 for sqlite-android
-static def androidMinSdk() { return 16 }
+static def androidMinSdk() { return 23 }
 
 static def androidTargetSdk() { return 29 }
 
@@ -63,7 +63,7 @@ subprojects {
             if (details.requested.group == 'com.android.support'
                     && !details.requested.name.contains('multidex')) {
                 //统一版本号
-                details.useVersion "27.0.0"
+                details.useVersion "29.0.2"
             }
         }
     }

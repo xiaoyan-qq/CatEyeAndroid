@@ -2,7 +2,6 @@ package com.vtm.library.tools;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerInterface;
-import org.oscim.layers.marker.MarkerItem;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,9 +16,9 @@ public class DrawLayerUtils {
         return instance;
     }
 
-    public GeoPoint removeItemFromList(GeoPoint geoPoint, List<MarkerItem> itemList) {
+    public GeoPoint removeItemFromList(GeoPoint geoPoint, List<MarkerInterface> itemList) {
         if (itemList != null && !itemList.isEmpty()) {
-            Iterator<MarkerItem> iterator = itemList.iterator();
+            Iterator<MarkerInterface> iterator = itemList.iterator();
             while (iterator.hasNext()) {
                 MarkerInterface item = iterator.next();
                 if (item.getPoint().getLatitude() == geoPoint.getLatitude() && item.getPoint().getLongitude() == geoPoint.getLongitude()) {

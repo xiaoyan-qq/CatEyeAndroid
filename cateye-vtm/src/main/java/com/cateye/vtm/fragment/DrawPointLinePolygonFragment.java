@@ -3,7 +3,6 @@ package com.cateye.vtm.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +17,13 @@ import com.vondear.rxtool.view.RxToast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.core.GeoPoint;
-import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.marker.MarkerInterface;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by xiaoxiao on 2018/3/21.
@@ -131,8 +132,8 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
                 Bundle drawBundle = new Bundle();
                 List<GeoPoint> geoPointList = new ArrayList<>();
                 if (markerLayer != null && markerLayer.getItemList() != null && !markerLayer.getItemList().isEmpty()) {
-                    for (MarkerItem item : markerLayer.getItemList()) {
-                        geoPointList.add(item.geoPoint);
+                    for (MarkerInterface item : markerLayer.getItemList()) {
+                        geoPointList.add(item.getPoint());
                     }
                     drawBundle.putSerializable(SystemConstant.DRAW_POINT_LIST, (Serializable) geoPointList);
                 }

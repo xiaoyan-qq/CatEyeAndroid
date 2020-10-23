@@ -1,7 +1,6 @@
 package com.cateye.vtm.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +24,8 @@ import com.vondear.rxtool.view.RxToast;
 
 import org.oscim.map.Map;
 import org.xutils.ex.DbException;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by xiaoxiao on 2018/8/31.

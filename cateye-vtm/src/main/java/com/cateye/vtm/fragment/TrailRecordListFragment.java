@@ -2,10 +2,6 @@ package com.cateye.vtm.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +12,6 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
-import com.cateye.android.entity.AirPlanDBEntity;
 import com.cateye.android.entity.TravelLocation;
 import com.cateye.android.entity.TravelRecord;
 import com.cateye.android.vtm.MainActivity;
@@ -40,17 +35,19 @@ import com.vtm.library.tools.OverlayerManager;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.map.Map;
-import org.oscim.map.Viewport;
 import org.xutils.DbManager;
 import org.xutils.db.sqlite.SqlInfo;
 import org.xutils.db.sqlite.SqlInfoBuilder;
 import org.xutils.db.sqlite.WhereBuilder;
-import org.xutils.db.table.TableEntity;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

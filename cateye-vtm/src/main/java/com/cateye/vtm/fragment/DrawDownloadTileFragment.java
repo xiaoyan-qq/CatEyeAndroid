@@ -2,7 +2,6 @@ package com.cateye.vtm.fragment;
 
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -12,6 +11,8 @@ import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.tools.TileDownloadRectDrawView;
 
 import org.greenrobot.eventbus.EventBus;
+
+import androidx.annotation.Nullable;
 
 public class DrawDownloadTileFragment extends BaseFragment {
     private BootstrapButton bbtn_finish;

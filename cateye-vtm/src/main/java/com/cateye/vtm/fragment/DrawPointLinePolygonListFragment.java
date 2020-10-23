@@ -3,11 +3,6 @@ package com.cateye.vtm.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +84,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
@@ -139,7 +139,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
         //初始化点线面的显示图层
         if (highLightPointLayer == null) {
             //打开该fragment，则自动向地图中添加marker的overlay
-            highLightPointLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getHighLightMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_DRAW_POINT_HIGHLIGHT);
+            highLightPointLayer = new ItemizedLayer(mMap, LayerStyle.getHighLightMarkerSymbol(getActivity()), SystemConstant.LAYER_NAME_DRAW_POINT_HIGHLIGHT);
             mMap.layers().add(highLightPointLayer);
 
         }

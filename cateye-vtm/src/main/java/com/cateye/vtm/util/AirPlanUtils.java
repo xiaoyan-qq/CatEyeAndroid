@@ -2,7 +2,6 @@ package com.cateye.vtm.util;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.cateye.android.entity.AirPlanDBEntity;
 import com.cateye.android.vtm.MainActivity;
@@ -95,7 +94,7 @@ public class AirPlanUtils {
                     if (airplanDrawOverlayer != null) {
                         //绘制多个polygon的图层
                         MultiPolygonLayer airPlanParamLayer = LayerUtils.getAirPlanParamLayer(mMap);
-                        ItemizedLayer<MarkerItem> airPlanMarkerLayer = LayerUtils.getAirPlanMarkerLayer(mainFragment.getContext(), mMap);
+                        ItemizedLayer airPlanMarkerLayer = LayerUtils.getAirPlanMarkerLayer(mainFragment.getContext(), mMap);
 
                         if (OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.AIR_PLAN_MULTI_POLYGON_PARAM_EVENT) == null) {
                             mMap.layers().add(new MapEventsReceiver(mMap, SystemConstant.AIR_PLAN_MULTI_POLYGON_PARAM_EVENT), MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);

@@ -2,12 +2,8 @@ package com.cateye.vtm.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +13,6 @@ import android.widget.ImageView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.cateye.android.entity.DrawPointLinePolygonEntity;
-import com.cateye.android.vtm.LoginActivity;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
@@ -25,9 +20,7 @@ import com.cateye.vtm.util.SystemConstant;
 import com.vondear.rxtool.RxDataTool;
 import com.vondear.rxtool.RxFileTool;
 import com.vondear.rxtool.RxPhotoTool;
-import com.vondear.rxtool.RxPictureTool;
 import com.vondear.rxtool.RxSPTool;
-import com.vondear.rxtool.RxTextTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialog;
 import com.vondear.rxui.view.dialog.RxDialogScaleView;
@@ -35,7 +28,6 @@ import com.vondear.rxui.view.dialog.RxDialogSureCancel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.oscim.event.Event;
 import org.xutils.ex.DbException;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
@@ -44,6 +36,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DrawPointLinePolygonDialog {
     private RxDialog currentDialog;

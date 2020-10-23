@@ -2,21 +2,17 @@ package com.cateye.vtm.fragment.base;
 
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cateye.android.vtm.MainActivity;
-import com.cateye.android.vtm.R;
 import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.layers.PolygonLayer;
 
 import org.greenrobot.eventbus.EventBus;
-import org.oscim.backend.canvas.Bitmap;
-import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
 import org.oscim.event.GestureListener;
@@ -24,15 +20,13 @@ import org.oscim.event.MotionEvent;
 import org.oscim.layers.Layer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.vector.PathLayer;
-import org.oscim.layers.vector.geometries.Style;
 import org.oscim.map.Map;
 
 import java.io.Serializable;
 import java.util.List;
 
-import static org.oscim.android.canvas.AndroidGraphics.drawableToBitmap;
+import androidx.annotation.Nullable;
 
 /**
  * Created by xiaoxiao on 2018/5/24.
@@ -45,7 +39,7 @@ public class BaseDrawFragment extends BaseFragment {
     protected Map mMap;
 
     //overLayer图层
-    protected ItemizedLayer<MarkerItem> markerLayer;
+    protected ItemizedLayer markerLayer;
     protected PathLayer polylineOverlay;
     protected PolygonLayer polygonOverlay;
 
@@ -69,7 +63,7 @@ public class BaseDrawFragment extends BaseFragment {
     public void initDrawLayers() {
         if (markerLayer == null) {
             //打开该fragment，则自动向地图中添加marker的overlay
-            markerLayer = new ItemizedLayer<MarkerItem>(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()));
+            markerLayer = new ItemizedLayer(mMap, LayerStyle.getDefaultMarkerSymbol(getActivity()));
             mMap.layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 

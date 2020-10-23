@@ -3,14 +3,12 @@ package com.cateye.vtm.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.cateye.android.entity.ContourMPData;
 import com.cateye.android.entity.MapSourceFromNet;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
@@ -38,9 +36,6 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapElement;
 import org.oscim.core.Tag;
 import org.oscim.layers.Layer;
-import org.oscim.layers.LocationLayer;
-import org.oscim.layers.MapEventLayer;
-import org.oscim.layers.MapEventLayer2;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.MapTile;
@@ -48,21 +43,20 @@ import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.map.Map;
 import org.oscim.renderer.bucket.RenderBuckets;
-import org.oscim.scalebar.MapScaleBarLayer;
 import org.oscim.theme.ExternalRenderTheme;
 import org.oscim.theme.ThemeUtils;
 import org.oscim.theme.styles.AreaStyle;
 import org.oscim.theme.styles.RenderStyle;
-import org.oscim.tiling.source.bitmap.BitmapTileSource;
-import org.oscim.tiling.source.geojson.ContourGeojsonTileSource;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+
 
 public class LayerManagerFragment extends BaseFragment {
     private Map mMap;
@@ -78,7 +72,7 @@ public class LayerManagerFragment extends BaseFragment {
     private static final Tag NOSEA_TAG = new Tag("natural", "nosea");
     private static final Tag SEA_TAG = new Tag("natural", "sea");
 
-    private ItemizedLayer<MarkerItem> geoJsonMarkerLayer;
+    private ItemizedLayer geoJsonMarkerLayer;
     private MultiPathLayer geoJsonMultiPathLayer;
     private MultiPolygonLayer geoJsonMultiPolygonLayer;
 
@@ -174,7 +168,7 @@ public class LayerManagerFragment extends BaseFragment {
                     com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geometry;
                     MarkerItem markerItem = new MarkerItem("", "", GeometryTools.position2GeoPoint(point.getPosition()));
                     if (geoJsonMarkerLayer == null) {
-                        geoJsonMarkerLayer = (ItemizedLayer<MarkerItem>) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.LAYER_NAME_GEOJSON_POINT);
+                        geoJsonMarkerLayer = (ItemizedLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.LAYER_NAME_GEOJSON_POINT);
                     }
                     if (geoJsonMarkerLayer != null) {
                         geoJsonMarkerLayer.addItem(markerItem);

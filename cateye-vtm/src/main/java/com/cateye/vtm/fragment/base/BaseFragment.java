@@ -3,8 +3,6 @@ package com.cateye.vtm.fragment.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.IdRes;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,8 @@ import com.cateye.vtm.util.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 import me.yokeyword.fragmentation.SupportFragment;
 
 /**

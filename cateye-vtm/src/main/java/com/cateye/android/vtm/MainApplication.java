@@ -1,8 +1,5 @@
 package com.cateye.android.vtm;
 
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.cateye.vtm.util.SystemConstant;
 import com.hss01248.notifyutil.NotifyUtil;
@@ -22,6 +19,8 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 import me.yokeyword.fragmentation.Fragmentation;
 import okhttp3.OkHttpClient;
 
