@@ -1,8 +1,6 @@
 package com.cateye.android.vtm;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -38,17 +36,10 @@ import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtool.RxFileTool;
-import com.vondear.rxtool.RxImageTool;
 import com.vondear.rxtool.RxLogTool;
 import com.vondear.rxtool.RxPhotoTool;
 import com.vondear.rxtool.view.RxToast;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
-import com.vondear.rxui.view.dialog.RxDialogSure;
-import com.yanzhenjie.permission.Action;
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.Permission;
-import com.yanzhenjie.permission.Rationale;
-import com.yanzhenjie.permission.RequestExecutor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.android.filepicker.FilePicker;
@@ -141,6 +132,15 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingdrawer);
         // 实时显示当前位置的控件
         tv_current_location = findViewById(R.id.tv_current_location);
+    }
+
+    /**
+     * 选择本地文件的文件选择过滤器(筛选map、json、geojson、kml文件)
+     */
+    public static class LocalFilePicker extends FilePicker {
+        public LocalFilePicker() {
+            setFileSelectFilter(new ValidMapFile());
+        }
     }
 
     /**

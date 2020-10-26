@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.cateye.android.vtm.R;
 
 import java.io.File;
@@ -68,6 +69,7 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
     protected Comparator<File> mFileComparator = getDefaultFileComparator();
     protected FileFilter mFileDisplayFilter;
     protected ValidFileFilter mFileSelectFilter;
+    protected BootstrapButton bbtnReturnDefaultFolder;
 
     /**
      * Sets the file comparator which is used to order the contents of all
@@ -199,6 +201,18 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
         // // first start of this instance
         // showDialog(DIALOG_FILE_SELECT);
         // }
+        bbtnReturnDefaultFolder = findViewById(R.id.bbtn_return_default_folder);
+        bbtnReturnDefaultFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 返回默认目录
+                mDirectory = new File(DEFAULT_DIRECTORY);
+                if (!mDirectory.exists() || !mDirectory.canRead()) {
+                    mDirectory = new File(DEFAULT_DIRECTORY);
+                }
+                browseToCurrentDirectory();
+            }
+        });
     }
 
     @Override

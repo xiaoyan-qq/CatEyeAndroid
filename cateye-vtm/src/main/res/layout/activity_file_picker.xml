@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:id="@+id/layer_file_picker_head"
+        style="@style/headStyle"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/button_padding_default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
                 android:id="@+id/img_close"
@@ -16,14 +21,36 @@
                 android:layout_centerVertical="true"
                 android:padding="5dp"
                 android:src="@drawable/file_select_close"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="@style/titleStyle"
+            android:textColor="@color/whitesmoke"
+            android:text="选择本地文件"></TextView>
     </RelativeLayout>
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/bbtn_return_default_folder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            app:bootstrapSize="lg"
+            android:text="返回默认目录"
+            android:layout_marginBottom="@dimen/button_padding_default"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"></com.beardedhen.androidbootstrap.BootstrapButton>
+
 
     <GridView
-            android:id="@+id/filePickerView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:columnWidth="100dip"
-            android:fadingEdge="vertical"
-            android:fadingEdgeLength="30dip"
-            android:numColumns="auto_fit"/>
-</LinearLayout>
+        android:id="@+id/filePickerView"
+        android:layout_below="@id/layer_file_picker_head"
+        android:layout_above="@id/bbtn_return_default_folder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:columnWidth="100dip"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="30dip"
+        android:numColumns="auto_fit"/>
+</RelativeLayout>

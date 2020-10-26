@@ -63,6 +63,11 @@
                 android:name="com.cateye.android.vtm.MainActivity$GeoJsonFilePicker"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:screenOrientation="sensorLandscape"/>
+        <!--本地文件选择筛选类-->
+        <activity
+                android:name="com.cateye.android.vtm.MainActivity$LocalFilePicker"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="sensorLandscape"/>
         <!--等高线文件选择筛选类-->
         <activity
                 android:name="com.cateye.android.vtm.MainActivity$ContourFilePicker"

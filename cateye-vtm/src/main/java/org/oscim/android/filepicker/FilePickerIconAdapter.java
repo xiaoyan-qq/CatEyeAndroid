@@ -80,17 +80,17 @@ class FilePickerIconAdapter extends BaseAdapter {
         if (index == 0 && mHasParentFolder) {
             // the parent directory of the current folder
             mTextView.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.file_picker_back, 0, 0);
-            mTextView.setText("..");
+            mTextView.setText("上一级/..");
         } else {
             mCurrentFile = mFiles[index];
             if (mCurrentFile.isDirectory()) {
                 mTextView.setCompoundDrawablesWithIntrinsicBounds(0,
-                        R.drawable.file_picker_folder,
+                        R.mipmap.file_picker_folder,
                         0,
                         0);
             } else {
                 mTextView.setCompoundDrawablesWithIntrinsicBounds(0,
-                        R.drawable.file_picker_file,
+                        R.mipmap.file_picker_file,
                         0,
                         0);
             }

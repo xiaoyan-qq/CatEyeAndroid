@@ -8,13 +8,4 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorControlHighlight">@color/bootstrap_gray_light</item>
     </style>
-
-    <style name="rowItem">
-        <item name="android:padding">@dimen/button_padding_default</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/ripple_bg</item>
-    </style>
-    <style name="headStyle">
-        <item name="android:background">@color/white</item>
-    </style>
 </resources>

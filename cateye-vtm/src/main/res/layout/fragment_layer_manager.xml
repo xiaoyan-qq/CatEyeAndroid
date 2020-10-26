@@ -19,24 +19,24 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="@dimen/button_padding_default"
-                android:text="添加本地map数据"
+                android:text="添加本地数据"
                 android:textSize="@dimen/bootstrap_h4_text_size"/>
 
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="0.1dp"
-                android:background="@color/divider"></View>
+<!--        <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0.1dp"-->
+<!--                android:background="@color/divider"></View>-->
 
-        <TextView
-                android:id="@+id/tv_layerlist_geojson"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="@dimen/button_padding_default"
-                android:text="添加本地GeoJson数据"
-                android:textSize="@dimen/bootstrap_h4_text_size"/>
+<!--        <TextView-->
+<!--                android:id="@+id/tv_layerlist_geojson"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentBottom="true"-->
+<!--                android:layout_weight="1"-->
+<!--                android:gravity="center"-->
+<!--                android:padding="@dimen/button_padding_default"-->
+<!--                android:text="添加本地GeoJson数据"-->
+<!--                android:textSize="@dimen/bootstrap_h4_text_size"/>-->
 
         <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/btn_layer_manager_confirm"
@@ -64,9 +64,15 @@
                 android:layout_centerVertical="true"
                 android:padding="@dimen/button_padding_default"
                 android:scaleType="fitCenter"
-                android:background="@drawable/ripple_bg_drawable"
                 android:src="@drawable/selector_back"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="图层管理"
+            android:textColor="@color/whitesmoke"
+            style="@style/titleStyle"></TextView>
     </RelativeLayout>
 
     <ExpandableListView

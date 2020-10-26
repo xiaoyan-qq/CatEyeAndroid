@@ -115,20 +115,20 @@ public class LayerManagerFragment extends BaseFragment {
         tv_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), MainActivity.MapFilePicker.class),
+                startActivityForResult(new Intent(getActivity(), MainActivity.LocalFilePicker.class),
                         SELECT_MAP_FILE);
             }
         });
 
-        //增加geojson按钮
-        TextView tv_geojson = (TextView) rootView.findViewById(R.id.tv_layerlist_geojson);
-        tv_geojson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), MainActivity.ContourFilePicker.class),
-                        SELECT_GEOJSON_FILE);
-            }
-        });
+//        //增加geojson按钮
+//        TextView tv_geojson = (TextView) rootView.findViewById(R.id.tv_layerlist_geojson);
+//        tv_geojson.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivityForResult(new Intent(getActivity(), MainActivity.ContourFilePicker.class),
+//                        SELECT_GEOJSON_FILE);
+//            }
+//        });
 
         BootstrapButton btn_confirm = rootView.findViewById(R.id.btn_layer_manager_confirm);
         btn_confirm.setOnClickListener(new View.OnClickListener() {
@@ -239,71 +239,112 @@ public class LayerManagerFragment extends BaseFragment {
                     }
                 }
                 File mapFile = new File(file);
-                if (mapFile.exists()) {
-                    MapSourceFromNet.DataBean.MapsBean mapFileDataBean = new MapSourceFromNet.DataBean.MapsBean();
-                    mapFileDataBean.setAbstractX(mapFile.getName());
-                    mapFileDataBean.setHref(file);
-                    String fileName = mapFile.getName();
-                    String suffix = fileName.substring(fileName.lastIndexOf("."));
-                    mapFileDataBean.setExtension(suffix);
-                    if (suffix != null) {
-                        MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
-                        if (suffix.toLowerCase().endsWith("map")) {
-                            mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                            localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                        } else if (suffix.toLowerCase().endsWith("json")) {
-                            mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                            localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                        }
-                        localDataBean.setMemo(mapFile.getName());
-                        localDataBean.setMaps(new ArrayList<MapSourceFromNet.DataBean.MapsBean>());
-                        localDataBean.getMaps().add(mapFileDataBean);
-                        if (layerDataBeanList != null) {
-                            layerDataBeanList.add(localDataBean);
-                            if (layerManagerAdapter != null) {
-                                layerManagerAdapter.sortListDataAndGroup(layerDataBeanList);
-                                layerManagerAdapter.notifyDataSetChanged();
+                if (mapFile.exists()) { // 用户选择的是map文件
+                    if (file.endsWith(".map")) {
+                        MapSourceFromNet.DataBean.MapsBean mapFileDataBean = new MapSourceFromNet.DataBean.MapsBean();
+                        mapFileDataBean.setAbstractX(mapFile.getName());
+                        mapFileDataBean.setHref(file);
+                        String fileName = mapFile.getName();
+                        String suffix = fileName.substring(fileName.lastIndexOf("."));
+                        mapFileDataBean.setExtension(suffix);
+                        if (suffix != null) {
+                            MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
+                            if (suffix.toLowerCase().endsWith("map")) {
+                                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
+                                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
+                            } else if (suffix.toLowerCase().endsWith("json")) {
+                                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
+                                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
+                            }
+                            localDataBean.setMemo(mapFile.getName());
+                            localDataBean.setMaps(new ArrayList<MapSourceFromNet.DataBean.MapsBean>());
+                            localDataBean.getMaps().add(mapFileDataBean);
+                            if (layerDataBeanList != null) {
+                                layerDataBeanList.add(localDataBean);
+                                if (layerManagerAdapter != null) {
+                                    layerManagerAdapter.sortListDataAndGroup(layerDataBeanList);
+                                    layerManagerAdapter.notifyDataSetChanged();
+                                }
                             }
                         }
+                    } else if (file.toLowerCase().endsWith(".geojson")||file.toLowerCase().endsWith(".json")) { // 用户选中了geojson文件
+                        try {
+                            FileInputStream geoJsonStream = new FileInputStream(new File(file));
+                            GeoJSONObject geoJSONObject = GeoJSON.parse(geoJsonStream);
+                            List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
+                            if (geoJSONObject.getType() == "FeatureCollection") {
+                                FeatureCollection featureCollection = (FeatureCollection) geoJSONObject;
+                                for (Feature feature : featureCollection.getFeatures()) {
+                                    geometryList.add(feature.getGeometry());
+                                }
+                            } else if (geoJSONObject.getType() == "Feature") {
+                                Feature feature = (Feature) geoJSONObject;
+                                geometryList.add(feature.getGeometry());
+                            } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
+                                com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geoJSONObject;
+                                geometryList.add(point);
+                            } else if (geoJSONObject.getType() == "LineString") {
+                                com.cocoahero.android.geojson.LineString lineString = (com.cocoahero.android.geojson.LineString) geoJSONObject;
+                                geometryList.add(lineString);
+                            } else if (geoJSONObject.getType() == "Polygon") {
+                                com.cocoahero.android.geojson.Polygon polygon = (com.cocoahero.android.geojson.Polygon) geoJSONObject;
+                                geometryList.add(polygon);
+                            }
+                            showGeoJsonFileData(geometryList);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (file.toLowerCase().endsWith(".kml")) { // 用户选中了kml文件
+
                     }
+                } else {
+                    RxToast.error("选择的文件不存在或无法读取指定文件，请尝试重新选择！");
                 }
+            } else {
+                RxToast.error("选择的文件不存在或无法读取指定文件，请尝试重新选择！");
             }
-        } else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
-            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
-                return;
-            }
-            String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
-            try {
-                FileInputStream geoJsonStream = new FileInputStream(new File(filePath));
-                GeoJSONObject geoJSONObject = GeoJSON.parse(geoJsonStream);
-                List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
-                if (geoJSONObject.getType() == "FeatureCollection") {
-                    FeatureCollection featureCollection = (FeatureCollection) geoJSONObject;
-                    for (Feature feature : featureCollection.getFeatures()) {
-                        geometryList.add(feature.getGeometry());
-                    }
-                } else if (geoJSONObject.getType() == "Feature") {
-                    Feature feature = (Feature) geoJSONObject;
-                    geometryList.add(feature.getGeometry());
-                } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geoJSONObject;
-                    geometryList.add(point);
-                } else if (geoJSONObject.getType() == "LineString") {
-                    com.cocoahero.android.geojson.LineString lineString = (com.cocoahero.android.geojson.LineString) geoJSONObject;
-                    geometryList.add(lineString);
-                } else if (geoJSONObject.getType() == "Polygon") {
-                    com.cocoahero.android.geojson.Polygon polygon = (com.cocoahero.android.geojson.Polygon) geoJSONObject;
-                    geometryList.add(polygon);
-                }
-                showGeoJsonFileData(geometryList);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
+        }
+//        else if (requestCode == SELECT_GEOJSON_FILE) { // 用户选择本地geojson文件
+//            if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
+//                return;
+//            }
+//            String filePath = intent.getStringExtra(FilePicker.SELECTED_FILE);
+//            try {
+//                FileInputStream geoJsonStream = new FileInputStream(new File(filePath));
+//                GeoJSONObject geoJSONObject = GeoJSON.parse(geoJsonStream);
+//                List<com.cocoahero.android.geojson.Geometry> geometryList = new ArrayList<>();
+//                if (geoJSONObject.getType() == "FeatureCollection") {
+//                    FeatureCollection featureCollection = (FeatureCollection) geoJSONObject;
+//                    for (Feature feature : featureCollection.getFeatures()) {
+//                        geometryList.add(feature.getGeometry());
+//                    }
+//                } else if (geoJSONObject.getType() == "Feature") {
+//                    Feature feature = (Feature) geoJSONObject;
+//                    geometryList.add(feature.getGeometry());
+//                } else if (geoJSONObject.getType() == "Point" || geoJSONObject.getType() == "LineString" || geoJSONObject.getType() == "Polygon") {
+//                    com.cocoahero.android.geojson.Point point = (com.cocoahero.android.geojson.Point) geoJSONObject;
+//                    geometryList.add(point);
+//                } else if (geoJSONObject.getType() == "LineString") {
+//                    com.cocoahero.android.geojson.LineString lineString = (com.cocoahero.android.geojson.LineString) geoJSONObject;
+//                    geometryList.add(lineString);
+//                } else if (geoJSONObject.getType() == "Polygon") {
+//                    com.cocoahero.android.geojson.Polygon polygon = (com.cocoahero.android.geojson.Polygon) geoJSONObject;
+//                    geometryList.add(polygon);
+//                }
+//                showGeoJsonFileData(geometryList);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        else if (requestCode == SELECT_THEME_FILE) {//选择本地style文件显示
             if (resultCode != getActivity().RESULT_OK || intent == null || intent.getStringExtra(FilePicker.SELECTED_FILE) == null) {
                 return;
             }
