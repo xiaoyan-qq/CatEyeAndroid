@@ -15,12 +15,12 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanMultiPolygonLayer;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerUtils;
 import com.litesuits.common.assist.Check;
 import com.vondear.rxtool.RxLogTool;
 import com.vondear.rxtool.RxTimeTool;
 import com.vondear.rxtool.view.RxToast;
+import com.vtm.library.tools.CatEyeMapManager;
 
 import org.oscim.map.Map;
 import org.xutils.ex.DbException;
@@ -137,8 +137,8 @@ public class AirPlanDrawFragment extends BaseDrawFragment {
         });
 
         //添加一个操作图层，监听用户在地图上的点击事件
-        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap());
-        CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance().getCatEyeMap());
+        CatEyeMapManager.getInstance().getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
 
         //如果当前地图不存在multiPolygon的图层，则自动生成添加到地图上
         multiPolygonLayer = LayerUtils.getAirPlanDrawLayer(mMap);

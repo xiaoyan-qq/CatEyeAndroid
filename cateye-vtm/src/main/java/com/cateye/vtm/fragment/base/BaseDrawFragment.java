@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cateye.android.vtm.MainActivity;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.layers.PolygonLayer;
+import com.vtm.library.tools.CatEyeMapManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.core.GeoPoint;
@@ -51,7 +51,7 @@ public class BaseDrawFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mMap = CatEyeMapManager.getInstance(getActivity()).getCatEyeMap();
+        mMap = CatEyeMapManager.getInstance().getCatEyeMap();
 
         initDrawLayers();
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -69,12 +69,12 @@ public class BaseDrawFragment extends BaseFragment {
 
         if (polylineOverlay == null) {
             //自动添加pathLayer
-            polylineOverlay = new PathLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), LayerStyle.getDefaultLineStyle());
+            polylineOverlay = new PathLayer(CatEyeMapManager.getInstance().getCatEyeMap(), LayerStyle.getDefaultLineStyle());
             mMap.layers().add(polylineOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
 
         if (polygonOverlay == null) {
-            polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), LayerStyle.getDefaultPolygonStyle());
+            polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance().getCatEyeMap(), LayerStyle.getDefaultPolygonStyle());
             mMap.layers().add(polygonOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
         }
     }
@@ -269,28 +269,28 @@ public class BaseDrawFragment extends BaseFragment {
         super.onDestroy();
         //如果点位的layer没有数据，则移除
         if (markerLayer != null && markerLayer.size() <= 0) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(markerLayer);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(markerLayer);
             markerLayer = null;
         }
         //如果线的layer没有数据，则移除
         if (polylineOverlay != null && polylineOverlay.getPoints() != null && polylineOverlay.getPoints().size() < 2) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polylineOverlay);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(polylineOverlay);
             polylineOverlay = null;
             if (currentDrawState == DRAW_STATE.DRAW_LINE) {
-                CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(markerLayer);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(markerLayer);
                 markerLayer = null;
             }
         }
         //如果面的layer没有数据，则移除
         if (polygonOverlay != null && polygonOverlay.getPoints() != null && polygonOverlay.getPoints().size() < 3) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polygonOverlay);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(polygonOverlay);
             polygonOverlay = null;
             if (currentDrawState == DRAW_STATE.DRAW_POLYGON) {
-                CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(markerLayer);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(markerLayer);
                 markerLayer = null;
             }
         }
-        CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().updateMap(true);
+        CatEyeMapManager.getInstance().getCatEyeMap().updateMap(true);
 
         //通知主界面绘制点线面结束
         Message msg = new Message();

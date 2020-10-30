@@ -44,7 +44,7 @@ android {
 dependencies {
     api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    api project(':gdal')
+//    api project(':gdal')
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     api project(':vtm-android')
@@ -68,19 +68,16 @@ dependencies {
     api 'com.github.vondear.RxTool:RxUI:v2.3.9'
 
     //功能库（Zxing扫描与生成二维码条形码 支付宝 微信）
-
     //implementation "com.github.vondear.RxTool:RxFeature:v2.0.4"
 
     //ArcGis For Android工具库（API：100.1以上版本）
-
-    //    compile "com.github.vondear.RxTool:RxArcGisKit:v2.0.4"
+    api "com.github.vondear.RxTool:RxArcGisKit:v2.3.9"
 
     //常用android工具类 https://github.com/ReactiveX/RxAndroid
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
     api 'io.reactivex.rxjava2:rxjava:2.1.1'
 
     //https://github.com/yanzhenjie/AndPermission
-
     //动态获取权限的三方库
     api 'com.yanzhenjie:permission:2.0.0-rc3'
 
@@ -108,9 +105,7 @@ dependencies {
     api 'org.greenrobot:eventbus:3.1.1'
 
     //    //https://github.com/rey5137/Material
-
     //    compile  ('com.github.rey5137:material:1.2.5',{
-
     //        exclude group: 'com.android.support'
 
     //    })
@@ -177,4 +172,7 @@ dependencies {
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     api 'com.github.hss01248:NotifyUtil:1.0.1'
 //    implementation files('libs/jts-1.13.jar')
+    api files('libs/gdal-release.aar')
+
+    // https://github.com/crankycoder/SimpleKML   simple-xml-2.6.3.jar
 }

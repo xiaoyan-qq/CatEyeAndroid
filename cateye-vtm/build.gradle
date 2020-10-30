@@ -44,6 +44,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        pickFirst 'about.html'
+        pickFirst 'about.ini'
+        pickFirst 'about.mappings'
+        pickFirst 'modeling32.png'
+        pickFirst 'about.properties'
+        pickFirst 'plugin.properties'
+        pickFirst 'plugin.xml'
+    }
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

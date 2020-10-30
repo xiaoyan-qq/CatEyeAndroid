@@ -36,7 +36,6 @@ import com.cateye.vtm.adapter.LayerManagerAdapter;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanUtils;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.TimeUtils;
@@ -61,6 +60,7 @@ import com.vtm.library.layers.GeoJsonLayer;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.layers.PolygonLayer;
+import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.DrawLayerUtils;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
@@ -397,7 +397,7 @@ public class CatEyeMainFragment extends BaseFragment {
     private void initData() {
 //        netDataSourceMap = new LinkedHashMap<String, MapSourceFromNet.DataBean>();
         //初始化MapManager，方便全局使用map对象
-        CatEyeMapManager.getInstance(getActivity()).init(mapView);
+        CatEyeMapManager.getInstance().init(mapView);
         mPrefs = new MapPreferences(this.getTag(), getActivity());
 //        mTileSourceList = new ArrayList<>();
 
@@ -1005,6 +1005,12 @@ public class CatEyeMainFragment extends BaseFragment {
      * 增加本地地图layer
      */
     private void addLocalMapFileLayer(String localMapFilePath) {
+//        // 测试用
+//        int count = ogr.GetDriverCount();
+//        for(int i=0;i<count;i++){
+//            System.out.println("ogr支持的文件格式---------"+ogr.GetDriver(i).GetName());
+//        }
+
         MapFileTileSource mTileSource = new MapFileTileSource();
         mTileSource.setPreferredLanguage("zh");
 
@@ -1061,7 +1067,7 @@ public class CatEyeMainFragment extends BaseFragment {
                 }
             }), isAllLayers);
         } else {
-            mMap.setTheme(VtmThemes.DEFAULT, isAllLayers);
+            mMap.setTheme(VtmThemes.OSMARENDER, isAllLayers);
         }
     }
 
@@ -1318,7 +1324,7 @@ public class CatEyeMainFragment extends BaseFragment {
                             .fixed(true)
                             .randomOffset(false)
                             .build();
-                    PolygonLayer polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), polygonStyle);
+                    PolygonLayer polygonOverlay = new PolygonLayer(CatEyeMapManager.getInstance().getCatEyeMap(), polygonStyle);
                     mMap.layers().add(polygonOverlay, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
                     polygonOverlay.setName(SystemConstant.DRAW_TILE_RECT);
 

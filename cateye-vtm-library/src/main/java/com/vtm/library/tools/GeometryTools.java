@@ -1357,4 +1357,13 @@ public class GeometryTools {
         }
         return null;
     }
+
+    public static enum GEOMETRY_TYPE {
+        POINT("Point"),LINE("LineString"),POLYGON("Polygon");
+        private String typeName;
+
+        GEOMETRY_TYPE(String typeName) {
+            this.typeName = typeName;
+        }
+    }
 }

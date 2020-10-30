@@ -14,7 +14,7 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.adapter.LayerManagerAdapter;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.CatEyeMapManager;
+import com.cateye.vtm.util.LocalGisFileUtil;
 import com.cateye.vtm.util.SystemConstant;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.FeatureCollection;
@@ -26,6 +26,7 @@ import com.cocoahero.android.geojson.Ring;
 import com.vondear.rxtool.view.RxToast;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
+import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
 
@@ -299,7 +300,11 @@ public class LayerManagerFragment extends BaseFragment {
                             e.printStackTrace();
                         }
                     } else if (file.toLowerCase().endsWith(".kml")) { // 用户选中了kml文件
-
+                        try {
+                            LocalGisFileUtil.getInstance().readKml(new File(file));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     RxToast.error("选择的文件不存在或无法读取指定文件，请尝试重新选择！");

@@ -24,9 +24,8 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerStyle;
-import com.cateye.vtm.util.ShpFileUtil;
+import com.cateye.vtm.util.LocalGisFileUtil;
 import com.cateye.vtm.util.SystemConstant;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.FeatureCollection;
@@ -49,6 +48,7 @@ import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vondear.rxui.view.dialog.RxDialogSureCancel;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
+import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
 
 import org.geotools.data.FeatureWriter;
@@ -545,7 +545,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
-                                    ShpFileUtil.writeShp(saveFile, GeometryTools.POINT_GEOMETRY_TYPE, pointEntityList);
+                                    LocalGisFileUtil.getInstance().writeShp(saveFile, GeometryTools.POINT_GEOMETRY_TYPE, pointEntityList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -558,7 +558,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
-                                    ShpFileUtil.writeShp(saveFile, GeometryTools.LINE_GEOMETRY_TYPE, lineEntityList);
+                                    LocalGisFileUtil.getInstance().writeShp(saveFile, GeometryTools.LINE_GEOMETRY_TYPE, lineEntityList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -571,7 +571,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                     saveFile.getParentFile().mkdirs();
                                 }
                                 try {
-                                    ShpFileUtil.writeShp(saveFile, GeometryTools.POLYGON_GEOMETRY_TYPE, polygonEntityList);
+                                    LocalGisFileUtil.getInstance().writeShp(saveFile, GeometryTools.POLYGON_GEOMETRY_TYPE, polygonEntityList);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

@@ -12,6 +12,7 @@ import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.umeng.commonsdk.UMConfigure;
 import com.vondear.rxtool.RxTool;
 
+import org.gdal.gdal.gdal;
 import org.gdal.ogr.ogr;
 import org.xutils.x;
 
@@ -42,6 +43,7 @@ public class MainApplication extends MultiDexApplication {
         RxTool.init(this);
         // 注册gdal
         ogr.RegisterAll();
+        gdal.AllRegister();
 
         Fragmentation.builder()
                 // 显示悬浮球 ; 其他Mode:SHAKE: 摇一摇唤出   NONE：隐藏

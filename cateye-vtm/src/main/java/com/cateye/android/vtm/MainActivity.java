@@ -44,6 +44,7 @@ import com.vondear.rxui.view.dialog.RxDialogLoading;
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.android.filepicker.FilePicker;
 import org.oscim.android.filepicker.FilterByFileExtension;
+import org.oscim.android.filepicker.FilterByFileExtensionArray;
 import org.oscim.android.filepicker.ValidMapFile;
 import org.oscim.android.filepicker.ValidRenderTheme;
 import org.xutils.DbManager;
@@ -139,7 +140,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
      */
     public static class LocalFilePicker extends FilePicker {
         public LocalFilePicker() {
-            setFileSelectFilter(new ValidMapFile());
+            setFileDisplayFilter(new FilterByFileExtensionArray(".map",".json", ".geojson",".kml"));
         }
     }
 
@@ -158,8 +159,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
      */
     public static class ContourFilePicker extends FilePicker {
         public ContourFilePicker() {
-            setFileDisplayFilter(new FilterByFileExtension(".json"));
-            setFileDisplayFilter(new FilterByFileExtension(".geojson"));
+            setFileDisplayFilter(new FilterByFileExtensionArray(".json", ".geojson"));
         }
     }
 

@@ -13,6 +13,9 @@ public class OverlayerManager {
 
     public static OverlayerManager getInstance(Map mMap) {
         if (instance == null) {
+            if (mMap == null) {
+                mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+            }
             instance = new OverlayerManager(mMap);
         }
 

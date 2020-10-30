@@ -18,7 +18,6 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanMultiPolygonLayer;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.LayerUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -27,6 +26,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vondear.rxtool.RxRecyclerViewDividerTool;
 import com.vondear.rxtool.view.RxToast;
+import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
 
 import org.oscim.core.GeoPoint;

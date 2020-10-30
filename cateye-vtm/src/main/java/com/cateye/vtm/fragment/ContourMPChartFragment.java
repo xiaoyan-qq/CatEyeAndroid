@@ -10,7 +10,6 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -26,6 +25,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.vondear.rxtool.RxDeviceTool;
 import com.vondear.rxui.view.dialog.RxDialogLoading;
+import com.vtm.library.tools.CatEyeMapManager;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
@@ -124,8 +124,8 @@ public class ContourMPChartFragment extends BaseDrawFragment {
 //        initMarkerOverlayer();
 
         //添加一个操作图层，监听用户在地图上的点击事件
-        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap());
-        CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance().getCatEyeMap());
+        CatEyeMapManager.getInstance().getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
 
         //绘制所有数据
         if (mpChartDataList != null && polylineOverlay != null && currentChartLine != null) {
@@ -207,8 +207,8 @@ public class ContourMPChartFragment extends BaseDrawFragment {
                 .fixed(true)
                 .randomOffset(false)
                 .build();
-        currentChartLine = new PathLayer(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap(), lineStyle);
-        CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().add(currentChartLine, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        currentChartLine = new PathLayer(CatEyeMapManager.getInstance().getCatEyeMap(), lineStyle);
+        CatEyeMapManager.getInstance().getCatEyeMap().layers().add(currentChartLine, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
     }
 
 //    /**
@@ -381,10 +381,10 @@ public class ContourMPChartFragment extends BaseDrawFragment {
         super.onStop();
         //当前界面被返回时，自动移除所有的overlayer
         if (mapEventsReceiver != null) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(mapEventsReceiver);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(mapEventsReceiver);
         }
         if (currentChartLine != null) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(currentChartLine);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(currentChartLine);
         }
         clearMapOverlayer();
     }

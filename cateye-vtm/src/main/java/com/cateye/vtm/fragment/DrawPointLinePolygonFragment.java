@@ -11,9 +11,9 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.CatEyeMapManager;
 import com.cateye.vtm.util.SystemConstant;
 import com.vondear.rxtool.view.RxToast;
+import com.vtm.library.tools.CatEyeMapManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.core.GeoPoint;
@@ -174,8 +174,8 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
         });
 
         //添加一个操作图层，监听用户在地图上的点击事件
-        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance(getActivity()).getCatEyeMap());
-        CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+        mapEventsReceiver = new MapEventsReceiver(CatEyeMapManager.getInstance().getCatEyeMap());
+        CatEyeMapManager.getInstance().getCatEyeMap().layers().add(mapEventsReceiver, MainActivity.LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
     }
 
     /**
@@ -208,22 +208,22 @@ public class DrawPointLinePolygonFragment extends BaseDrawFragment {
         //判断绘制的用途，某些用途下，绘制结束后就不需要再显示，也需要移除掉layer
         if (drawUsage == SystemConstant.DRAW_CONTOUR_LINE) {
             if (markerLayer != null) {
-                CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(markerLayer);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(markerLayer);
                 markerLayer = null;
             }
             if (polylineOverlay != null) {
-                CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polylineOverlay);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(polylineOverlay);
                 polylineOverlay = null;
             }
             if (polygonOverlay != null) {
-                CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(polygonOverlay);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(polygonOverlay);
                 polygonOverlay = null;
             }
         }
 
         //当前界面被返回时，移除绘制的图层
         if (mapEventsReceiver != null) {
-            CatEyeMapManager.getInstance(getActivity()).getCatEyeMap().layers().remove(mapEventsReceiver);
+            CatEyeMapManager.getInstance().getCatEyeMap().layers().remove(mapEventsReceiver);
             mapEventsReceiver = null;
         }
         //通知主界面绘制点线面结束
