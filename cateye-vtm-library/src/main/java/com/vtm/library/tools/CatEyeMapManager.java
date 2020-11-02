@@ -11,7 +11,7 @@ import org.oscim.map.Map;
 public class CatEyeMapManager {
     private static CatEyeMapManager instance;
 
-    private static MapView mapView;
+    private MapView mapView;
     private Map catEyeMap;
 
     public static CatEyeMapManager getInstance() {
@@ -29,7 +29,7 @@ public class CatEyeMapManager {
     protected CatEyeMapManager() {
     }
 
-    public static MapView getMapView() {
+    public MapView getMapView() {
         return mapView;
     }
 

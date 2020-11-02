@@ -41,7 +41,7 @@ public class AirPlanDrawFragment extends BaseDrawFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mMap = CatEyeMapManager.getMapView().map();
+        this.mMap = CatEyeMapManager.getInstance().getMapView().map();
     }
 
     public static BaseFragment newInstance(Bundle bundle) {

@@ -37,6 +37,7 @@ import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanUtils;
 import com.cateye.vtm.util.LayerStyle;
+import com.cateye.vtm.util.LocalGisFileUtil;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.TimeUtils;
 import com.litesuits.common.assist.Check;
@@ -89,8 +90,6 @@ import org.oscim.layers.MapEventLayer2;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
-import org.oscim.layers.tile.buildings.BuildingLayer;
-import org.oscim.layers.tile.vector.OsmTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.layers.vector.geometries.PolygonDrawable;
@@ -111,8 +110,6 @@ import org.oscim.theme.styles.TextStyle;
 import org.oscim.tiling.source.bitmap.BitmapTileSource;
 import org.oscim.tiling.source.geojson.ContourGeojsonTileSource;
 import org.oscim.tiling.source.geojson.GeojsonTileSource;
-import org.oscim.tiling.source.mapfile.MapFileTileSource;
-import org.oscim.tiling.source.mapfile.MapInfo;
 import org.xutils.ex.DbException;
 
 import java.io.File;
@@ -857,8 +854,10 @@ public class CatEyeMainFragment extends BaseFragment {
                             .zoomMax(18).build();
                     mTileSource.setOption(SystemConstant.LAYER_KEY_ID, dataBean.getId() + "");
                     createGeoJsonTileLayer(getActivity(), mTileSource, true, dataBean.getGroup());
-                } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".map")) {
-                    addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
+                } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".map")) { // 加载本地map数据
+                    LocalGisFileUtil.getInstance().addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
+                }  else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".kml")) { // 加载kml数据
+                    LocalGisFileUtil.getInstance().addLocalKmlFileLayer(dataBean.getMaps().get(0).getHref(), getActivity());
                 } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
                     File geoJsonFile = new File(dataBean.getMaps().get(0).getHref());
                     loadJson(geoJsonFile);
@@ -1001,38 +1000,6 @@ public class CatEyeMainFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 增加本地地图layer
-     */
-    private void addLocalMapFileLayer(String localMapFilePath) {
-//        // 测试用
-//        int count = ogr.GetDriverCount();
-//        for(int i=0;i<count;i++){
-//            System.out.println("ogr支持的文件格式---------"+ogr.GetDriver(i).GetName());
-//        }
-
-        MapFileTileSource mTileSource = new MapFileTileSource();
-        mTileSource.setPreferredLanguage("zh");
-
-        if (mTileSource.setMapFile(localMapFilePath)) {
-            //设置当前的文件选择的layer为地图的基础图层(第一层)==此处去掉此设置
-            VectorTileLayer mTileLayer = new OsmTileLayer(mMap);
-            mTileLayer.setTileSource(mTileSource);
-            mMap.layers().add(mTileLayer, LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.orderIndex);
-//            LabelLayer labelLayer = new LabelLayer(mMap, mTileLayer);
-            mMap.layers().add(new LabelLayer(mMap, mTileLayer), LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-            mMap.layers().add(new BuildingLayer(mMap, mTileLayer), LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-
-            MapInfo info = mTileSource.getMapInfo();
-            MapPosition pos = new MapPosition();
-            pos.setByBoundingBox(info.boundingBox, Tile.SIZE * 4, Tile.SIZE * 4);
-            mMap.animator().animateTo(pos);
-            loadTheme(null, true);
-
-            mPrefs.clear();
-//            mTileSourceList.add(mTileSource);
-        }
-    }
 
     /**
      * 设置地图样式
@@ -1508,7 +1475,7 @@ public class CatEyeMainFragment extends BaseFragment {
      * @return :
      * @method : clearAllLayers
      * @Author : xiaoxiao
-     * @Describe : 清空地图上所有图层
+     * @Describe : 清空地图上所有图层，排除用户操作图层，缩放比例尺图层，绘制点、线、面的图层，以及GeoJson的点、线、面的图层
      * @Date : 2018/9/21
      */
     public void clearAllMapLayers() {

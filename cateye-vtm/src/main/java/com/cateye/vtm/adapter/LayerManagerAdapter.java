@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cateye.android.entity.MapSourceFromNet;
+import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class LayerManagerAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private List<String> keyList;
 
-    String translateJson = "{\"L0\":\"基础栅格图层\",\"L1\":\"项目栅格图层\",\"L2\":\"基础矢量图层\",\"L3\":\"项目矢量图层\"}";
+//    String translateJson = "{'L0':'基础栅格图层','L1':'项目栅格图层',\"L2\":\"基础矢量图层\",\"L3\":\"项目矢量图层\"}";
     private JSONObject layerGroupNameJsonObject;//用于翻译图层名称的map
 
     public LayerManagerAdapter(Context mContext, List<MapSourceFromNet.DataBean> dataBeanList) {
@@ -46,11 +46,11 @@ public class LayerManagerAdapter extends BaseExpandableListAdapter {
         if (this.dataBeanMap != null) {
             keyList.addAll(dataBeanMap.keySet());
         }
-        try {
-            layerGroupNameJsonObject = new JSONObject(translateJson);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            layerGroupNameJsonObject = new JSONObject(translateJson);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -93,9 +93,7 @@ public class LayerManagerAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(R.layout.item_layer_manager_group, null);
         TextView tv_groupName = (TextView) convertView.findViewById(R.id.tv_group_name);
         String groupName = keyList.get(groupPosition);
-        if (layerGroupNameJsonObject != null) {
-            groupName = layerGroupNameJsonObject.optString(groupName, groupName);
-        }
+        groupName = MainActivity.LAYER_GROUP_ENUM.getGroupByName(groupName).desc;
         tv_groupName.setText(groupName);
         return convertView;
     }

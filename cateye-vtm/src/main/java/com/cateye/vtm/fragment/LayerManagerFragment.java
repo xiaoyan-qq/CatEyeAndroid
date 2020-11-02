@@ -14,7 +14,6 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.adapter.LayerManagerAdapter;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.LocalGisFileUtil;
 import com.cateye.vtm.util.SystemConstant;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.FeatureCollection;
@@ -81,7 +80,7 @@ public class LayerManagerFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mMap = CatEyeMapManager.getMapView().map();
+        this.mMap = CatEyeMapManager.getInstance().getMapView().map();
         if (savedInstanceState != null) {
             layerDataBeanList = (List<MapSourceFromNet.DataBean>) savedInstanceState.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
         }
@@ -241,33 +240,8 @@ public class LayerManagerFragment extends BaseFragment {
                 }
                 File mapFile = new File(file);
                 if (mapFile.exists()) { // 用户选择的是map文件
-                    if (file.endsWith(".map")) {
-                        MapSourceFromNet.DataBean.MapsBean mapFileDataBean = new MapSourceFromNet.DataBean.MapsBean();
-                        mapFileDataBean.setAbstractX(mapFile.getName());
-                        mapFileDataBean.setHref(file);
-                        String fileName = mapFile.getName();
-                        String suffix = fileName.substring(fileName.lastIndexOf("."));
-                        mapFileDataBean.setExtension(suffix);
-                        if (suffix != null) {
-                            MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
-                            if (suffix.toLowerCase().endsWith("map")) {
-                                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-                            } else if (suffix.toLowerCase().endsWith("json")) {
-                                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
-                            }
-                            localDataBean.setMemo(mapFile.getName());
-                            localDataBean.setMaps(new ArrayList<MapSourceFromNet.DataBean.MapsBean>());
-                            localDataBean.getMaps().add(mapFileDataBean);
-                            if (layerDataBeanList != null) {
-                                layerDataBeanList.add(localDataBean);
-                                if (layerManagerAdapter != null) {
-                                    layerManagerAdapter.sortListDataAndGroup(layerDataBeanList);
-                                    layerManagerAdapter.notifyDataSetChanged();
-                                }
-                            }
-                        }
+                    if (file.endsWith(".map") || file.toLowerCase().endsWith(".kml")) {
+                        addLocalGisFile2LayerList(mapFile);
                     } else if (file.toLowerCase().endsWith(".geojson")||file.toLowerCase().endsWith(".json")) { // 用户选中了geojson文件
                         try {
                             FileInputStream geoJsonStream = new FileInputStream(new File(file));
@@ -297,12 +271,6 @@ public class LayerManagerFragment extends BaseFragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (file.toLowerCase().endsWith(".kml")) { // 用户选中了kml文件
-                        try {
-                            LocalGisFileUtil.getInstance().readKml(new File(file));
-                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -390,5 +358,37 @@ public class LayerManagerFragment extends BaseFragment {
         pop();
         ((MainActivity) getActivity()).hiddenSlidingLayout(true);//同时隐藏右侧面板
         return true;
+    }
+
+    private void addLocalGisFile2LayerList(File localMapFile) {
+        MapSourceFromNet.DataBean.MapsBean mapFileDataBean = new MapSourceFromNet.DataBean.MapsBean();
+        mapFileDataBean.setAbstractX(localMapFile.getName());
+        mapFileDataBean.setHref(localMapFile.getAbsolutePath());
+        String fileName = localMapFile.getName();
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        mapFileDataBean.setExtension(suffix);
+        if (suffix != null) {
+            MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
+            if (suffix.toLowerCase().endsWith("map")) {
+                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
+                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
+            } if (suffix.toLowerCase().endsWith(".kml")) {
+                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.name);
+                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.name);
+            } else if (suffix.toLowerCase().endsWith("json")) {
+                mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
+                localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
+            }
+            localDataBean.setMemo(localMapFile.getName());
+            localDataBean.setMaps(new ArrayList<MapSourceFromNet.DataBean.MapsBean>());
+            localDataBean.getMaps().add(mapFileDataBean);
+            if (layerDataBeanList != null) {
+                layerDataBeanList.add(localDataBean);
+                if (layerManagerAdapter != null) {
+                    layerManagerAdapter.sortListDataAndGroup(layerDataBeanList);
+                    layerManagerAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 }

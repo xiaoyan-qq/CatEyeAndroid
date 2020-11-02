@@ -1,6 +1,9 @@
 package com.cateye.vtm.util;
 
+import android.content.Context;
+
 import com.cateye.android.entity.DrawPointLinePolygonEntity;
+import com.cateye.android.vtm.MainActivity;
 import com.vtm.library.kml.Serializer;
 import com.vtm.library.kml.model.Coordinate;
 import com.vtm.library.kml.model.Document;
@@ -28,8 +31,17 @@ import org.gdal.ogr.Layer;
 import org.gdal.ogr.ogr;
 import org.gdal.osr.SpatialReference;
 import org.oscim.core.GeoPoint;
+import org.oscim.core.MapPosition;
+import org.oscim.core.Tile;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.tile.buildings.BuildingLayer;
+import org.oscim.layers.tile.vector.OsmTileLayer;
+import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.map.Map;
+import org.oscim.tiling.source.mapfile.MapFileTileSource;
+import org.oscim.tiling.source.mapfile.MapInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -139,7 +151,9 @@ public class LocalGisFileUtil {
         System.out.println("\n数据集创建完成！\n");
     }
 
-    public List<DrawPointLinePolygonEntity> readKml(File kmlFile) throws Exception {
+    public List<DrawPointLinePolygonEntity> readKmlAndDrawLayer(File kmlFile, Context mContext) throws Exception {
+        Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+
         Serializer serializer = new Serializer();
         Kml kmlModel = serializer.read(kmlFile);
         List<Placemark> placemarkList=getAllPlacemark(kmlModel.getFeature(), new ArrayList<Placemark>());
@@ -152,7 +166,13 @@ public class LocalGisFileUtil {
                         Coordinate pointCoordinate=point.getCoordinates();
                         if (pointCoordinate!=null){
                             // 在地图上绘制点
-                            ItemizedLayer markerLayer= (ItemizedLayer) OverlayerManager.getInstance(null).getLayerByName(SystemConstant.LAYER_NAME_DRAW_POINT);
+                            ItemizedLayer markerLayer = null;
+                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_point")!=null){
+                                markerLayer = (ItemizedLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_point");
+                            } else {
+                                markerLayer= new ItemizedLayer(mMap, LayerStyle.getDefaultMarkerSymbol(mContext), kmlFile.getAbsolutePath()+"_point");
+                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+                            }
                             markerLayer.addItem(new MarkerItem(placemark.getDescription(),placemark.getAddress(),new GeoPoint(pointCoordinate.getLatitude(), pointCoordinate.getLongitude())));
                         }
                     } else if (geometry instanceof LineString) {
@@ -164,7 +184,13 @@ public class LocalGisFileUtil {
                             for (Coordinate coordinate:lineCoordinates) {
                                 geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                             }
-                            MultiPathLayer multiPathLayer= (MultiPathLayer) OverlayerManager.getInstance(null).getLayerByName(SystemConstant.LAYER_NAME_DRAW_LINE);
+                            MultiPathLayer multiPathLayer = null;
+                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line")!=null){
+                                multiPathLayer = (MultiPathLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line");
+                            } else {
+                                multiPathLayer= new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_line");
+                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPathLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+                            }
                             multiPathLayer.addPathDrawable(geoPointList);
                         }
                     } else if (geometry instanceof LinearRing) {
@@ -177,7 +203,13 @@ public class LocalGisFileUtil {
                             for (Coordinate coordinate:lineCoordinates) {
                                 geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                             }
-                            MultiPathLayer multiPathLayer= (MultiPathLayer) OverlayerManager.getInstance(null).getLayerByName(SystemConstant.LAYER_NAME_DRAW_LINE);
+                            MultiPathLayer multiPathLayer = null;
+                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line")!=null){
+                                multiPathLayer = (MultiPathLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line");
+                            } else {
+                                multiPathLayer= new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_line");
+                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPathLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+                            }
                             multiPathLayer.addPathDrawable(geoPointList);
                         }
                     } else if (geometry instanceof Polygon) {
@@ -190,7 +222,13 @@ public class LocalGisFileUtil {
                                 for (Coordinate coordinate:lineCoordinates) {
                                     geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                                 }
-                                MultiPolygonLayer multiPolygonLayer= (MultiPolygonLayer) OverlayerManager.getInstance(null).getLayerByName(SystemConstant.LAYER_NAME_DRAW_POLYGON);
+                                MultiPolygonLayer multiPolygonLayer = null;
+                                if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon")!=null){
+                                    multiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon");
+                                } else {
+                                    multiPolygonLayer= new MultiPolygonLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_polygon");
+                                    CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+                                }
                                 multiPolygonLayer.addPolygonDrawable(geoPointList);
                             }
                         } else if (polygon.getOuterBoundaryIs()!=null&&polygon.getOuterBoundaryIs().getLinearRing()!=null){
@@ -201,7 +239,13 @@ public class LocalGisFileUtil {
                                 for (Coordinate coordinate:lineCoordinates) {
                                     geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                                 }
-                                MultiPolygonLayer multiPolygonLayer= (MultiPolygonLayer) OverlayerManager.getInstance(null).getLayerByName(SystemConstant.LAYER_NAME_DRAW_POLYGON);
+                                MultiPolygonLayer multiPolygonLayer = null;
+                                if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon")!=null){
+                                    multiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon");
+                                } else {
+                                    multiPolygonLayer= new MultiPolygonLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_polygon");
+                                    CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+                                }
                                 multiPolygonLayer.addPolygonDrawable(geoPointList);
                             }
                         }
@@ -235,5 +279,44 @@ public class LocalGisFileUtil {
         return placemarkList;
     }
 
+
+    /**
+     * 增加本地Map文件的地图layer
+     */
+    public void addLocalMapFileLayer(String localMapFilePath) {
+        Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+        MapFileTileSource mTileSource = new MapFileTileSource();
+        mTileSource.setPreferredLanguage("zh");
+
+        if (mTileSource.setMapFile(localMapFilePath)) {
+            //设置当前的文件选择的layer为地图的基础图层(第一层)==此处去掉此设置
+            VectorTileLayer mTileLayer = new OsmTileLayer(mMap);
+            mTileLayer.setTileSource(mTileSource);
+            mMap.layers().add(mTileLayer, MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.orderIndex);
+            mMap.layers().add(new LabelLayer(mMap, mTileLayer), MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.orderIndex);
+            mMap.layers().add(new BuildingLayer(mMap, mTileLayer), MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.orderIndex);
+            MapInfo info = mTileSource.getMapInfo();
+            MapPosition pos = new MapPosition();
+            pos.setByBoundingBox(info.boundingBox, Tile.SIZE * 4, Tile.SIZE * 4);
+            mMap.animator().animateTo(pos);
+            mMap.updateMap(true);
+        }
+    }
+
+    /**
+     * 增加本地Kml文件的地图layer
+     */
+    public void addLocalKmlFileLayer(String localKmlFilePath, Context mContext) {
+        Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+        File kmlFile = new File(localKmlFilePath);
+        if (kmlFile!=null&&kmlFile.exists()) {
+            try {
+                readKmlAndDrawLayer(kmlFile, mContext);
+            } catch (Exception e) {
+
+            }
+            mMap.updateMap(true);
+        }
+    }
 
 }
