@@ -69,7 +69,8 @@ public class ClusterMarkerOverlayActivity extends MarkerOverlayActivity {
                 mMap,
                 new ArrayList<MarkerInterface>(),
                 markerRendererFactory,
-                this);
+                this,
+                null);
         mMap.layers().add(mMarkerLayer);
 
         // Create some markers spaced STEP degrees

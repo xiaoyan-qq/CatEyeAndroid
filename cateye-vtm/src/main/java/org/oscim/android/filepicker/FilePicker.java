@@ -17,7 +17,6 @@ package org.oscim.android.filepicker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -30,6 +29,10 @@ import android.widget.ImageView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.cateye.android.vtm.R;
+import com.cateye.vtm.util.SystemConstant;
+import com.github.lazylibrary.util.StringUtils;
+import com.vondear.rxtool.view.RxToast;
+import com.vondear.rxui.view.dialog.RxDialogEditSureCancel;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -69,7 +72,7 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
     protected Comparator<File> mFileComparator = getDefaultFileComparator();
     protected FileFilter mFileDisplayFilter;
     protected ValidFileFilter mFileSelectFilter;
-    protected BootstrapButton bbtnReturnDefaultFolder;
+    protected BootstrapButton bbtnReturnRootFolder/*返回根目录*/, bbtnReturnDefaultFolder/*返回项目默认目录*/, bbtnCreateNewFolder/*创建新文件夹*/;
 
     /**
      * Sets the file comparator which is used to order the contents of all
@@ -143,6 +146,19 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
             finish();
         } else {
             showDialog(DIALOG_FILE_INVALID);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setIcon(android.R.drawable.ic_menu_info_details);
+            builder.setTitle(R.string.error);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(getString(R.string.file_invalid));
+            stringBuilder.append("\n\n");
+            stringBuilder.append(mFileSelectFilter.getFileOpenResult()
+                    .getErrorMessage());
+
+            builder.setMessage(stringBuilder.toString());
+            builder.setPositiveButton(R.string.ok, null);
+            builder.create().show();
         }
     }
 
@@ -201,11 +217,11 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
         // // first start of this instance
         // showDialog(DIALOG_FILE_SELECT);
         // }
-        bbtnReturnDefaultFolder = findViewById(R.id.bbtn_return_default_folder);
-        bbtnReturnDefaultFolder.setOnClickListener(new View.OnClickListener() {
+        bbtnReturnRootFolder = findViewById(R.id.bbtn_return_root_folder);
+        bbtnReturnRootFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 返回默认目录
+                // 返回根目录
                 mDirectory = new File(DEFAULT_DIRECTORY);
                 if (!mDirectory.exists() || !mDirectory.canRead()) {
                     mDirectory = new File(DEFAULT_DIRECTORY);
@@ -213,33 +229,64 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
                 browseToCurrentDirectory();
             }
         });
-    }
+        bbtnReturnDefaultFolder = findViewById(R.id.bbtn_return_default_folder);
+        bbtnReturnDefaultFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 返回项目目录
+                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH);
+                if (!mDirectory.exists() || !mDirectory.canRead()) {
+                    mDirectory = new File(DEFAULT_DIRECTORY);
+                }
+                browseToCurrentDirectory();
+            }
+        });
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        switch (id) {
-            case DIALOG_FILE_INVALID:
-                builder.setIcon(android.R.drawable.ic_menu_info_details);
-                builder.setTitle(R.string.error);
+        bbtnCreateNewFolder = findViewById(R.id.bbtn_create_new_folder);
+        bbtnCreateNewFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 创建新目录
+                if (!mDirectory.exists() || !mDirectory.canRead()) {
+                    mDirectory = new File(DEFAULT_DIRECTORY);
+                }
+                // 在当前目录下创建新的文件夹
+                final RxDialogEditSureCancel rxDialogEditSureCancel = new RxDialogEditSureCancel(FilePicker.this);
 
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(getString(R.string.file_invalid));
-                stringBuilder.append("\n\n");
-                stringBuilder.append(mFileSelectFilter.getFileOpenResult()
-                        .getErrorMessage());
-
-                builder.setMessage(stringBuilder.toString());
-                builder.setPositiveButton(R.string.ok, null);
-                return builder.create();
-            // case DIALOG_FILE_SELECT:
-            // builder.setMessage(R.string.file_select);
-            // builder.setPositiveButton(R.string.ok, null);
-            // return builder.create();
-            default:
-                // do dialog will be created
-                return null;
-        }
+                rxDialogEditSureCancel.setTitle("创建目录");
+                rxDialogEditSureCancel.getEditText().setHint("输入目录名");
+                rxDialogEditSureCancel.getSureView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String folderName = rxDialogEditSureCancel.getEditText().getText().toString().trim();
+                        folderName = folderName.replace("/", "").replace("\\", "").replace(".", "");
+                        if (StringUtils.isEmpty(folderName)) {
+                            RxToast.error("目录名不能为空，且不能存在'/'、'\\'、'.'等特殊符号！");
+                            return;
+                        }
+                        File folder = new File(mDirectory.getAbsolutePath()+"/"+folderName);
+                        if (folder.exists()) {
+                            RxToast.error("已存在此名称的目录！");
+                            return;
+                        }
+                        boolean createResult = folder.mkdirs();
+                        if (createResult) {
+                            rxDialogEditSureCancel.dismiss();
+                            browseToCurrentDirectory();
+                        } else {
+                            RxToast.error("创建目录失败，请重试！");
+                        }
+                    }
+                });
+                rxDialogEditSureCancel.getCancelView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        rxDialogEditSureCancel.dismiss();
+                    }
+                });
+                rxDialogEditSureCancel.show();
+            }
+        });
     }
 
     @Override

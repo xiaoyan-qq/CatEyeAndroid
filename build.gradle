@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
@@ -37,12 +37,12 @@ allprojects {
     }
 }
 
-static def androidCompileSdk() { return 29 }
+static def androidCompileSdk() { return 30 }
 
 // 14 for Support Library, 16 for sqlite-android
 static def androidMinSdk() { return 23 }
 
-static def androidTargetSdk() { return 29 }
+static def androidTargetSdk() { return 30 }
 
 static def versionCode() { return 1 }
 

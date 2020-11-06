@@ -87,7 +87,7 @@ public class AtlasMultiTextureActivity extends MarkerOverlayActivity {
         // With iOS we must flip the Y-Axis
         TextureAtlasUtils.createTextureRegions(inputMap, regionsMap, atlasList, true, false);
 
-        mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), (MarkerSymbol) null, this);
+        mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), (MarkerSymbol) null, this, null);
         mMap.layers().add(mMarkerLayer);
 
         mMarkerLayer.addItems(pts);

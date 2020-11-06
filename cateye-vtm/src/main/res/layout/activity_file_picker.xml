@@ -30,23 +30,55 @@
             android:textColor="@color/whitesmoke"
             android:text="选择本地文件"></TextView>
     </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layer_file_operate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/button_padding_default"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_alignParentBottom="true">
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bbtn_return_default_folder"
-            android:layout_width="match_parent"
+            android:id="@+id/bbtn_return_root_folder"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             app:roundedCorners="true"
             app:bootstrapBrand="primary"
             app:bootstrapSize="lg"
-            android:text="返回默认目录"
-            android:layout_marginBottom="@dimen/button_padding_default"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"></com.beardedhen.androidbootstrap.BootstrapButton>
+            android:text="返回根目录"
+            android:layout_weight="1" />
+        <Space
+            android:layout_width="@dimen/bootstrap_edit_text_hori_padding"
+            android:layout_height="wrap_content" />
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/bbtn_return_default_folder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            app:bootstrapSize="lg"
+            android:text="返回项目目录"
+            android:layout_weight="1" />
+        <Space
+            android:layout_width="@dimen/bootstrap_edit_text_hori_padding"
+            android:layout_height="wrap_content" />
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/bbtn_create_new_folder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            app:bootstrapSize="lg"
+            android:text="新建目录"
+            android:layout_weight="1" />
+    </LinearLayout>
+
 
 
     <GridView
         android:id="@+id/filePickerView"
         android:layout_below="@id/layer_file_picker_head"
-        android:layout_above="@id/bbtn_return_default_folder"
+        android:layout_above="@id/layer_file_operate"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:columnWidth="100dip"

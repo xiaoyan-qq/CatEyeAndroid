@@ -78,7 +78,7 @@ public class MarkerOverlayActivity extends MapActivity implements ItemizedLayer.
         else
             mFocusMarker = new MarkerSymbol(bitmapFocus, HotspotPlace.CENTER, false);
 
-        mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), symbol, this);
+        mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), symbol, this, null);
         mMap.layers().add(mMarkerLayer);
 
         List<MarkerInterface> pts = new ArrayList<>();

@@ -155,7 +155,7 @@ public class PoiSearchActivity extends MapsforgeActivity implements ItemizedLaye
 
             Bitmap bitmap = new AndroidBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.marker_green));
             MarkerSymbol symbol = new MarkerSymbol(bitmap, MarkerSymbol.HotspotPlace.BOTTOM_CENTER);
-            mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), symbol, this);
+            mMarkerLayer = new ItemizedLayer(mMap, new ArrayList<MarkerInterface>(), symbol, this, null);
             mMap.layers().add(mMarkerLayer);
         }
     }
