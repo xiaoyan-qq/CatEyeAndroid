@@ -53,6 +53,8 @@ android {
         pickFirst 'about.properties'
         pickFirst 'plugin.properties'
         pickFirst 'plugin.xml'
+        pickFirst 'lib/armeabi-v7a/libproj.so'
+        pickFirst 'lib/armeabi/libproj.so'
     }
 }
 dependencies {

@@ -22,10 +22,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cateye.android.vtm.R;
-import com.litesuits.common.io.FileUtils;
-import com.vondear.rxtool.model.ActionItem;
-import com.vondear.rxui.view.popupwindows.RxPopupSingleView;
-import com.vondear.rxui.view.popupwindows.tools.RxPopupViewManager;
 
 import java.io.File;
 
@@ -100,48 +96,6 @@ class FilePickerIconAdapter extends BaseAdapter {
             }
             mTextView.setText(mCurrentFile.getName());
 
-            // 设置长按点击事件，增加重命名和删除操作
-            mTextView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    RxPopupViewManager manager = new RxPopupViewManager();
-                    RxPopupSingleView rxPopupView = new RxPopupSingleView(mContext, ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT, R.layout.popupwindow_definition_layout);
-                    rxPopupView.addAction(new ActionItem("删除"));
-                    rxPopupView.addAction(new ActionItem("重命名"));
-                    rxPopupView.show(view);
-                    rxPopupView.setItemOnClickListener(new RxPopupSingleView.OnItemOnClickListener() {
-                        @Override
-                        public void onItemClick(ActionItem item, int position) {
-                            if (mFiles!=null&&mFiles.length>index){
-                                switch (position) {
-                                    case 0:
-                                        FileUtils.deleteQuietly(mFiles[index]);
-                                        for (int i = index; i<mFiles.length-1; i++) {
-                                            mFiles[i] = mFiles[i+1];
-                                        }
-                                        notifyDataSetChanged();
-                                        break;
-                                    case 1:
-                                        try {
-                                            File destFile = new File(mCurrentFile.getAbsoluteFile()+"/"+"new");
-                                            if (mFiles[index].isDirectory()) {
-                                                FileUtils.moveDirectory(mFiles[index], destFile);
-                                            } else {
-                                                FileUtils.moveFile(mFiles[index], destFile);
-                                            }
-                                            mFiles[index] = destFile;
-                                        } catch (Exception e) {
-
-                                        }
-                                        break;
-                                }
-                            }
-                        }
-                    });
-                    return false;
-                }
-            });
         }
         return mTextView;
     }

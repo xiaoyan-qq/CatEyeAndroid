@@ -22,5 +22,5 @@ include ':vtm-android-gdx'
 include ':vtm-gdx'
 include ':vtm-android-example'
 include ':vtm'
-//include ':gdal'
+include ':gdal'
 

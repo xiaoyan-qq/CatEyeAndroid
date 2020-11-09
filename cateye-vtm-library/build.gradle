@@ -44,7 +44,7 @@ android {
 dependencies {
     api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-//    api project(':gdal')
+    api project(':gdal')
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     api project(':vtm-android')
@@ -172,7 +172,7 @@ dependencies {
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     api 'com.github.hss01248:NotifyUtil:1.0.1'
 //    implementation files('libs/jts-1.13.jar')
-    api files('libs/gdal-release.aar')
-
+    // 通用dialog的对话框  https://github.com/orhanobut/dialogplus
+    api 'com.orhanobut:dialogplus:1.11@aar'
     // https://github.com/crankycoder/SimpleKML   simple-xml-2.6.3.jar
 }

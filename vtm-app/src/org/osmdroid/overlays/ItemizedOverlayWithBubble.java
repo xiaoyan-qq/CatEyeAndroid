@@ -39,7 +39,7 @@ public class ItemizedOverlayWithBubble extends ItemizedLayer
 
     public ItemizedOverlayWithBubble(Map map, Context context,
                                      MarkerSymbol marker, List<MarkerInterface> list, InfoWindow bubble) {
-        super(map, list, marker, null);
+        super(map, list, marker, null, null);
 
         if (bubble != null) {
             mBubble = bubble;

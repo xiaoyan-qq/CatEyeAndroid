@@ -28,11 +28,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.canyinghao.candialog.CanDialog;
+import com.canyinghao.candialog.CanDialogInterface;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.StringUtils;
+import com.litesuits.common.io.FileUtils;
 import com.vondear.rxtool.view.RxToast;
-import com.vondear.rxui.view.dialog.RxDialogEditSureCancel;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -57,7 +59,7 @@ import java.util.Comparator;
  * valid before its path is returned. By default all files are considered as
  * valid and can be selected.
  */
-public class FilePicker extends Activity implements AdapterView.OnItemClickListener {
+public class FilePicker extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     /**
      * The name of the extra data in the result {@link Intent}.
      */
@@ -204,6 +206,7 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
         mFilePickerIconAdapter = new FilePickerIconAdapter(this);
         GridView gridView = (GridView) findViewById(R.id.filePickerView);
         gridView.setOnItemClickListener(this);
+        gridView.setOnItemLongClickListener(this);
         gridView.setAdapter(mFilePickerIconAdapter);
 
         ImageView img_close = (ImageView) findViewById(R.id.img_close);
@@ -251,40 +254,25 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
                     mDirectory = new File(DEFAULT_DIRECTORY);
                 }
                 // 在当前目录下创建新的文件夹
-                final RxDialogEditSureCancel rxDialogEditSureCancel = new RxDialogEditSureCancel(FilePicker.this);
+                CanDialog.Builder newFolderDialogBuilder = new CanDialog.Builder(FilePicker.this);
+                newFolderDialogBuilder.setTitle("新建文件夹").setEditDialog("文件夹名称", false, 1, R.color.secondColor).setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
+                        String folderName = text.toString();
+                        folderName = checkFileName(folderName);
+                        if (folderName!= null) {
+                            File folder = new File(mDirectory.getAbsolutePath()+"/"+folderName);
+                            boolean createResult = folder.mkdirs();
+                            if (createResult) {
+                                browseToCurrentDirectory();
+                            } else {
+                                RxToast.error("创建目录失败，请重试！");
+                            }
+                        }
+                    }
+                }).setNegativeButton("取消", true, null);
+                newFolderDialogBuilder.create().show();
 
-                rxDialogEditSureCancel.setTitle("创建目录");
-                rxDialogEditSureCancel.getEditText().setHint("输入目录名");
-                rxDialogEditSureCancel.getSureView().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String folderName = rxDialogEditSureCancel.getEditText().getText().toString().trim();
-                        folderName = folderName.replace("/", "").replace("\\", "").replace(".", "");
-                        if (StringUtils.isEmpty(folderName)) {
-                            RxToast.error("目录名不能为空，且不能存在'/'、'\\'、'.'等特殊符号！");
-                            return;
-                        }
-                        File folder = new File(mDirectory.getAbsolutePath()+"/"+folderName);
-                        if (folder.exists()) {
-                            RxToast.error("已存在此名称的目录！");
-                            return;
-                        }
-                        boolean createResult = folder.mkdirs();
-                        if (createResult) {
-                            rxDialogEditSureCancel.dismiss();
-                            browseToCurrentDirectory();
-                        } else {
-                            RxToast.error("创建目录失败，请重试！");
-                        }
-                    }
-                });
-                rxDialogEditSureCancel.getCancelView().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        rxDialogEditSureCancel.dismiss();
-                    }
-                });
-                rxDialogEditSureCancel.show();
             }
         });
     }
@@ -314,5 +302,114 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
             mDirectory = new File(DEFAULT_DIRECTORY);
         }
         browseToCurrentDirectory();
+
+//        arrayAdapter = new ArrayAdapter(FilePicker.this, android.R.layout.simple_list_item_1, operateStringArray);
+    }
+
+    private String[] operateStringArray = {"删除", "重命名"};
+//    private ArrayAdapter arrayAdapter = null;
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int index, long l) {
+//        DialogPlus dialogPlus = DialogPlus.newDialog(FilePicker.this)
+//                        .setGravity(Gravity.BOTTOM)
+//                        .setCancelable(true)
+//                        .setAdapter(arrayAdapter)
+//                        .setOnItemClickListener(new OnItemClickListener() {
+//                            @Override
+//                            public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+//
+//                            }
+//                        })
+//                        .create();
+//        dialogPlus.show();
+
+        CanDialog.Builder dialogBuilder = new CanDialog.Builder(FilePicker.this);
+        dialogBuilder
+                .setTitle("选择操作")
+                .setItems(operateStringArray, new CanDialogInterface.OnClickListener() {
+            @Override
+            public void onClick(CanDialog dialog, int position, CharSequence text, boolean[] checkItems) {
+                if (mFiles!=null&&mFiles.length>index){
+                    dialog.dismiss();
+                    switch (position) {
+                        case 0:
+                            deleteConfirmFile(index);
+                            break;
+                        case 1:
+                            new CanDialog.Builder(FilePicker.this)
+                                    .setTitle("重命名")
+                                    .setEditDialog("新名称", false, 1, R.color.secondColor)
+                                    .setNegativeButton("取消", true, null)
+                                    .setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
+                                            if (checkFileName(text.toString())!=null) {
+                                                try {
+                                                    File destFile = new File(mFiles[index].getParentFile().getAbsolutePath()+"/"+text);
+                                                    if (mFiles[index].isDirectory()) {
+                                                        FileUtils.moveDirectory(mFiles[index], destFile);
+                                                    } else {
+                                                        FileUtils.moveFile(mFiles[index], destFile);
+                                                    }
+                                                    mFiles[index] = destFile;
+                                                    browseToCurrentDirectory();
+                                                } catch (Exception e) {
+
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .create().show();
+                            break;
+                        default:
+                            dialog.dismiss();
+                            break;
+                    }
+                }
+            }
+        })
+                .show();
+        return true;
+    }
+
+    private void deleteConfirmFile(int index) {
+        CanDialog.Builder deleteDialogBuilder = new CanDialog.Builder(FilePicker.this);
+        deleteDialogBuilder
+                .setTitle("确认")
+                .setMessage("确认删除?")
+                .setCancelable(true)
+                .setNegativeButton("取消", true, null)
+                .setPositiveButton("确定", true, new CanDialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(CanDialog dialog, int checkItem, CharSequence text, boolean[] checkItems) {
+                        boolean result = FileUtils.deleteQuietly(mFiles[index]);
+                        if (result) {
+                            for (int i = index; i<mFiles.length-1; i++) {
+                                mFiles[i] = mFiles[i+1];
+                            }
+                            browseToCurrentDirectory();
+                        }
+                    }
+                })
+                .show();
+
+    }
+
+    private String checkFileName(String folderName) {
+        if (folderName.contains("/")||folderName.contains("\\")||folderName.contains("\"")||folderName.startsWith("-")) {
+            RxToast.error("文件名不能为空，且不能存在'/'、'\\'、'.'等特殊符号！");
+            return null;
+        }
+        folderName = folderName.replace("/", "").replace("\\", "");
+        if (StringUtils.isEmpty(folderName)) {
+            RxToast.error("文件名不能为空，且不能存在'/'、'\\'、'.'等特殊符号！");
+            return null;
+        }
+        File folder = new File(mDirectory.getAbsolutePath()+"/"+folderName);
+        if (folder.exists()) {
+            RxToast.error("已存在此名称的文件！");
+            return null;
+        }
+        return folderName;
     }
 }
