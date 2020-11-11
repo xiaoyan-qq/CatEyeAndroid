@@ -39,29 +39,31 @@
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_alignParentBottom="true">
         <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/bbtn_folder_quick_into"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            app:bootstrapSize="lg"
+            android:text="快速导引"
+            android:layout_weight="1" />
+        <Space
+            android:layout_width="@dimen/bootstrap_edit_text_hori_padding"
+            android:layout_height="wrap_content" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/bbtn_return_root_folder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:roundedCorners="true"
             app:bootstrapBrand="primary"
             app:bootstrapSize="lg"
-            android:text="返回根目录"
+            android:text="到根目录"
             android:layout_weight="1" />
         <Space
             android:layout_width="@dimen/bootstrap_edit_text_hori_padding"
             android:layout_height="wrap_content" />
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bbtn_return_default_folder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:roundedCorners="true"
-            app:bootstrapBrand="primary"
-            app:bootstrapSize="lg"
-            android:text="返回项目目录"
-            android:layout_weight="1" />
-        <Space
-            android:layout_width="@dimen/bootstrap_edit_text_hori_padding"
-            android:layout_height="wrap_content" />
+
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/bbtn_create_new_folder"
             android:layout_width="0dp"

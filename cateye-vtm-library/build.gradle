@@ -130,8 +130,7 @@ dependencies {
     api files('libs/jts2geojson-0.14.0.jar')
 
     //spatialite的实现 https://github.com/sevar83/android-spatialite
-
-    //    compile 'com.github.sevar83:android-spatialite:2.0.0'
+    api 'com.github.sevar83:android-spatialite:2.0.1'
 
     //友盟日志记录
     api 'com.umeng.sdk:common:1.5.0'
@@ -171,8 +170,4 @@ dependencies {
 
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     api 'com.github.hss01248:NotifyUtil:1.0.1'
-//    implementation files('libs/jts-1.13.jar')
-    // 通用dialog的对话框  https://github.com/orhanobut/dialogplus
-    api 'com.orhanobut:dialogplus:1.11@aar'
-    // https://github.com/crankycoder/SimpleKML   simple-xml-2.6.3.jar
 }

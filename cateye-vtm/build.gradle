@@ -55,6 +55,8 @@ android {
         pickFirst 'plugin.xml'
         pickFirst 'lib/armeabi-v7a/libproj.so'
         pickFirst 'lib/armeabi/libproj.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/armeabi/libc++_shared.so'
     }
 }
 dependencies {

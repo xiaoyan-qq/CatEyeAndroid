@@ -45,6 +45,7 @@ import org.oscim.tiling.source.mapfile.MapInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //将空间数据写入shp文件
@@ -148,15 +149,96 @@ public class LocalGisFileUtil {
         oLayer.SyncToDisk();
         oDS.SyncToDisk();
 
+
+
         System.out.println("\n数据集创建完成！\n");
     }
 
-    public List<DrawPointLinePolygonEntity> readKmlAndDrawLayer(File kmlFile, Context mContext) throws Exception {
+    // https://www.jianshu.com/p/957721b42bd4
+    public List<java.util.Map<String,String>> readShpFile(File shpFile) throws Exception{
         Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
 
+        // 为了使属性表字段支持中文，请添加下面这句
+        gdal.SetConfigOption("SHAPE_ENCODING", "CP936");
+        //配置GDAL_DATA路径（gdal根目录下的bin\gdal-data）
+        gdal.SetConfigOption("GDAL_DATA", shpFile.getParent());
+        //创建数据，这里以创建ESRI的shp文件为例
+        String strDriverName = "ESRI Shapefile";
+
+        //创建一个文件，根据strDriverName扩展名自动判断是创建shp文件或其他文件
+        Driver oDriver = ogr.GetDriverByName(strDriverName);
+        if (oDriver == null) {
+            System.out.println(strDriverName + " 驱动不可用！\n");
+            throw new Exception("驱动不可用！");
+        }
+
+        DataSource dataSource=ogr.Open(shpFile.getAbsolutePath());
+        if (dataSource == null) {
+            System.out.println("打开文件失败！" );
+            return null;
+        }
+        if (dataSource.GetLayerCount() > 0) {
+            List<java.util.Map<String, String>> shpMapList = new ArrayList<>();
+            for (int j = 0; j < dataSource.GetLayerCount(); j++) {
+                Layer layer = dataSource.GetLayer(j);
+                if (layer!=null) {
+                    String layerName = layer.GetName();
+                    System.out.println("图层名称："+layerName);
+
+                    SpatialReference spatialReference = layer.GetSpatialRef();
+                    //System.out.println(spatialReference);
+                    System.out.println("空间参考坐标系："+spatialReference.GetAttrValue("AUTHORITY",0)+spatialReference.GetAttrValue("AUTHORITY",1));
+
+                    double[] layerExtent = layer.GetExtent();
+                    System.out.println("图层范围：minx:"+layerExtent[0]+",maxx:"+layerExtent[1]+",miny:"+layerExtent[2]+",maxy:"+layerExtent[3]);
+
+                    FeatureDefn featureDefn = layer.GetLayerDefn();
+                    int fieldCount = featureDefn.GetFieldCount();
+                    java.util.Map<String,Object> fieldMap = new HashMap();
+                    for(int i=0; i<fieldCount; i++){
+                        FieldDefn fieldDefn = featureDefn.GetFieldDefn(i);
+                        //得到属性字段类型
+                        int fieldType = fieldDefn.GetFieldType();
+                        String fieldTypeName = fieldDefn.GetFieldTypeName(fieldType);
+                        //得到属性字段名称
+                        String fieldName = fieldDefn.GetName();
+                        fieldMap.put(fieldName,fieldTypeName);
+                    }
+
+                    long featureCount = layer.GetFeatureCount();
+                    System.out.println("图层要素个数："+featureCount);
+                    for(int i=0; i<featureCount; i++){
+                        Feature feature = layer.GetFeature(i);
+                        System.out.println("GeometryRef:"+feature.GetGeometryRef().ExportToWkt());
+                        java.util.Map shpMap = new HashMap();
+                        shpMap.put(SystemConstant.GEOMETRY_COLUMN, feature.GetGeometryRef().ExportToWkt());
+
+                        Object[] arr = fieldMap.keySet().toArray();
+                        for(int k=0; k<arr.length; k++){
+                            String fvalue = feature.GetFieldAsString(arr[k].toString());
+//                            System.out.print(" 属性名称:"+arr[k].toString()+",属性值:"+fvalue);
+                            shpMap.put(arr[k], fvalue);
+                        }
+                        shpMapList.add(shpMap);
+                    }
+                }
+            }
+            return shpMapList;
+        }
+        return null;
+    }
+
+    public List<Placemark> readKmlFile(File kmlFile) throws Exception {
         Serializer serializer = new Serializer();
         Kml kmlModel = serializer.read(kmlFile);
         List<Placemark> placemarkList=getAllPlacemark(kmlModel.getFeature(), new ArrayList<Placemark>());
+        return placemarkList;
+    }
+
+    /**
+     * 将kml文件读取出的数据显示在地图上
+     * */
+    private void drawKmlData2Map(Context mContext, List<Placemark> placemarkList, String layerName) {
         if (placemarkList!=null&&!placemarkList.isEmpty()){
             for (Placemark placemark:placemarkList) {
                 List<com.vtm.library.kml.model.Geometry> geometryList=placemark.getGeometryList();
@@ -166,14 +248,7 @@ public class LocalGisFileUtil {
                         Coordinate pointCoordinate=point.getCoordinates();
                         if (pointCoordinate!=null){
                             // 在地图上绘制点
-                            ItemizedLayer markerLayer = null;
-                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_point")!=null){
-                                markerLayer = (ItemizedLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_point");
-                            } else {
-                                markerLayer= new ItemizedLayer(mMap, LayerStyle.getDefaultMarkerSymbol(mContext), kmlFile.getAbsolutePath()+"_point");
-                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-                            }
-                            markerLayer.addItem(new MarkerItem(placemark.getDescription(),placemark.getAddress(),new GeoPoint(pointCoordinate.getLatitude(), pointCoordinate.getLongitude())));
+                            addLayer2Map(mContext, GeometryTools.createGeometry(new GeoPoint(pointCoordinate.getLatitude(), pointCoordinate.getLongitude())).toString(), layerName);
                         }
                     } else if (geometry instanceof LineString) {
                         LineString lineString = (LineString) geometry;
@@ -184,14 +259,7 @@ public class LocalGisFileUtil {
                             for (Coordinate coordinate:lineCoordinates) {
                                 geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                             }
-                            MultiPathLayer multiPathLayer = null;
-                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line")!=null){
-                                multiPathLayer = (MultiPathLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line");
-                            } else {
-                                multiPathLayer= new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_line");
-                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPathLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-                            }
-                            multiPathLayer.addPathDrawable(geoPointList);
+                            addLayer2Map(mContext, GeometryTools.getLineString(geoPointList), layerName);
                         }
                     } else if (geometry instanceof LinearRing) {
                         LinearRing linearRing = (LinearRing) geometry;
@@ -203,14 +271,7 @@ public class LocalGisFileUtil {
                             for (Coordinate coordinate:lineCoordinates) {
                                 geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                             }
-                            MultiPathLayer multiPathLayer = null;
-                            if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line")!=null){
-                                multiPathLayer = (MultiPathLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_line");
-                            } else {
-                                multiPathLayer= new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_line");
-                                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPathLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-                            }
-                            multiPathLayer.addPathDrawable(geoPointList);
+                            addLayer2Map(mContext, GeometryTools.getLineString(geoPointList), layerName);
                         }
                     } else if (geometry instanceof Polygon) {
                         Polygon polygon = (Polygon) geometry;
@@ -222,14 +283,7 @@ public class LocalGisFileUtil {
                                 for (Coordinate coordinate:lineCoordinates) {
                                     geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                                 }
-                                MultiPolygonLayer multiPolygonLayer = null;
-                                if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon")!=null){
-                                    multiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon");
-                                } else {
-                                    multiPolygonLayer= new MultiPolygonLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_polygon");
-                                    CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-                                }
-                                multiPolygonLayer.addPolygonDrawable(geoPointList);
+                                addLayer2Map(mContext, GeometryTools.createPolygon(geoPointList).toString(), layerName);
                             }
                         } else if (polygon.getOuterBoundaryIs()!=null&&polygon.getOuterBoundaryIs().getLinearRing()!=null){
                             List<Coordinate> lineCoordinates=polygon.getOuterBoundaryIs().getLinearRing().getCoordinates().getList();
@@ -239,14 +293,7 @@ public class LocalGisFileUtil {
                                 for (Coordinate coordinate:lineCoordinates) {
                                     geoPointList.add(new GeoPoint(coordinate.getLatitude(),coordinate.getLongitude()));
                                 }
-                                MultiPolygonLayer multiPolygonLayer = null;
-                                if (OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon")!=null){
-                                    multiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(kmlFile.getAbsolutePath()+"_polygon");
-                                } else {
-                                    multiPolygonLayer= new MultiPolygonLayer(mMap, LayerStyle.getDefaultLineStyle(), kmlFile.getAbsolutePath()+"_polygon");
-                                    CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-                                }
-                                multiPolygonLayer.addPolygonDrawable(geoPointList);
+                                addLayer2Map(mContext, GeometryTools.createPolygon(geoPointList).toString(), layerName);
                             }
                         }
                     }
@@ -254,10 +301,48 @@ public class LocalGisFileUtil {
                 CatEyeMapManager.getInstance().getCatEyeMap().updateMap();
             }
         }
-        System.out.println(kmlModel.getFeature().getRegion().getLatLonAltBox());
-        return null;
     }
 
+    /**
+     * 添加图层到地图
+     * */
+    private void addLayer2Map(Context mContext, String wkt, String layerName) {
+        Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+        com.vividsolutions.jts.geom.Geometry geometry = GeometryTools.createGeometry(wkt);
+        if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+            ItemizedLayer markerLayer = null;
+            if (OverlayerManager.getInstance(mMap).getLayerByName(layerName, ItemizedLayer.class)!=null){
+                markerLayer = (ItemizedLayer) OverlayerManager.getInstance(mMap).getLayerByName(layerName, ItemizedLayer.class);
+            } else {
+                markerLayer= new ItemizedLayer(mMap, LayerStyle.getDefaultMarkerSymbol(mContext), layerName);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(markerLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+            }
+            markerLayer.addItem(new MarkerItem(wkt,wkt,GeometryTools.createGeoPoint(wkt)));
+        } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+            MultiPathLayer multiPathLayer = null;
+            if (OverlayerManager.getInstance(mMap).getLayerByName(layerName, MultiPathLayer.class)!=null){
+                multiPathLayer = (MultiPathLayer) OverlayerManager.getInstance(mMap).getLayerByName(layerName, MultiPathLayer.class);
+            } else {
+                multiPathLayer= new MultiPathLayer(mMap, LayerStyle.getDefaultLineStyle(), layerName);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPathLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+            }
+            multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(wkt));
+        } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+            MultiPolygonLayer multiPolygonLayer = null;
+            if (OverlayerManager.getInstance(mMap).getLayerByName(layerName, MultiPolygonLayer.class)!=null){
+                multiPolygonLayer = (MultiPolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(layerName, MultiPolygonLayer.class);
+            } else {
+                multiPolygonLayer= new MultiPolygonLayer(mMap, LayerStyle.getDefaultLineStyle(), layerName);
+                CatEyeMapManager.getInstance().getCatEyeMap().layers().add(multiPolygonLayer, MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
+            }
+            multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(wkt));
+        }
+    }
+
+
+    /**
+     * 通过递归获取到kml文件中所有的placemarker数据
+     * */
     private List<Placemark> getAllPlacemark(com.vtm.library.kml.model.Feature feature, List<Placemark> placemarkList) {
         if (placemarkList == null) {
             placemarkList = new ArrayList<>();
@@ -311,7 +396,30 @@ public class LocalGisFileUtil {
         File kmlFile = new File(localKmlFilePath);
         if (kmlFile!=null&&kmlFile.exists()) {
             try {
-                readKmlAndDrawLayer(kmlFile, mContext);
+                List<Placemark> placemarkList = readKmlFile(kmlFile);
+                if (placemarkList!=null) {
+                    drawKmlData2Map(mContext, placemarkList, kmlFile.getAbsolutePath());
+                }
+            } catch (Exception e) {
+
+            }
+            mMap.updateMap(true);
+        }
+    }
+    /**
+     * 增加本地Kml文件的地图layer
+     */
+    public void addLocalShpFileLayer(String localShpFilePath, Context mContext) {
+        Map mMap = CatEyeMapManager.getInstance().getCatEyeMap();
+        File shpFile = new File(localShpFilePath);
+        if (shpFile!=null&&shpFile.exists()) {
+            try {
+                List<java.util.Map<String, String>> shpDataList = readShpFile(shpFile);
+                if (shpDataList!=null&&!shpDataList.isEmpty()) {
+                    for (java.util.Map map:shpDataList) {
+                        addLayer2Map(mContext, map.get(SystemConstant.GEOMETRY_COLUMN).toString(), shpFile.getAbsolutePath());
+                    }
+                }
             } catch (Exception e) {
 
             }

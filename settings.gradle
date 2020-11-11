@@ -23,4 +23,3 @@ include ':vtm-gdx'
 include ':vtm-android-example'
 include ':vtm'
 include ':gdal'
-

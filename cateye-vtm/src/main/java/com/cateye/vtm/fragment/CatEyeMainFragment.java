@@ -506,12 +506,12 @@ public class CatEyeMainFragment extends BaseFragment {
                 for (DrawPointLinePolygonEntity entity : entityList) {
                     if (entity.getGeometry() != null) {
                         String geometryType = GeometryTools.createGeometry(entity.getGeometry()).getGeometryType();
-                        if (geometryType == "Point") {
+                        if (geometryType == GeometryTools.POINT_GEOMETRY_TYPE) {
                             MarkerItem markerItem = new MarkerItem(entity.getName(), entity.getRemark(), GeometryTools.createGeoPoint(entity.getGeometry()));
                             markerLayer.addItem(markerItem);
-                        } else if (geometryType == "LineString") {
+                        } else if (geometryType == GeometryTools.LINE_GEOMETRY_TYPE) {
                             multiPathLayer.addPathDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
-                        } else if (geometryType == "Polygon") {
+                        } else if (geometryType == GeometryTools.POLYGON_GEOMETRY_TYPE) {
                             multiPolygonLayer.addPolygonDrawable(GeometryTools.getGeoPoints(entity.getGeometry()));
                         }
                     }
@@ -858,6 +858,8 @@ public class CatEyeMainFragment extends BaseFragment {
                     LocalGisFileUtil.getInstance().addLocalMapFileLayer(dataBean.getMaps().get(0).getHref());
                 }  else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".kml")) { // 加载kml数据
                     LocalGisFileUtil.getInstance().addLocalKmlFileLayer(dataBean.getMaps().get(0).getHref(), getActivity());
+                } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains(".shp")) { // 加载kml数据
+                    LocalGisFileUtil.getInstance().addLocalShpFileLayer(dataBean.getMaps().get(0).getHref(), getActivity());
                 } else if (!dataBean.getMaps().get(0).getHref().startsWith("http") && dataBean.getMaps().get(0).getExtension().contains("json")) {
                     File geoJsonFile = new File(dataBean.getMaps().get(0).getHref());
                     loadJson(geoJsonFile);

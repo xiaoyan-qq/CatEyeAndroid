@@ -466,21 +466,18 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                     RxToast.error("请至少勾选一条数据");
                     return;
                 }
-                final RxDialogSureCancel rxDialogSureCancel = new RxDialogSureCancel(getActivity());
                 View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_export_customer_data, null);
-                rxDialogSureCancel.setContentView(rootView);
-                rxDialogSureCancel.show();
+                CanDialog canDialog = new CanDialog.Builder(getActivity()).setTitle("导出数据").setView(rootView).create();
+                canDialog.show();
                 final AppCompatSpinner spinnerFormate = rootView.findViewById(R.id.spn_file_format);
                 final EditText edt_fileName = rootView.findViewById(R.id.edt_export_file_name);
-//                rxDialogSureCancel.setCancel("取消");
-                rxDialogSureCancel.findViewById(R.id.btn_export_shp_cancel).setOnClickListener(new View.OnClickListener() {
+                canDialog.findViewById(R.id.btn_export_shp_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        rxDialogSureCancel.dismiss();
+                        canDialog.dismiss();
                     }
                 });
-//                rxDialogSureCancel.setSure("确定");
-                rxDialogSureCancel.findViewById(R.id.btn_export_shp_confirm).setOnClickListener(new View.OnClickListener() {
+                canDialog.findViewById(R.id.btn_export_shp_confirm).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String fileName = edt_fileName.getText().toString().trim();
@@ -578,7 +575,7 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                                 RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
                             }
                         }
-                        rxDialogSureCancel.dismiss();
+                        canDialog.dismiss();
                     }
                 });
             }

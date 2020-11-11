@@ -92,6 +92,7 @@ public class SystemConstant {
 
     public static final String PARAM_PROP_KEY_IMG = "img";
     public static final String PARAM_PROP_KEY_REMARK = "remark";
+    public static final String GEOMETRY_COLUMN = "GEOMETRY_COLUMN"; // 记录geometry的列名，也可用于map的key中
 
     public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
 

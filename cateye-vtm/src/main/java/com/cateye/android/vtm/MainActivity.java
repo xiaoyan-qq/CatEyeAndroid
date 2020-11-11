@@ -147,7 +147,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
      */
     public static class LocalFilePicker extends FilePicker {
         public LocalFilePicker() {
-            setFileDisplayFilter(new FilterByFileExtensionArray(".map",".json", ".geojson",".kml"));
+            setFileDisplayFilter(new FilterByFileExtensionArray(".map",".json", ".geojson",".kml", "shp"));
         }
     }
 

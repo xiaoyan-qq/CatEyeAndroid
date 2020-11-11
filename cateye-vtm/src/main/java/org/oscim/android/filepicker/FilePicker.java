@@ -22,10 +22,13 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
@@ -38,8 +41,12 @@ import com.vondear.rxtool.view.RxToast;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A FilePicker displays the contents of directories. The user can navigate
@@ -74,7 +81,10 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
     protected Comparator<File> mFileComparator = getDefaultFileComparator();
     protected FileFilter mFileDisplayFilter;
     protected ValidFileFilter mFileSelectFilter;
-    protected BootstrapButton bbtnReturnRootFolder/*返回根目录*/, bbtnReturnDefaultFolder/*返回项目默认目录*/, bbtnCreateNewFolder/*创建新文件夹*/;
+    protected BootstrapButton bbtnReturnRootFolder/*返回根目录*/, /*bbtnReturnDefaultFolder*//*返回项目默认目录*//*,*/ bbtnCreateNewFolder/*创建新文件夹*/,bbtnFolderQuickInto/*快速导引*/;
+    private SimpleAdapter commonFolderAdapter;
+    private final String KEY_ICON="KEY_ICON",KEY_NAME="KEY_NAME";
+    private CanDialog commonIntoDialog;
 
     /**
      * Sets the file comparator which is used to order the contents of all
@@ -232,16 +242,80 @@ public class FilePicker extends Activity implements AdapterView.OnItemClickListe
                 browseToCurrentDirectory();
             }
         });
-        bbtnReturnDefaultFolder = findViewById(R.id.bbtn_return_default_folder);
-        bbtnReturnDefaultFolder.setOnClickListener(new View.OnClickListener() {
+//        bbtnReturnDefaultFolder = findViewById(R.id.bbtn_return_default_folder);
+//        bbtnReturnDefaultFolder.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 返回项目目录
+//                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH);
+//                if (!mDirectory.exists() || !mDirectory.canRead()) {
+//                    mDirectory = new File(DEFAULT_DIRECTORY);
+//                }
+//                browseToCurrentDirectory();
+//            }
+//        });
+
+        List<Map<String, Object>> commonFolderList = new ArrayList<>();
+
+        Map<String, Object> qqFolderMap = new HashMap<>();
+        qqFolderMap.put(KEY_ICON, R.mipmap.icon_qq);
+        qqFolderMap.put(KEY_NAME, "QQ");
+        commonFolderList.add(qqFolderMap);
+
+        Map<String, Object> wechatFolderMap = new HashMap<>();
+        wechatFolderMap.put(KEY_ICON, R.mipmap.icon_wechat);
+        wechatFolderMap.put(KEY_NAME, "微信");
+        commonFolderList.add(wechatFolderMap);
+
+        Map<String, Object> homeFolderMap = new HashMap<>();
+        homeFolderMap.put(KEY_ICON, R.mipmap.icon_folder_home);
+        homeFolderMap.put(KEY_NAME, "项目目录");
+        commonFolderList.add(homeFolderMap);
+
+        commonFolderAdapter = new SimpleAdapter(FilePicker.this, commonFolderList, R.layout.simple_list_item, new String[]{KEY_ICON,KEY_NAME}, new int[]{R.id.image_view, R.id.text_view});
+
+        bbtnFolderQuickInto = findViewById(R.id.bbtn_folder_quick_into);
+        bbtnFolderQuickInto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 返回项目目录
-                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH);
-                if (!mDirectory.exists() || !mDirectory.canRead()) {
-                    mDirectory = new File(DEFAULT_DIRECTORY);
-                }
-                browseToCurrentDirectory();
+                View listViewLayer = LayoutInflater.from(FilePicker.this).inflate(R.layout.simple_listview, null);
+                ListView lv=listViewLayer.findViewById(R.id.simple_list_view);
+                lv.setAdapter(commonFolderAdapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        String currentPath = mDirectory.getAbsolutePath();
+                        switch (i) {
+                            case 0: // 进入QQ下载目录
+                                // 返回项目目录
+                                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH+"/tencent/QQfile_recv");
+                                break;
+                            case 1: // 进入微信下载目录
+                                // 返回项目目录
+                                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH+"/Android/data/com.tencent.mm/MicroMsg/Download");
+                                break;
+                            case 2: // 进入程序默认目录
+                                // 返回项目目录
+                                mDirectory = new File(SystemConstant.APP_ROOT_DATA_PATH);
+                                break;
+                        }
+                        if (!mDirectory.exists() || !mDirectory.canRead()) {
+                            mDirectory = new File(currentPath);
+                            RxToast.error("指定的目录不存在!");
+                        }
+                        browseToCurrentDirectory();
+                        if (commonIntoDialog != null && commonIntoDialog.isShow()) {
+                            commonIntoDialog.dismiss();
+                        }
+                    }
+                });
+
+                // 弹出对话框，由用户选择跳转路径
+                commonIntoDialog = new CanDialog.Builder(FilePicker.this)
+                        .setTitle("快速导引")
+                        .setView(listViewLayer)
+                        .create();
+                commonIntoDialog.show();
             }
         });
 

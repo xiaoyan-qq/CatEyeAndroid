@@ -240,7 +240,7 @@ public class LayerManagerFragment extends BaseFragment {
                 }
                 File mapFile = new File(file);
                 if (mapFile.exists()) { // 用户选择的是map文件
-                    if (file.endsWith(".map") || file.toLowerCase().endsWith(".kml")) {
+                    if (file.endsWith(".map") || file.toLowerCase().endsWith(".kml") || file.toLowerCase().endsWith(".shp")) {
                         addLocalGisFile2LayerList(mapFile);
                     } else if (file.toLowerCase().endsWith(".geojson")||file.toLowerCase().endsWith(".json")) { // 用户选中了geojson文件
                         try {
@@ -372,10 +372,10 @@ public class LayerManagerFragment extends BaseFragment {
             if (suffix.toLowerCase().endsWith("map")) {
                 mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
                 localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
-            } if (suffix.toLowerCase().endsWith(".kml")) {
+            } if (suffix.toLowerCase().endsWith(".kml")||suffix.toLowerCase().endsWith(".shp")) {
                 mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.name);
                 localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.OTHER_GROUP.name);
-            } else if (suffix.toLowerCase().endsWith("json")) {
+            } else if (suffix.toLowerCase().endsWith(".json") || suffix.toLowerCase().endsWith(".geojson")) {
                 mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
                 localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.PROJ_VECTOR_GROUP.name);
             }

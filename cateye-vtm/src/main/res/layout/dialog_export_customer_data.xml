@@ -10,7 +10,7 @@
             android:id="@+id/layer_export_file_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spn_file_format"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
                 android:spinnerMode="dropdown"
                 android:layout_centerVertical="true">
 
-        </android.support.v7.widget.AppCompatSpinner>
+        </androidx.appcompat.widget.AppCompatSpinner>
         <EditText
                 android:id="@+id/edt_export_file_name"
                 android:layout_toLeftOf="@id/spn_file_format"

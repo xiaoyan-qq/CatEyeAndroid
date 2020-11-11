@@ -36,4 +36,15 @@ public class OverlayerManager {
         }
         return null;
     }
+
+    public Layer getLayerByName(String name, Class layerType) {
+        if (mMap != null && mMap.layers() != null) {
+            for (Layer layer : mMap.layers()) {
+                if (name != null && name.equals(layer.getName()) && layer.getClass().equals(layerType)) {
+                    return layer;
+                }
+            }
+        }
+        return null;
+    }
 }
