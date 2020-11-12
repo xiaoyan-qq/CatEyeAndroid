@@ -17,9 +17,8 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanMultiPolygonLayer;
 import com.cateye.vtm.util.LayerUtils;
 import com.litesuits.common.assist.Check;
-import com.vondear.rxtool.RxLogTool;
-import com.vondear.rxtool.RxTimeTool;
-import com.vondear.rxtool.view.RxToast;
+import com.tamsiree.rxkit.RxTimeTool;
+import com.tamsiree.rxkit.view.RxToast;
 import com.vtm.library.tools.CatEyeMapManager;
 
 import org.oscim.map.Map;
@@ -213,7 +212,6 @@ public class AirPlanDrawFragment extends BaseDrawFragment {
                         } catch (DbException e) {
                             e.printStackTrace();
                             RxToast.error("保存polygon失败!");
-                            RxLogTool.saveLogFile("保存航线polygon到数据库失败：" + e.toString());
                             //保存失败
                             clearDrawLayers();
                             if (isPop) {

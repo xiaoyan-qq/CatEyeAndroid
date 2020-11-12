@@ -15,15 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapProgressBar;
-import com.beardedhen.androidbootstrap.BootstrapProgressBarGroup;
-import com.canyinghao.candialog.CanDialog;
-import com.canyinghao.candialog.CanDialogInterface;
 import com.example.cateye_vtm_library.R;
 import com.hss01248.notifyutil.NotifyUtil;
-import com.vondear.rxtool.RxBarTool;
-import com.vondear.rxtool.RxTool;
-import com.vondear.rxui.view.dialog.RxDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.backend.CanvasAdapter;
@@ -31,13 +24,11 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MercatorProjection;
 import org.oscim.core.Tile;
 import org.oscim.layers.Layer;
-import org.oscim.layers.tile.TileLayer;
 import org.oscim.layers.tile.bitmap.BitmapTileLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.map.Map;
 import org.oscim.tiling.ITileCache;
 import org.oscim.tiling.source.HttpEngine;
-import org.oscim.tiling.source.LwHttp;
 import org.oscim.tiling.source.UrlTileSource;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -52,14 +43,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class TileDownloader {

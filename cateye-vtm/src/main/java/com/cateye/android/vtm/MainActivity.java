@@ -30,16 +30,15 @@ import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
+import com.tamsiree.rxkit.RxFileTool;
+import com.tamsiree.rxkit.RxPhotoTool;
+import com.tamsiree.rxkit.view.RxToast;
+import com.tamsiree.rxui.view.dialog.RxDialogLoading;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.umeng.analytics.MobclickAgent;
-import com.vondear.rxtool.RxFileTool;
-import com.vondear.rxtool.RxLogTool;
-import com.vondear.rxtool.RxPhotoTool;
-import com.vondear.rxtool.view.RxToast;
-import com.vondear.rxui.view.dialog.RxDialogLoading;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.android.filepicker.FilePicker;
@@ -335,7 +334,6 @@ public class MainActivity extends SupportActivity implements TencentLocationList
             @Override
             public void onError(Throwable e) {
                 RxToast.info("请求失败，请检查网络!", Toast.LENGTH_SHORT);
-                RxLogTool.saveLogFile(e.toString());
                 if (rxDialogLoading != null && rxDialogLoading.isShowing()) {
                     rxDialogLoading.dismiss();
                 }

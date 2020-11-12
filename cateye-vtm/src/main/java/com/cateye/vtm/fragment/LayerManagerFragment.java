@@ -22,7 +22,7 @@ import com.cocoahero.android.geojson.GeoJSONObject;
 import com.cocoahero.android.geojson.LineString;
 import com.cocoahero.android.geojson.Position;
 import com.cocoahero.android.geojson.Ring;
-import com.vondear.rxtool.view.RxToast;
+import com.tamsiree.rxkit.view.RxToast;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.CatEyeMapManager;

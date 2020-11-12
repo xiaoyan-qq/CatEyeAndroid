@@ -38,7 +38,7 @@
             android:id="@id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#dd707070"
+            android:background="#CCDDDDDD"
             android:orientation="vertical">
 
         <LinearLayout

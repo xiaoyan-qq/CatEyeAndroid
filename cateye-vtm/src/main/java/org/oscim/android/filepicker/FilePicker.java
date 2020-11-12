@@ -37,7 +37,7 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.StringUtils;
 import com.litesuits.common.io.FileUtils;
-import com.vondear.rxtool.view.RxToast;
+import com.tamsiree.rxkit.view.RxToast;
 
 import java.io.File;
 import java.io.FileFilter;

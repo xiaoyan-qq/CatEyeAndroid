@@ -23,8 +23,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.vondear.rxtool.RxDeviceTool;
-import com.vondear.rxui.view.dialog.RxDialogLoading;
+import com.tamsiree.rxkit.RxDeviceTool;
+import com.tamsiree.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.tools.CatEyeMapManager;
 
 import org.oscim.core.GeoPoint;

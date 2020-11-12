@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,13 +18,13 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.adapter.ObservableResponse;
-import com.vondear.rxtool.RxDataTool;
-import com.vondear.rxtool.RxLogTool;
-import com.vondear.rxtool.RxSPTool;
-import com.vondear.rxtool.view.RxToast;
-import com.vondear.rxui.view.dialog.RxDialogLoading;
-import com.vondear.rxui.view.dialog.RxDialogSure;
-import com.vondear.rxui.view.dialog.RxDialogSureCancel;
+import com.tamsiree.rxkit.RxAnimationTool;
+import com.tamsiree.rxkit.RxDataTool;
+import com.tamsiree.rxkit.RxSPTool;
+import com.tamsiree.rxkit.view.RxToast;
+import com.tamsiree.rxui.view.dialog.RxDialogLoading;
+import com.tamsiree.rxui.view.dialog.RxDialogSure;
+import com.tamsiree.rxui.view.dialog.RxDialogSureCancel;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -184,7 +185,6 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onError(Throwable e) {
                         RxToast.error("请检查网络!");
-                        RxLogTool.saveLogFile(e.toString());
                         rxDialogLoading.dismiss();
                     }
 
@@ -217,5 +217,8 @@ public class LoginActivity extends Activity {
         edt_pwd = (EditText) findViewById(R.id.edt_login_pwd);
         btn_login = (TextView) findViewById(R.id.btn_login);
         chk_remember_pwd = findViewById(R.id.chk_remeberPwd);
+
+        Animation alphaAnimation=RxAnimationTool.initAlphaAnimtion(LoginActivity.this, 0f, 1f, 1800);
+        img_logo.startAnimation(alphaAnimation);
     }
 }

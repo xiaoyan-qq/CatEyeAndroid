@@ -12,7 +12,7 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.SystemConstant;
-import com.vondear.rxtool.view.RxToast;
+import com.tamsiree.rxkit.view.RxToast;
 import com.vtm.library.tools.CatEyeMapManager;
 
 import org.greenrobot.eventbus.EventBus;

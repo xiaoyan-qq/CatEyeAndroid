@@ -46,17 +46,16 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.adapter.ObservableResponse;
+import com.tamsiree.rxkit.RxFileTool;
+import com.tamsiree.rxkit.RxSPTool;
+import com.tamsiree.rxkit.RxTimeTool;
+import com.tamsiree.rxkit.view.RxToast;
+import com.tamsiree.rxui.view.dialog.RxDialog;
+import com.tamsiree.rxui.view.dialog.RxDialogLoading;
 import com.tencent.map.geolocation.TencentLocation;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vondear.rxtool.RxFileTool;
-import com.vondear.rxtool.RxLogTool;
-import com.vondear.rxtool.RxSPTool;
-import com.vondear.rxtool.RxTimeTool;
-import com.vondear.rxtool.view.RxToast;
-import com.vondear.rxui.view.dialog.RxDialog;
-import com.vondear.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.layers.GeoJsonLayer;
 import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
@@ -807,7 +806,6 @@ public class CatEyeMainFragment extends BaseFragment {
             @Override
             public void onError(Throwable e) {
                 RxToast.info("请求失败，请检查网络!", Toast.LENGTH_SHORT);
-                RxLogTool.saveLogFile(e.toString());
                 if (rxDialogLoading != null && rxDialogLoading.isShowing()) {
                     rxDialogLoading.dismiss();
                 }
@@ -1050,7 +1048,6 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceFirst("https?://", "")
                     .replaceAll("/", "-");
 
-            RxLogTool.i("use bitmap cache {}", cacheFile);
             TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
@@ -1075,7 +1072,6 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceFirst("https?://", "")
                     .replaceAll("/", "-");
 
-            RxLogTool.i("use geoJson cache {}", cacheFile);
             TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
@@ -1259,7 +1255,6 @@ public class CatEyeMainFragment extends BaseFragment {
                             @Override
                             public void onError(Throwable e) {
                                 RxToast.info("请求失败，请检查网络!", Toast.LENGTH_SHORT);
-                                RxLogTool.saveLogFile(e.toString());
                             }
 
                             @Override

@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
-            android:background="@color/white_66"
+            android:background="@color/White66"
             android:padding="@dimen/bootstrap_badge_default_size">
 
         <LinearLayout
