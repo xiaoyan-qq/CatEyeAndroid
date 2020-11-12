@@ -90,7 +90,7 @@ dependencies {
     //https://github.com/YoKeyword/Fragmentation/wiki
 
     // To get SwipeBack feature, rely on both fragmentation & fragmentation-swipeback
-    api 'me.yokeyword:fragmentation:1.3.3'
+    api 'me.yokeyword:fragmentationx:1.0.1'
 
     // Swipeback is based on fragmentation. Refer to SwipeBackActivity/Fragment for your Customized SupportActivity/Fragment
     api 'me.yokeyword:fragmentation-swipeback:1.3.3'
@@ -167,4 +167,7 @@ dependencies {
 
     // 显示notification的工具类 https://github.com/hss01248/NotifyUtil
     api 'com.github.hss01248:NotifyUtil:1.0.1'
+
+    // 常用动画库 https://github.com/daimajia/AndroidViewAnimations
+    api 'com.daimajia.androidanimations:library:2.4@aar'
 }

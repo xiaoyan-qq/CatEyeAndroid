@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,12 +12,13 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.cateye.vtm.util.SystemConstant;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.adapter.ObservableResponse;
-import com.tamsiree.rxkit.RxAnimationTool;
 import com.tamsiree.rxkit.RxDataTool;
 import com.tamsiree.rxkit.RxSPTool;
 import com.tamsiree.rxkit.view.RxToast;
@@ -218,7 +218,10 @@ public class LoginActivity extends Activity {
         btn_login = (TextView) findViewById(R.id.btn_login);
         chk_remember_pwd = findViewById(R.id.chk_remeberPwd);
 
-        Animation alphaAnimation=RxAnimationTool.initAlphaAnimtion(LoginActivity.this, 0f, 1f, 1800);
-        img_logo.startAnimation(alphaAnimation);
+//        Animation alphaAnimation=RxAnimationTool.initAlphaAnimtion(LoginActivity.this, 0f, 1f, 1800);
+//        img_logo.startAnimation(alphaAnimation);
+
+        YoYo.with(Techniques.Tada)
+                .playOn(img_logo);
     }
 }

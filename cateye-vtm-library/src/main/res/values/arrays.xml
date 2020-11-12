@@ -3,5 +3,6 @@
     <string-array name="file_formate_array">
         <item>.json</item>
         <item>.shp</item>
+        <item>.kml</item>
     </string-array>
 </resources>

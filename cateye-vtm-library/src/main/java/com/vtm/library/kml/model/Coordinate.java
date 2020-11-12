@@ -32,7 +32,19 @@ public class Coordinate {
 	
 	/** The altitude. */
 	private Double altitude;
-	
+
+	/**
+	 * Instantiates a new coordinate.
+	 *
+	 * @param longitude the longitude
+	 * @param latitude the latitude
+	 */
+	public Coordinate(Double longitude, Double latitude) {
+		super();
+		this.longitude = longitude;
+		this.latitude = latitude;
+	}
+
 	/**
 	 * Instantiates a new coordinate.
 	 *

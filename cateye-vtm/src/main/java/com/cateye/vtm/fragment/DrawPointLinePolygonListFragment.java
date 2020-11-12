@@ -521,6 +521,59 @@ public class DrawPointLinePolygonListFragment extends BaseDrawFragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                        } else if (".kml".equals(spinnerFormate.getSelectedItem().toString())) {
+                            // 分别筛选勾选的数据中的点、线、面数据
+                            List<DrawPointLinePolygonEntity> pointEntityList = new ArrayList<>(), lineEntityList = new ArrayList<>(), polygonEntityList = new ArrayList<>();
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+                            for (DrawPointLinePolygonEntity entity : checkedListData) {
+                                Geometry geometry = GeometryTools.createGeometry(entity.getGeometry());
+                                if (GeometryTools.POINT_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+                                    pointEntityList.add(entity);
+                                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+                                    lineEntityList.add(entity);
+                                } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(geometry.getGeometryType())) {
+                                    polygonEntityList.add(entity);
+                                }
+                            }
+                            if (!pointEntityList.isEmpty()) {
+                                StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_KML_PATH).append(File.separator).append(fileName).append("_point").append(sdf.format(new Date())).append(".kml");
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
+                                    saveFile.getParentFile().mkdirs();
+                                }
+                                try {
+                                    LocalGisFileUtil.getInstance().writeKmlFile(saveFile, GeometryTools.POINT_GEOMETRY_TYPE, pointEntityList);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
+                            }
+                            if (!lineEntityList.isEmpty()) {
+                                StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_KML_PATH).append(File.separator).append(fileName).append("_line").append(sdf.format(new Date())).append(".kml");
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
+                                    saveFile.getParentFile().mkdirs();
+                                }
+                                try {
+                                    LocalGisFileUtil.getInstance().writeKmlFile(saveFile, GeometryTools.LINE_GEOMETRY_TYPE, lineEntityList);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
+                            }
+                            if (!polygonEntityList.isEmpty()) {
+                                StringBuilder fileNameBuilder = new StringBuilder(SystemConstant.CACHE_EXPORT_KML_PATH).append(File.separator).append(fileName).append("_polygon").append(sdf.format(new Date())).append(".kml");
+                                File saveFile = new File(fileNameBuilder.toString());
+                                if (!saveFile.getParentFile().exists()) {
+                                    saveFile.getParentFile().mkdirs();
+                                }
+                                try {
+                                    LocalGisFileUtil.getInstance().writeKmlFile(saveFile, GeometryTools.POLYGON_GEOMETRY_TYPE, polygonEntityList);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                RxToast.info("保存成功,文件保存在:" + saveFile.getParent());
+                            }
                         } else { // 导出为shp文件
                             // 分别筛选勾选的数据中的点、线、面数据
                             List<DrawPointLinePolygonEntity> pointEntityList = new ArrayList<>(), lineEntityList = new ArrayList<>(), polygonEntityList = new ArrayList<>();

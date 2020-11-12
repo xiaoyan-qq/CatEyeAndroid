@@ -35,6 +35,16 @@ public class Data {
 	@Element(required=false)
 	private String value;
 
+	public Data() {
+	}
+
+
+	public Data(String name, String displayName, String value) {
+		this.name = name;
+		this.displayName = displayName;
+		this.value = value;
+	}
+
 	/**
 	 * Gets the name.
 	 *

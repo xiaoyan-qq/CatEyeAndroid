@@ -5,8 +5,12 @@ import android.content.Context;
 import com.cateye.android.entity.DrawPointLinePolygonEntity;
 import com.cateye.android.vtm.MainActivity;
 import com.vtm.library.kml.Serializer;
+import com.vtm.library.kml.model.Boundary;
 import com.vtm.library.kml.model.Coordinate;
+import com.vtm.library.kml.model.Coordinates;
+import com.vtm.library.kml.model.Data;
 import com.vtm.library.kml.model.Document;
+import com.vtm.library.kml.model.ExtendedData;
 import com.vtm.library.kml.model.Folder;
 import com.vtm.library.kml.model.Kml;
 import com.vtm.library.kml.model.LineString;
@@ -228,11 +232,81 @@ public class LocalGisFileUtil {
         return null;
     }
 
+    /**
+     * 读取kml文件
+     * */
     public List<Placemark> readKmlFile(File kmlFile) throws Exception {
         Serializer serializer = new Serializer();
         Kml kmlModel = serializer.read(kmlFile);
         List<Placemark> placemarkList=getAllPlacemark(kmlModel.getFeature(), new ArrayList<Placemark>());
         return placemarkList;
+    }
+
+    /**
+     * 写入kml文件
+     * */
+    public boolean writeKmlFile(File kmlFile, String kmlType, List<DrawPointLinePolygonEntity> entityList) throws Exception {
+        Serializer serializer = new Serializer();
+        Kml kmlModel = new Kml();
+        Document kmlDocument = new Document();
+        List<com.vtm.library.kml.model.Feature> placemarkList = new ArrayList<>();
+        kmlDocument.setFeatureList(placemarkList);
+        kmlModel.setFeature(kmlDocument);
+        if (entityList!=null&&!entityList.isEmpty()){
+            for (int i = 0; i < entityList.size(); i++) {
+                Placemark kmlPlacemark = new Placemark();
+                placemarkList.add(kmlPlacemark);
+                DrawPointLinePolygonEntity drawPointLinePolygonEntity = entityList.get(i);
+                ExtendedData kmlExtendData = new ExtendedData();
+                kmlPlacemark.setExtendedData(kmlExtendData);
+                List<Data> extendDataList = new ArrayList<>();
+                extendDataList.add(new Data("name","name",drawPointLinePolygonEntity.getName()));
+                extendDataList.add(new Data("remark","remark",drawPointLinePolygonEntity.getRemark()));
+                extendDataList.add(new Data("userName","userName",drawPointLinePolygonEntity.getUserName()));
+                extendDataList.add(new Data("projectId","projectId",drawPointLinePolygonEntity.getProjectId()+""));
+                extendDataList.add(new Data("imgUrlListStr","imgUrlListStr",drawPointLinePolygonEntity.getImgUrlListStr()));
+                kmlExtendData.setDataList(extendDataList);
+
+                List<com.vtm.library.kml.model.Geometry> geometryList = new ArrayList<>();
+                kmlPlacemark.setGeometryList(geometryList);
+                if (GeometryTools.POINT_GEOMETRY_TYPE.equals(kmlType)) {
+                    GeoPoint geoPoint = GeometryTools.createGeoPoint(drawPointLinePolygonEntity.getGeometry());
+                    Point pointGeometry = new Point();
+                    pointGeometry.setCoordinates(new Coordinate(geoPoint.getLatitude(),geoPoint.getLongitude()));
+                    geometryList.add(pointGeometry);
+                } else if (GeometryTools.LINE_GEOMETRY_TYPE.equals(kmlType)) {
+                    LineString lineGeometry = new LineString();
+                    geometryList.add(lineGeometry);
+                    List<GeoPoint> geoPointList = GeometryTools.getGeoPoints(drawPointLinePolygonEntity.getGeometry());
+                    ArrayList<Coordinate> coordinateList = new ArrayList<>();
+                    for (GeoPoint geoPoint: geoPointList) {
+                        coordinateList.add(new Coordinate(geoPoint.getLongitude(), geoPoint.getLatitude()));
+                    }
+                    Coordinates coordinates = new Coordinates("");
+                    coordinates.setList(coordinateList);
+                    lineGeometry.setCoordinates(coordinates);
+                } else if (GeometryTools.POLYGON_GEOMETRY_TYPE.equals(kmlType)) {
+                    Polygon polygonGeometry = new Polygon();
+                    geometryList.add(polygonGeometry);
+                    List<GeoPoint> geoPointList = GeometryTools.getGeoPoints(drawPointLinePolygonEntity.getGeometry());
+                    ArrayList<Coordinate> coordinateList = new ArrayList<>();
+                    for (GeoPoint geoPoint: geoPointList) {
+                        coordinateList.add(new Coordinate(geoPoint.getLongitude(), geoPoint.getLatitude()));
+                    }
+                    Coordinates coordinates = new Coordinates("");
+                    coordinates.setList(coordinateList);
+
+                    LinearRing linearRing = new LinearRing();
+                    linearRing.setCoordinates(coordinates);
+
+                    Boundary boundary = new Boundary();
+                    boundary.setLinearRing(linearRing);
+                    polygonGeometry.setOuterBoundaryIs(boundary);
+                }
+            }
+        }
+        serializer.write(kmlModel, kmlFile);
+        return true;
     }
 
     /**

@@ -38,9 +38,11 @@ public class Coordinates {
 		String[] rawPoints = raw.replaceFirst("^\\s+", "").split("\\s+");
 		String[] coords;
 		for (String rawPoint : rawPoints) {
-			coords = rawPoint.split("(?<!\\\\),");
-			Double altitude = coords.length>2? Double.parseDouble(coords[2]) : null;
-			this.list.add(new Coordinate(Double.parseDouble(coords[0]),Double.parseDouble(coords[1]),altitude));
+			if (rawPoint!=null&&rawPoint.length()>0) {
+				coords = rawPoint.split("(?<!\\\\),");
+				Double altitude = coords.length>2? Double.parseDouble(coords[2]) : null;
+				this.list.add(new Coordinate(Double.parseDouble(coords[0]),Double.parseDouble(coords[1]),altitude));
+			}
 		}
 	}
 
