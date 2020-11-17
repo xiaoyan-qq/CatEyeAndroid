@@ -788,9 +788,13 @@ public class CatEyeMainFragment extends BaseFragment {
                                             db.setShow(true);
                                         }
                                         //调用显示选中图层的功能
-                                        refreshAllLayers(dataBeanList);
+//                                        refreshAllLayers(dataBeanList);
+                                        Message msg = Message.obtain();
+                                        msg.what = SystemConstant.MSG_WHAT_REFRSH_MAP_LAYERS;
+                                        msg.obj = dataBeanList;
+                                        EventBus.getDefault().post(msg);
                                     }
-                                    layerDataBeanList = dataBeanList;
+//                                    layerDataBeanList = dataBeanList;
                                     showLayerManagerDialog(dataBeanList);
                                 } else {
                                     RxToast.warning("当前项目没有可作业的图层，请联系系统管理员确认！");
@@ -899,7 +903,9 @@ public class CatEyeMainFragment extends BaseFragment {
                 loadRootFragment(R.id.layer_main_cateye_top, MultiTimeLayerSelectFragment.newInstance(bundle));
             }
         } else {
-            popToChild(MultiTimeLayerSelectFragment.class, true);
+            if (findChildFragment(MultiTimeLayerSelectFragment.class) != null) {
+                popToChild(MultiTimeLayerSelectFragment.class, true);
+            }
         }
     }
 

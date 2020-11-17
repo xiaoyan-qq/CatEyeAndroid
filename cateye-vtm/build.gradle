@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 29
+    compileSdkVersion androidCompileSdk()
     defaultConfig {
         applicationId "com.cateye.android.vtm"
         minSdkVersion androidMinSdk()
-        targetSdkVersion 29
+        targetSdkVersion androidTargetSdk()
         versionCode 12
         versionName "2.0.0"
 
@@ -39,7 +39,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '29.0.2'
+    buildToolsVersion "$androidBuildVersionTools"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

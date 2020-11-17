@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <!--<uses-permission android:name="android.permission.WRITE_SETTINGS"/>-->
 
+    <!--    android:requestLegacyExternalStorage="true"-->
+    <!-- Android10 后继续支持普通方式访问sd卡内容 -->
     <application
             android:name="com.cateye.android.vtm.MainApplication"
             android:allowBackup="true"
@@ -29,6 +31,7 @@
             android:largeHeap="true"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
+            android:usesCleartextTraffic="true"
             android:theme="@style/AppTheme">
 
         <activity
