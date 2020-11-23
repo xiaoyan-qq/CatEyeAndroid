@@ -369,7 +369,7 @@ public class LayerManagerFragment extends BaseFragment {
         mapFileDataBean.setExtension(suffix);
         if (suffix != null) {
             MapSourceFromNet.DataBean localDataBean = new MapSourceFromNet.DataBean();
-            if (suffix.toLowerCase().endsWith("map")) {
+            if (suffix.toLowerCase().endsWith(".map")) {
                 mapFileDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
                 localDataBean.setGroup(MainActivity.LAYER_GROUP_ENUM.BASE_VECTOR_GROUP.name);
             } if (suffix.toLowerCase().endsWith(".kml")||suffix.toLowerCase().endsWith(".shp")) {

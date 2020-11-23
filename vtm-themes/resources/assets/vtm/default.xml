@@ -199,28 +199,28 @@
         <area fill="#11ffffff" mesh="true" fade="-1"/>
     </m>
 
-    <m k="contour">
+    <m k="contour" zoom-min="1" zoom-max="19">
         <line use="contour"/>
         <text use="contour"/>
     </m>
 
-    <m k="name" v="liupanshui">
+    <m k="name" v="liupanshui" zoom-min="1" zoom-max="19">
         <area use="liupanshui"/>
         <line use="liupanshui"/>
         <text use="liupanshui"/>
         <symbol src="assets:symbols/place_of_worship/dot_blue.svg"/>
     </m>
-    <m k="name" v="polygon">
+    <m k="name" v="polygon" zoom-min="1" zoom-max="19">
         <text use="liupanshui"/>
         <area use="customer"/>
     </m>
 
-    <m k="name" v="line">
+    <m k="name" v="line" zoom-min="1" zoom-max="19">
         <text use="liupanshui"/>
         <line use="customer"/>
     </m>
 
-    <m k="name" v="point">
+    <m k="name" v="point" zoom-min="1" zoom-max="19">
         <text use="liupanshui"/>
         <symbol src="assets:symbols/dot_blue.svg"/>
     </m>

@@ -81,7 +81,9 @@ public abstract class MapScaleBar {
      * Free all resources
      */
     public void destroy() {
-        this.mapScaleBitmap.recycle();
+        if (this.mapScaleBitmap != null) {
+            this.mapScaleBitmap.recycle();
+        }
         this.mapScaleBitmap = null;
         this.mapScaleCanvas = null;
     }

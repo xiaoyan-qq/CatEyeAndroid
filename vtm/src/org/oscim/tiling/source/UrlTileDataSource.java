@@ -88,15 +88,20 @@ public class UrlTileDataSource implements ITileDataSource {
                 res = SUCCESS;
         } catch (SocketException e) {
             log.debug("{} Socket Error: {}", tile, e.getMessage());
+            System.out.println(tile+"{} Socket Error: {}"+e.getMessage());
         } catch (SocketTimeoutException e) {
             log.debug("{} Socket Timeout", tile);
+            System.out.println(tile+"{} Socket Timeout: {}"+e.getMessage());
             res = DELAYED;
         } catch (UnknownHostException e) {
             log.debug("{} Unknown host: {}", tile, e.getMessage());
+            System.out.println(tile+"{} Unknown host: {}"+e.getMessage());
         } catch (IOException e) {
             log.debug("{} Network Error: {}", tile, e.getMessage());
+            System.out.println(tile+"{} Network Error: {}"+e.getMessage());
         } catch (Exception e) {
             log.debug("{} Error: {}", tile, e.getMessage());
+            System.out.println(tile+"{} Error: {}"+e.getMessage());
         } finally {
             boolean ok = (res == SUCCESS);
 

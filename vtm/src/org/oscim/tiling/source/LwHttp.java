@@ -43,6 +43,7 @@ public class LwHttp implements HttpEngine {
     static final boolean dbg = true;
 
     private static final byte[] HEADER_HTTP_OK = "200 OK".getBytes();
+    private static final byte[] HEADER_HTTP_OK_OLD = "200".getBytes();
     private static final byte[] HEADER_CONTENT_LENGTH = "Content-Length".getBytes();
     private static final byte[] HEADER_CONNECTION_CLOSE = "Connection: close".getBytes();
     private static final byte[] HEADER_ENCODING_GZIP = "Content-Encoding: gzip".getBytes();
@@ -300,7 +301,7 @@ public class LwHttp implements HttpEngine {
             if (first) {
                 first = false;
                 /* check only for OK (" HTTP/1.? ".length == 10)*/
-                if (!check(HEADER_HTTP_OK, buf, pos + 9, end)) {
+                if (!check(HEADER_HTTP_OK, buf, pos + 9, end)&&!check(HEADER_HTTP_OK_OLD, buf, pos + 9, end)) {
                     throw new IOException("HTTP Error: "
                             + new String(buf, pos, end - pos - 1));
                 }

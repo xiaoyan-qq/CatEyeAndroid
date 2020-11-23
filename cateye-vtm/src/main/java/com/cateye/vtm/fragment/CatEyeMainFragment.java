@@ -201,7 +201,6 @@ public class CatEyeMainFragment extends BaseFragment {
         travelSdf = new SimpleDateFormat("yyyyMMddHHmmss");
         mapView = (MapView) findViewById(R.id.mapView);
         mMap = mapView.map();
-
         layer_fragment = (FrameLayout) rootView.findViewById(R.id.layer_main_cateye_bottom);
 
         chk_draw_point = rootView.findViewById(R.id.chk_draw_vector_point);
@@ -1040,7 +1039,7 @@ public class CatEyeMainFragment extends BaseFragment {
                 }
             }), isAllLayers);
         } else {
-            mMap.setTheme(VtmThemes.OSMARENDER, isAllLayers);
+            mMap.setTheme(VtmThemes.DEFAULT, isAllLayers);
         }
     }
 
@@ -1054,7 +1053,8 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceFirst("https?://", "")
                     .replaceAll("/", "-");
 
-            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
+//            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
+            TileCache mCache = new TileCache(mContext, null, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
         }
@@ -1078,7 +1078,8 @@ public class CatEyeMainFragment extends BaseFragment {
                     .replaceFirst("https?://", "")
                     .replaceAll("/", "-");
 
-            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
+//            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
+            TileCache mCache = new TileCache(mContext, null, cacheFile);
             mCache.setCacheSize(512 * (1 << 10));
             mTileSource.setCache(mCache);
         }
@@ -1086,7 +1087,6 @@ public class CatEyeMainFragment extends BaseFragment {
         VectorTileLayer mVectorTileLayer = new VectorTileLayer(mMap, mTileSource);
         mMap.layers().add(mVectorTileLayer, LAYER_GROUP_ENUM.getGroupByName(layerGroup).orderIndex);
         mMap.layers().add(new LabelLayer(mMap, mVectorTileLayer), LAYER_GROUP_ENUM.OTHER_GROUP.orderIndex);
-        loadTheme(null, true);
         mMap.updateMap(true);
     }
 
@@ -1385,6 +1385,7 @@ public class CatEyeMainFragment extends BaseFragment {
                 if (msg.obj != null) {
                     this.layerDataBeanList = (List<MapSourceFromNet.DataBean>) msg.obj;
                     this.refreshAllLayers(this.layerDataBeanList);
+                    loadTheme(null, true); // 设置地图风格
                 }
                 break;
         }
