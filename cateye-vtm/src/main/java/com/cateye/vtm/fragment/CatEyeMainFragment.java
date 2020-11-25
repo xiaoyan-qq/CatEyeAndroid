@@ -1308,7 +1308,7 @@ public class CatEyeMainFragment extends BaseFragment {
                     polygonOverlay.add(polygonDrawable);
                     mMap.updateMap(true);
                     //根据polygon的数据计算需要下载的tile列表
-                    TileDownloader tileDownloader = new TileDownloader();
+                    TileDownloader tileDownloader = TileDownloader.getInstance();
                     List<Tile> tileList = tileDownloader.getRectLatitudeArray(mMap, rect, (byte) 1, (byte) 16);
                     if (tileList != null && !tileList.isEmpty()) {
                         tileDownloader.openDownloadTileDialog(getActivity(), tileList, mMap.layers());

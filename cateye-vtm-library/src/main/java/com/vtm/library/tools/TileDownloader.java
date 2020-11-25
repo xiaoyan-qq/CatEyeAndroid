@@ -2,12 +2,14 @@ package com.vtm.library.tools;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.example.cateye_vtm_library.R;
-import com.hss01248.notifyutil.NotifyUtil;
+import com.vtm.library.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.backend.CanvasAdapter;
@@ -38,19 +39,30 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import androidx.core.app.NotificationCompat;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.schedulers.Schedulers;
 
 public class TileDownloader {
+    private static TileDownloader instance;
     private Dialog dialog;
     private CatEyeTileDownloadReceiver receiver;
+    private NotificationManager notificationManager; // 顶部标题栏管理类
+    private NotificationCompat.Builder builder;
 
-    public TileDownloader() {
+    public static TileDownloader getInstance() {
+        if (instance == null) {
+            instance = new TileDownloader();
+        }
+        return instance;
     }
 
     /**
@@ -132,6 +144,12 @@ public class TileDownloader {
      */
     private Subscription subscription = null;
 
+    public void showDialog() {
+        if (dialog!=null) {
+            dialog.show();
+        }
+    }
+
     public void openDownloadTileDialog(final Activity mContext, final List<Tile> tileList, final List<Layer> mapLayerList) {
         View downloadProgressView = LayoutInflater.from(mContext).inflate(R.layout.layer_tile_download_progress, null);
         dialog = new Dialog(mContext);
@@ -140,7 +158,7 @@ public class TileDownloader {
         dialog.setTitle("缓存tile地图数据");
         dialog.show();
 //        dialog = new CanDialog.Builder(mContext).setCancelable(false).setView(downloadProgressView).setTitle("缓存tile地图数据").show();
-        IntentFilter filter = new IntentFilter("catEye_tile_download");
+        IntentFilter filter = new IntentFilter();
         receiver = new CatEyeTileDownloadReceiver();
         mContext.registerReceiver(receiver, filter);
 
@@ -151,10 +169,7 @@ public class TileDownloader {
 
         final List<UrlTileSource> urlTileSourceList = new ArrayList<>();
 
-        final Intent tileDownloaderIntent = new Intent("catEye_tile_download");
-        tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        Flowable.create(new FlowableOnSubscribe<Tile>() {
+        Flowable tileDownloadFlowable = Flowable.create(new FlowableOnSubscribe<Tile>() {
             @Override
             public void subscribe(FlowableEmitter<Tile> emitter) throws Exception {
                 if (urlTileSourceList != null && !urlTileSourceList.isEmpty()) {
@@ -179,7 +194,18 @@ public class TileDownloader {
                 }
                 emitter.onComplete();
             }
-        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Tile>() {
+        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io());
+
+        Flowable<Long> delayConsumer = Flowable.interval(50, TimeUnit.MILLISECONDS).observeOn(Schedulers.io());
+
+        Flowable.zip(tileDownloadFlowable, delayConsumer, new BiFunction<Tile, Long, Tile>() {
+
+            @NonNull
+            @Override
+            public Tile apply(@NonNull Tile tile, @NonNull Long aLong) throws Exception {
+                return tile;
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Tile>() {
             @Override
             public void onSubscribe(Subscription d) {
                 subscription = d;
@@ -200,17 +226,26 @@ public class TileDownloader {
                 bbtn_ok.setEnabled(false);
 
                 d.request(1);
+                builder = createProgressNotificationBuilder(mContext, 0, pb_download.getMax());
             }
 
             @Override
             public void onNext(Tile tile) {
-                pb_download.setProgress(pb_download.getProgress() + 1 <= pb_download.getMax() ? pb_download.getProgress() + 1 : pb_download.getMax());
+                pb_download.setProgress(pb_download.getProgress() < pb_download.getMax() ? pb_download.getProgress() + 1 : pb_download.getMax());
                 tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
                 System.out.println("进度:" + pb_download.getProgress() + "/" + pb_download.getMax());
 
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH, R.mipmap.ic_launcher_foreground, "正在下载", pb_download.getProgress() + 1, pb_download.getMax(), "下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT))
-                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT)).show();
+                if (builder!=null) {
+                    builder.setProgress(pb_download.getMax(), pb_download.getProgress(), false);
+                    if (pb_download.getProgress()<pb_download.getMax()) {
+                        builder.setContentText("正在下载:"+pb_download.getProgress()+"/"+pb_download.getMax());
+                    } else {
+                        builder.setContentText("下载完成:"+pb_download.getProgress()+"/"+pb_download.getMax());
+                    }
+                }
+                if (notificationManager!=null) {
+                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                }
 
                 subscription.request(1);
             }
@@ -223,6 +258,15 @@ public class TileDownloader {
             @Override
             public void onComplete() {
                 bbtn_ok.setEnabled(true);
+                System.out.println("下载结束:" + pb_download.getProgress() + "/" + pb_download.getMax());
+
+                if (builder!=null) {
+                    builder.setProgress(pb_download.getMax(), pb_download.getMax(), false);
+                    builder.setContentText("下载完成!");
+                }
+                if (notificationManager!=null) {
+                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                }
 
                 // 结束下载后，择缓存地图按钮置为可用，直到下载完成后才可以进行下一次下载
                 Message msg = Message.obtain();
@@ -230,13 +274,121 @@ public class TileDownloader {
                 msg.obj = true;
                 EventBus.getDefault().post(msg);
 
+
+                Intent tileDownloaderIntent = new Intent("catEye_tile_download");
+                tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                tileDownloaderIntent.setPackage(mContext.getPackageName());
+                mContext.sendBroadcast(tileDownloaderIntent);
             }
         });
+//        Flowable.create(new FlowableOnSubscribe<Tile>() {
+//            @Override
+//            public void subscribe(FlowableEmitter<Tile> emitter) throws Exception {
+//                if (urlTileSourceList != null && !urlTileSourceList.isEmpty()) {
+//                    b:
+//                    for (int i = 0; i < urlTileSourceList.size(); i++) {
+//                        UrlTileSource mUrlTileSource = urlTileSourceList.get(i);
+//                        HttpEngine httpEngine = mUrlTileSource.getHttpEngine();
+//                        for (int j = 0; j < tileList.size(); j++) {
+//                            Tile tile = tileList.get(j);
+//                            if (!emitter.isCancelled()) {
+//                                while (emitter.requested() == 0) {
+//                                    if (emitter.isCancelled()) {
+//                                        System.out.println("这里break了urlTileSourceList:===" + i + "/" + urlTileSourceList.size() + "  tileList:===" + j + "/" + tileList.size());
+//                                        break b;
+//                                    }
+//                                }
+//                                download(tile, mUrlTileSource, httpEngine);
+//                                emitter.onNext(tile);
+//                            }
+//                        }
+//                    }
+//                }
+//                emitter.onComplete();
+//            }
+//        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Tile>() {
+//            @Override
+//            public void onSubscribe(Subscription d) {
+//                subscription = d;
+//                if (mapLayerList != null && !mapLayerList.isEmpty()) {
+//                    for (Layer layer : mapLayerList) {
+//
+//                        if (layer instanceof BitmapTileLayer && ((BitmapTileLayer) layer).getTileSource() instanceof UrlTileSource) {
+//                            urlTileSourceList.add((UrlTileSource) ((BitmapTileLayer) layer).getTileSource());
+//                        }
+//                        if (layer instanceof VectorTileLayer && ((VectorTileLayer) layer).getTileSource() instanceof UrlTileSource) {
+//                            urlTileSourceList.add((UrlTileSource) ((VectorTileLayer) layer).getTileSource());
+//                        }
+//                    }
+//                }
+//                pb_download.setMax(tileList.size() * urlTileSourceList.size());
+//                pb_download.setProgress(0);
+//                bbtn_mini.setEnabled(true);
+//                bbtn_ok.setEnabled(false);
+//
+//                d.request(1);
+//                builder = createProgressNotificationBuilder(mContext, 0, pb_download.getMax());
+//            }
+//
+//            @Override
+//            public void onNext(Tile tile) {
+//                pb_download.setProgress(pb_download.getProgress() < pb_download.getMax() ? pb_download.getProgress() + 1 : pb_download.getMax());
+//                tv_download.setText(pb_download.getProgress() + "/" + pb_download.getMax());
+//                System.out.println("进度:" + pb_download.getProgress() + "/" + pb_download.getMax());
+//
+//                if (builder!=null) {
+//                    builder.setProgress(pb_download.getMax(), pb_download.getProgress(), false);
+//                }
+//                if (notificationManager!=null) {
+//                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+//                }
+//
+//                subscription.request(1);
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//                bbtn_ok.setEnabled(true);
+//                System.out.println("下载结束:" + pb_download.getProgress() + "/" + pb_download.getMax());
+//
+//                if (builder!=null) {
+//                    builder.setProgress(pb_download.getMax(), pb_download.getMax(), false);
+//                    builder.setContentText("下载完成!");
+//                    builder.setContentIntent(null);
+//                    builder.setFullScreenIntent(null, false);
+//                }
+//                if (notificationManager!=null) {
+//                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+//                }
+//
+//                // 结束下载后，择缓存地图按钮置为可用，直到下载完成后才可以进行下一次下载
+//                Message msg = Message.obtain();
+//                msg.what = 0x1017; // SystemConstant.MSG_WHAT_TILE_DOWNLAOD_ENABLE
+//                msg.obj = true;
+//                EventBus.getDefault().post(msg);
+//
+//            }
+//        });
 
         View.OnClickListener dissmissClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+
+                if (builder!=null) {
+                    builder.setProgress(pb_download.getMax(), pb_download.getMax(), false);
+                    builder.setContentText("下载完成!");
+                }
+                if (notificationManager!=null) {
+                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                    notificationManager.cancel(MSG_DOWNLOAD_TILE_FINISH);
+                }
+
                 // 通知主界面，清除下载区域的绘制框
                 Message msg = Message.obtain();
                 msg.what = MSG_DOWNLOAD_TILE_FINISH;
@@ -251,26 +403,38 @@ public class TileDownloader {
         bbtn_mini.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotifyUtil.buildProgress(MSG_DOWNLOAD_TILE_FINISH, R.mipmap.ic_launcher_foreground, "正在下载", pb_download.getProgress() + 1, pb_download.getMax(), "下载进度:%d%%")
-                        .setContentIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT))
-                        .setFullScreenIntent(PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_ONE_SHOT)).show();
                 dialog.hide();
             }
         });
     }
 
-    public class CatEyeTileDownloadReceiver extends BroadcastReceiver {
+    public static final int MSG_DOWNLOAD_TILE_FINISH = 0x101;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() == "catEye_tile_download") {
-                if (dialog != null) {
-                    dialog.show();
-                    context.startActivity(intent);//显示主界面，主界面设置了clear_top的tag，如果当前已经在显示了，不会重复显示
-                }
-            }
+    private NotificationCompat.Builder createProgressNotificationBuilder(Context mContext, int progress, int max) {
+        notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager =
+                    (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String channelId = "cateye";
+            CharSequence channelName = "cateye_map_cache";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
-    }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+        builder.setSmallIcon(R.mipmap.ic_launcher_foreground);
+        builder.setContentTitle("缓存地图");
+        builder.setContentText("正在下载");
 
-    public static final int MSG_DOWNLOAD_TILE_FINISH = 0x10111;
+        Intent tileDownloaderIntent = new Intent("catEye_tile_download");
+        tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        tileDownloaderIntent.setPackage(mContext.getPackageName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+//        builder.setFullScreenIntent(pendingIntent, false);
+
+        builder.setProgress(max,progress,false);
+        notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+        return builder;
+    }
 }
