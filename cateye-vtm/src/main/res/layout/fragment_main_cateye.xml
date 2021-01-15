@@ -253,9 +253,19 @@
                     android:id="@+id/layer_main_fragment_right_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:orientation="vertical">
-
+                <ImageView
+                    android:id="@+id/img_search_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/selector_bg_blue_frame_white_bg_4_radius"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/default_padding_side"
+                    android:padding="@dimen/button_padding_default"
+                    android:src="@drawable/selector_search_location"/>
             </LinearLayout>
         </RelativeLayout>
 
@@ -279,4 +289,9 @@
                 android:layout_gravity="top"></FrameLayout>
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/layer_main_cateye_whole"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
 </FrameLayout>

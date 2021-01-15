@@ -89,6 +89,7 @@
             </intent-filter>
         </receiver>
 
+        <!-- RMLBZ-OHAHI-GMEGY-5ECJR-MXTJO-ODFWF -->
         <meta-data
                 android:name="TencentMapSDK"
                 android:value="FN4BZ-P6IC6-ENKSQ-MVCMP-MGAX6-FYFUW"/>

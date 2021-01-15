@@ -91,13 +91,10 @@ dependencies {
 
     // To get SwipeBack feature, rely on both fragmentation & fragmentation-swipeback
     api 'me.yokeyword:fragmentationx:1.0.1'
-
     // Swipeback is based on fragmentation. Refer to SwipeBackActivity/Fragment for your Customized SupportActivity/Fragment
-    api 'me.yokeyword:fragmentation-swipeback:1.3.3'
-
+    api 'me.yokeyword:fragmentation-swipeback:1.3.8'
     // To simplify the communication between Fragments.
     api 'me.yokeyword:eventbus-activity-scope:1.1.0'
-
     // Your EventBus's version
     api 'org.greenrobot:eventbus:3.1.1'
 
@@ -110,7 +107,6 @@ dependencies {
 
     //对话框样式 https://github.com/canyinghao/CanDialog
     api 'com.canyinghao:candialog:1.0.9'
-    api files('libs/TencentLocationSdk_v6.2.5.3.jar')
 
     //绘制图表的开源库 https://github.com/PhilJay/MPAndroidChart
     api 'com.github.PhilJay:MPAndroidChart:v3.0.3'
@@ -170,4 +166,7 @@ dependencies {
 
     // 常用动画库 https://github.com/daimajia/AndroidViewAnimations
     api 'com.daimajia.androidanimations:library:2.4@aar'
+
+    // gson库 https://github.com/google/gson
+    api 'com.google.code.gson:gson:2.8.6'
 }

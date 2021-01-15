@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="button_padding_default">8dp</dimen>
+    <dimen name="button_padding_default">10dp</dimen>
     <dimen name="layer_margin_vertical">12dp</dimen>
+    <dimen name="cateye_default_layer_padding">12dp</dimen>
+    <dimen name="cateye_default_widget_margin">10dp</dimen>
 
     <dimen name="lv_font_main_text">18sp</dimen>
     <dimen name="lv_font_sub_text">14sp</dimen>
+
 </resources>

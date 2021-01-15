@@ -96,5 +96,8 @@ public class SystemConstant {
     public static final String GEOMETRY_COLUMN = "GEOMETRY_COLUMN"; // 记录geometry的列名，也可用于map的key中
 
     public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
+    public static final int REQUEST_CODE_SEARCH_LOCATION = 0x5002; // POI搜索对应的RequestCode
+    public static final int RESULT_CODE_SEARCH_LOCATION_SELECT_ONE = 0x5002; // POI搜索后选中指定的某个POI
+    public static final int RESULT_CODE_SEARCH_LOCATION_GET_MORE = 0x5003; // POI搜索选择获取更多数据
 
 }

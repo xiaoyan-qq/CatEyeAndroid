@@ -48,7 +48,7 @@ public class MainApplication extends MultiDexApplication {
         Fragmentation.builder()
                 // 显示悬浮球 ; 其他Mode:SHAKE: 摇一摇唤出   NONE：隐藏
                 .stackViewMode(Fragmentation.NONE)
-//                .debug(BuildConfig.DEBUG)
+                .debug(BuildConfig.DEBUG)
                 .install();
 
         //Okhttp的配置

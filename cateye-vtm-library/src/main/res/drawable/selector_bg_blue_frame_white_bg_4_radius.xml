@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false" android:drawable="@drawable/drawable_bg_gray_frame_gray_bg_4_radius"></item>
-    <item android:state_checked="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"/>
-    <item android:state_pressed="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"/>
-    <item android:state_selected="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"></item>
-    <item android:drawable="@drawable/drawable_bg_blue_frame_white_bg_4_radius"/>
-</selector>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#BFBFBF" >
+    <item>
+        <selector>
+            <item android:state_enabled="false" android:drawable="@drawable/drawable_bg_gray_frame_gray_bg_4_radius"></item>
+            <item android:state_checked="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"/>
+            <item android:state_pressed="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"/>
+            <item android:state_selected="true" android:drawable="@drawable/drawable_bg_blue_bg_4_radius"></item>
+            <item android:drawable="@drawable/drawable_bg_blue_frame_white_bg_4_radius"/>
+        </selector>
+    </item>
+</ripple>

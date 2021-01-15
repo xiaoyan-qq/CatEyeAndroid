@@ -137,6 +137,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cateye.vtm.util.SystemConstant.MSG_WHAT_LOCATION_UPDATE;
 import static com.cateye.vtm.util.SystemConstant.URL_CONTOUR_CALCULATE;
 import static com.cateye.vtm.util.SystemConstant.URL_MAP_SOURCE_NET;
 
@@ -156,7 +157,7 @@ public class CatEyeMainFragment extends BaseFragment {
 
 //    private List<TileSource> mTileSourceList;//当前正在显示的tileSource的集合
 
-    private ImageView img_location/*获取当前位置的按钮*/, img_exit_app/*退出程序*/;
+    private ImageView img_location/*获取当前位置的按钮*/, img_exit_app/*退出程序*/,img_search_location/*搜索位置信息*/;
     private TextView chk_draw_point, chk_draw_line, chk_draw_polygon;//绘制点线面
     private TextView img_map_source_selector;
     private TextView img_contour_selector;//加载等高线数据的按钮
@@ -233,6 +234,7 @@ public class CatEyeMainFragment extends BaseFragment {
         img_change_contour_color = rootView.findViewById(R.id.img_change_contour_color);
         img_location = rootView.findViewById(R.id.img_location);
         img_exit_app = rootView.findViewById(R.id.img_exit_app);
+        img_search_location = rootView.findViewById(R.id.img_search_location);
 
         initData();
         initScaleBar();
@@ -372,6 +374,7 @@ public class CatEyeMainFragment extends BaseFragment {
         });
 
         img_trail_record.setOnClickListener(mainFragmentClickListener);
+        img_search_location.setOnClickListener(mainFragmentClickListener);
     }
 
     @Override
@@ -743,6 +746,13 @@ public class CatEyeMainFragment extends BaseFragment {
             } else if (view.getId() == R.id.img_draw_record) {
                 DrawPointLinePolygonListFragment drawPointLinePolygonListFragment = (DrawPointLinePolygonListFragment) DrawPointLinePolygonListFragment.newInstance(new Bundle());
                 ((MainActivity) getActivity()).showSlidingLayout(0.4f, drawPointLinePolygonListFragment);
+            } else if (view.getId() == R.id.img_search_location) { // 搜索位置
+                if (findFragment(SearchLocationFragment.class) == null) {
+                    Bundle bundle = new Bundle();
+                    SearchLocationFragment searchLocationFragment = (SearchLocationFragment) SearchLocationFragment.newInstance();
+//                loadRootFragment(R.id.layer_main_cateye_whole, searchLocationFragment, true, true);
+                    startForResult(searchLocationFragment, SystemConstant.REQUEST_CODE_SEARCH_LOCATION);
+                }
             }
         }
     };
@@ -1039,7 +1049,7 @@ public class CatEyeMainFragment extends BaseFragment {
                 }
             }), isAllLayers);
         } else {
-            mMap.setTheme(VtmThemes.DEFAULT, isAllLayers);
+            mMap.setTheme(VtmThemes.CATEYERENDER, isAllLayers);
         }
     }
 
@@ -1468,9 +1478,12 @@ public class CatEyeMainFragment extends BaseFragment {
     @Override
     public void onFragmentResult(int requestCode, int resultCode, Bundle data) {
         super.onFragmentResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 1:
-                break;
+        if (requestCode == SystemConstant.REQUEST_CODE_SEARCH_LOCATION) {
+            if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE) { // 用户选中其中一条数据
+                
+            } else if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE) { // 用户点击获取更多
+
+            }
         }
     }
 
@@ -1641,4 +1654,5 @@ public class CatEyeMainFragment extends BaseFragment {
             return false;
         }
     }
+
 }

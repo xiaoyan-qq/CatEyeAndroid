@@ -117,12 +117,16 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         mainFragment = CatEyeMainFragment.newInstance(new Bundle());
         loadRootFragment(R.id.fragment_main_container, mainFragment);
 
-
-        TencentLocationRequest request = TencentLocationRequest.create();
-        request.setAllowCache(true);
-        request.setInterval(3000);
         TencentLocationManager locationManager = TencentLocationManager.getInstance(this);
         locationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_WGS84);//使用wgs84坐标系
+
+        TencentLocationRequest request = TencentLocationRequest.create();
+        request.setInterval(3000);
+        request.setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA); // 包含经纬度，位置所处的中国大陆行政区划
+        request.setAllowDirection(true); // 包含方向信息
+        request.setAllowGPS(true); // 允许使用gps
+        request.setIndoorLocationMode(true); // 允许使用室内定位
+
         int error = locationManager.requestLocationUpdates(request, this);
         if (error != 0) {
             RxToast.warning("注意！无法获取位置信息！");
