@@ -5,6 +5,7 @@ import android.content.Context;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.vtm.library.tools.OverlayerManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;

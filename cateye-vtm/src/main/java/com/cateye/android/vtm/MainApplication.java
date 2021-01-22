@@ -1,7 +1,6 @@
 package com.cateye.android.vtm;
 
 import com.beardedhen.androidbootstrap.TypefaceProvider;
-import com.cateye.vtm.util.SystemConstant;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -11,6 +10,7 @@ import com.lzy.okgo.cookie.store.MemoryCookieStore;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.tamsiree.rxkit.RxTool;
 import com.umeng.commonsdk.UMConfigure;
+import com.vtm.library.utils.SystemConstant;
 
 import org.gdal.gdal.gdal;
 import org.gdal.ogr.ogr;

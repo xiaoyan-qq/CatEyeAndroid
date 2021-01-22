@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cateye.vtm.fragment.CatEyeMainFragment;
-import com.cateye.vtm.util.SystemConstant;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,10 +29,6 @@ public abstract class BaseFragment extends SupportFragment implements BaseFragme
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            //获取当前的绘制状态
-            bundle = savedInstanceState;
-        }
         if (getArguments() != null) {
             bundle = getArguments();
         }

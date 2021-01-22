@@ -16,6 +16,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;

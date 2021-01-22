@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.vtm.util.LayerStyle;
-import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.layers.PolygonLayer;
 import com.vtm.library.tools.CatEyeMapManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.core.GeoPoint;

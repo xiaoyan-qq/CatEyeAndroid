@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.cateye.vtm.util.SystemConstant;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.lzy.okgo.OkGo;
@@ -25,6 +24,7 @@ import com.tamsiree.rxkit.view.RxToast;
 import com.tamsiree.rxui.view.dialog.RxDialogLoading;
 import com.tamsiree.rxui.view.dialog.RxDialogSure;
 import com.tamsiree.rxui.view.dialog.RxDialogSureCancel;
+import com.vtm.library.utils.SystemConstant;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;

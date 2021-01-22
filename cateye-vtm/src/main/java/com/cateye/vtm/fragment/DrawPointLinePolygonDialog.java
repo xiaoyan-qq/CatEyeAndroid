@@ -16,7 +16,6 @@ import com.cateye.android.entity.DrawPointLinePolygonEntity;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.tamsiree.rxkit.RxDataTool;
 import com.tamsiree.rxkit.RxFileTool;
 import com.tamsiree.rxkit.RxPhotoTool;
@@ -25,6 +24,7 @@ import com.tamsiree.rxkit.view.RxToast;
 import com.tamsiree.rxui.view.dialog.RxDialog;
 import com.tamsiree.rxui.view.dialog.RxDialogScaleView;
 import com.tamsiree.rxui.view.dialog.RxDialogSureCancel;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

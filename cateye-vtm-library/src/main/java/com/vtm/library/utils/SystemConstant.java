@@ -1,4 +1,4 @@
-package com.cateye.vtm.util;
+package com.vtm.library.utils;
 
 
 import com.litesuits.common.utils.SdCardUtil;
@@ -50,6 +50,8 @@ public class SystemConstant {
 
     public static final String BASE_URL = "http://211.154.194.45:8080";
     public static final String PROJECT_URL = "http://211.154.194.45:8080/project";
+    public static final String TECENT_MAP_BASE_URL = "http://apis.map.qq.com/ws"; // 腾讯地图web service基地址
+    public static final String TECENT_MAP_TRANSLATE = TECENT_MAP_BASE_URL+"/coord/v1/translate"; // 地址转换
     public static final String USER_ID = "{userId}";
     public static final String URL_MAP_SOURCE_NET = BASE_URL + "/projects/" + USER_ID + "/datasets";//获取数据源的url
     public static final String URL_CONTOUR_CALCULATE = BASE_URL + "/dem/contour";//等高线获取的url
@@ -97,7 +99,7 @@ public class SystemConstant {
 
     public static final int REQUEST_CODE_POINT_CAMERA = 0x5001; // 戳点时拍照对应的requestCode，需要在主Activity中获取拍摄的照片
     public static final int REQUEST_CODE_SEARCH_LOCATION = 0x5002; // POI搜索对应的RequestCode
-    public static final int RESULT_CODE_SEARCH_LOCATION_SELECT_ONE = 0x5002; // POI搜索后选中指定的某个POI
-    public static final int RESULT_CODE_SEARCH_LOCATION_GET_MORE = 0x5003; // POI搜索选择获取更多数据
+    public static final int RESULT_CODE_SEARCH_LOCATION_SELECT_ONE = 0x5003; // POI搜索后选中指定的某个POI
+    public static final int RESULT_CODE_SEARCH_LOCATION_GET_MORE = 0x5004; // POI搜索选择获取更多数据
 
 }

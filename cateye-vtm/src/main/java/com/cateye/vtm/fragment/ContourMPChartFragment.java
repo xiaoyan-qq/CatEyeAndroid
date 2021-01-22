@@ -10,7 +10,6 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -26,6 +25,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.tamsiree.rxkit.RxDeviceTool;
 import com.tamsiree.rxui.view.dialog.RxDialogLoading;
 import com.vtm.library.tools.CatEyeMapManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;

@@ -7,8 +7,8 @@ import android.view.View;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.vtm.library.tools.TileDownloadRectDrawView;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 

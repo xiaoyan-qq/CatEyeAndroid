@@ -19,7 +19,6 @@ import com.cateye.android.entity.Project;
 import com.cateye.vtm.fragment.CatEyeMainFragment;
 import com.cateye.vtm.fragment.MultiTimeLayerSelectFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
@@ -39,6 +38,7 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
 import com.umeng.analytics.MobclickAgent;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.android.filepicker.FilePicker;
@@ -118,7 +118,7 @@ public class MainActivity extends SupportActivity implements TencentLocationList
         loadRootFragment(R.id.fragment_main_container, mainFragment);
 
         TencentLocationManager locationManager = TencentLocationManager.getInstance(this);
-        locationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_WGS84);//使用wgs84坐标系
+        locationManager.setCoordinateType(TencentLocationManager.COORDINATE_TYPE_GCJ02);//使用wgs84坐标系
 
         TencentLocationRequest request = TencentLocationRequest.create();
         request.setInterval(3000);

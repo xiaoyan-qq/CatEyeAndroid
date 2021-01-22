@@ -34,10 +34,10 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.canyinghao.candialog.CanDialog;
 import com.canyinghao.candialog.CanDialogInterface;
 import com.cateye.android.vtm.R;
-import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.StringUtils;
 import com.litesuits.common.io.FileUtils;
 import com.tamsiree.rxkit.view.RxToast;
+import com.vtm.library.utils.SystemConstant;
 
 import java.io.File;
 import java.io.FileFilter;

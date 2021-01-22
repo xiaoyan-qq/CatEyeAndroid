@@ -1,5 +1,7 @@
 package com.cateye.vtm.fragment;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,20 +17,22 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.alibaba.fastjson.JSON;
 import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.StringUtils;
-import com.google.gson.Gson;
+import com.lzy.okgo.OkGo;
+import com.lzy.okrx2.adapter.ObservableResponse;
 import com.tamsiree.rxkit.view.RxToast;
 import com.tencent.lbssearch.TencentSearch;
-import com.tencent.lbssearch.object.param.SearchParam;
 import com.tencent.lbssearch.object.param.SuggestionParam;
 import com.tencent.lbssearch.object.result.SuggestionResultObject;
 import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.tools.Util;
 import com.tencent.map.tools.net.http.HttpResponseListener;
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.vtm.library.utils.SystemConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,12 +51,11 @@ public class SearchLocationFragment extends BaseFragment {
     private TencentSearch tencentSearch;
     private SimpleAdapter suggestAdapter;
     private List<Map<String, Object>> listData;
-    private Gson gson;
+//    private Gson gson;
 
     public SearchLocationFragment() {
         // Required empty public constructor
-        this.gson = new Gson();
-        this.tencentSearch = new TencentSearch(getActivity());
+//        this.gson = new Gson();
         this.listData = new ArrayList<>();
     }
     // TODO: Rename and change types and number of parameters
@@ -70,6 +73,7 @@ public class SearchLocationFragment extends BaseFragment {
 
     @Override
     public void initView(View rootView) {
+        tencentSearch = new TencentSearch(getActivity());
         edt_search_location = rootView.findViewById(R.id.edt_search_location);
         img_search_location = rootView.findViewById(R.id.img_search_location);
         lvSuggest = rootView.findViewById(R.id.lv_search_location);
@@ -83,14 +87,14 @@ public class SearchLocationFragment extends BaseFragment {
                         // 用户点击指定数据，直接在地图上用mark标识选定的POI数据
                         SuggestionResultObject.SuggestionData suggestionData = (SuggestionResultObject.SuggestionData) listData.get(position).get("obj");
                         Bundle bundle = new Bundle();
-                        bundle.putString("suggestData", gson.toJson(suggestionData));
+                        bundle.putString("suggestData", JSON.toJSONString(suggestionData));
                         setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE, bundle);
                         pop();
                     } else {
                         // 用户点击获取更多，则使用keyword获取更多推荐数据，在地图上展示获取到的POI数据
                         String keyWord = edt_search_location.getText().toString();
                         Bundle bundle = new Bundle();
-                        bundle.putString("keyword", gson.toJson(keyWord));
+                        bundle.putString("keyword", keyWord);
                         setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE, bundle);
                         pop();
                     }
@@ -117,7 +121,7 @@ public class SearchLocationFragment extends BaseFragment {
                 if (!StringUtils.isEmpty(keyWord)) {
                     SuggestionParam suggestionParam = new SuggestionParam();
                     suggestionParam.keyword(keyWord);
-                    suggestionParam.region("北京");
+                    suggestionParam.region("北京市");
                     suggestionParam.regionFix(true);
                     suggestionParam.pageSize(20);
                     suggestionParam.location(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
@@ -143,6 +147,7 @@ public class SearchLocationFragment extends BaseFragment {
                                 map.put("title", "获取更多+");
                                 map.put("address", "点击获取更多");
                                 map.put("obj", null);
+                                listData.add(map);
                             }
                             suggestAdapter.notifyDataSetChanged();
                         }

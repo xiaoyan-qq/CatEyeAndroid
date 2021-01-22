@@ -14,7 +14,6 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.adapter.LayerManagerAdapter;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.FeatureCollection;
 import com.cocoahero.android.geojson.GeoJSON;
@@ -28,6 +27,7 @@ import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -81,11 +81,7 @@ public class LayerManagerFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mMap = CatEyeMapManager.getInstance().getMapView().map();
-        if (savedInstanceState != null) {
-            layerDataBeanList = (List<MapSourceFromNet.DataBean>) savedInstanceState.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
-        }
         if (getArguments() != null) {
-            Bundle bundle = getArguments();
             //获取等高线的数据
             layerDataBeanList = (List<MapSourceFromNet.DataBean>) bundle.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
         }

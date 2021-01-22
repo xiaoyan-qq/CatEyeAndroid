@@ -38,7 +38,6 @@ import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.AirPlanUtils;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.LocalGisFileUtil;
-import com.cateye.vtm.util.SystemConstant;
 import com.github.lazylibrary.util.TimeUtils;
 import com.litesuits.common.assist.Check;
 import com.litesuits.common.io.IOUtils;
@@ -52,7 +51,13 @@ import com.tamsiree.rxkit.RxTimeTool;
 import com.tamsiree.rxkit.view.RxToast;
 import com.tamsiree.rxui.view.dialog.RxDialog;
 import com.tamsiree.rxui.view.dialog.RxDialogLoading;
+import com.tencent.lbssearch.TencentSearch;
+import com.tencent.lbssearch.object.param.SearchParam;
+import com.tencent.lbssearch.object.result.SearchResultObject;
+import com.tencent.lbssearch.object.result.SuggestionResultObject;
 import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.tools.net.http.HttpResponseListener;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -65,6 +70,7 @@ import com.vtm.library.tools.DrawLayerUtils;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
 import com.vtm.library.tools.TileDownloader;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -136,10 +142,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.cateye.vtm.util.SystemConstant.MSG_WHAT_LOCATION_UPDATE;
-import static com.cateye.vtm.util.SystemConstant.URL_CONTOUR_CALCULATE;
-import static com.cateye.vtm.util.SystemConstant.URL_MAP_SOURCE_NET;
 
 /**
  * Created by zhangdezhi1702 on 2018/3/15.
@@ -762,7 +764,7 @@ public class CatEyeMainFragment extends BaseFragment {
      */
     public void getMapDataSourceFromNet(final boolean isChangeProject /*标识是否为切换项目时自动获取资源，如果是，则自动将所有图层都勾选并显示*/) {
         final RxDialogLoading rxDialogLoading = new RxDialogLoading(getContext());
-        OkGo.<String>get(URL_MAP_SOURCE_NET.replace(SystemConstant.USER_ID, SystemConstant.CURRENT_PROJECTS_ID + "")).tag(this).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
+        OkGo.<String>get(SystemConstant.URL_MAP_SOURCE_NET.replace(SystemConstant.USER_ID, SystemConstant.CURRENT_PROJECTS_ID + "")).tag(this).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 rxDialogLoading.show();
@@ -1228,7 +1230,7 @@ public class CatEyeMainFragment extends BaseFragment {
                         }
 
                         final RxDialogLoading rxDialogLoading = new RxDialogLoading(getContext());
-                        OkGo.<String>get(URL_CONTOUR_CALCULATE).params("xys", contourParam.toString()).tag(this).params("layerName", layerName).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
+                        OkGo.<String>get(SystemConstant.URL_CONTOUR_CALCULATE).params("xys", contourParam.toString()).tag(this).params("layerName", layerName).converter(new StringConvert()).adapt(new ObservableResponse<String>()).subscribeOn(Schedulers.io()).doOnSubscribe(new Consumer<Disposable>() {
                             @Override
                             public void accept(Disposable disposable) throws Exception {
                                 rxDialogLoading.show();
@@ -1480,9 +1482,53 @@ public class CatEyeMainFragment extends BaseFragment {
         super.onFragmentResult(requestCode, resultCode, data);
         if (requestCode == SystemConstant.REQUEST_CODE_SEARCH_LOCATION) {
             if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE) { // 用户选中其中一条数据
-                
+                if (data!=null&&data.containsKey("suggestData")) {
+                    String suggestDataStr = data.getString("suggestData");
+                    // 解析数据，并且将数据和位置信息展示在地图上
+                    if (suggestDataStr!=null) {
+                        SuggestionResultObject.SuggestionData suggestOneData = JSON.parseObject(suggestDataStr, SuggestionResultObject.SuggestionData.class);
+                        // 右侧面板显示列表数据
+                        Bundle searchResultBundle = new Bundle();
+                        List<>
+                        searchResultBundle.putString();
+                        SearchResultListFragment searchResultListFragment = (SearchResultListFragment) SearchResultListFragment.newInstance();
+                        ((MainActivity) getActivity()).showSlidingLayout(0.4f, layerManagerFragment);
+                    }
+                }
             } else if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE) { // 用户点击获取更多
+                if (data!=null&&data.containsKey("keyword")) {
+                    String keyword = data.getString("keyword");
+                    TencentLocation location = ((MainActivity) getActivity()).getCurrentLocation();
+                    // 根据keyword，使用search重新查询数据
+                    TencentSearch tencentSearch = new TencentSearch(getActivity());
+                    SearchParam.Nearby nearby = new SearchParam.Nearby(new LatLng(location.getLatitude(), location.getLongitude()), 3000);
+                    SearchParam searchParam = new SearchParam(keyword, nearby);
+                    searchParam.pageSize(20);
+                    tencentSearch.search(searchParam, new HttpResponseListener() {
+                        @Override
+                        public void onSuccess(int i, Object o) {
+                            // 可以查询出数据
+                            System.out.println(o);
+                            if (o == null) {
+                                return;
+                            }
+                            SearchResultObject obj = (SearchResultObject) o;
+                            if(obj.data == null){
+                                return;
+                            }
+                            if (obj.data.size()>0) {
+                                // 将地图定位到指定数据位置，地图级别设置为16级
+                                LatLng firstLatlng = obj.data.get(0).latLng;
+                                CatEyeMapManager.getInstance().getMapView().map().animator().animateTo(1000, new GeoPoint(firstLatlng.getLatitude(), firstLatlng.getLongitude()), 16, true);
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(int i, String s, Throwable throwable) {
+                            RxToast.error(s);
+                        }
+                    });
+                }
             }
         }
     }

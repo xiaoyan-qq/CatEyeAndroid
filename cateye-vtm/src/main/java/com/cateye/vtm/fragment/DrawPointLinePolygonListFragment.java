@@ -26,7 +26,6 @@ import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.LayerStyle;
 import com.cateye.vtm.util.LocalGisFileUtil;
-import com.cateye.vtm.util.SystemConstant;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.FeatureCollection;
 import com.lzy.okgo.OkGo;
@@ -50,6 +49,7 @@ import com.vtm.library.layers.MultiPathLayer;
 import com.vtm.library.layers.MultiPolygonLayer;
 import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
+import com.vtm.library.utils.SystemConstant;
 
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;

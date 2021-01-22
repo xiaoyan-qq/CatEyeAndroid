@@ -90,9 +90,7 @@
         </receiver>
 
         <!-- RMLBZ-OHAHI-GMEGY-5ECJR-MXTJO-ODFWF -->
-        <meta-data
-                android:name="TencentMapSDK"
-                android:value="FN4BZ-P6IC6-ENKSQ-MVCMP-MGAX6-FYFUW"/>
+        <meta-data android:name="TencentMapSDK" android:value="FN4BZ-P6IC6-ENKSQ-MVCMP-MGAX6-FYFUW"/>
 
         <meta-data android:value="5b14feeaf29d980959000093" android:name="UMENG_APPKEY"/>
         <meta-data android:value="Native" android:name="UMENG_CHANNEL"/>

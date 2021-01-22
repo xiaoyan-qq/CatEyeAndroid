@@ -19,7 +19,6 @@ import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseDrawFragment;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.cateye.vtm.util.LayerUtils;
-import com.cateye.vtm.util.SystemConstant;
 import com.cateye.vtm.util.TrailRecordMultiPathLayer;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -32,6 +31,7 @@ import com.tamsiree.rxui.view.dialog.RxDialogShapeLoading;
 import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.tools.GeometryTools;
 import com.vtm.library.tools.OverlayerManager;
+import com.vtm.library.utils.SystemConstant;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.map.Map;

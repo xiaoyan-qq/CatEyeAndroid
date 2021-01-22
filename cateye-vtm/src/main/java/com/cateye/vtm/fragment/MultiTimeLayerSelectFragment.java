@@ -12,7 +12,7 @@ import android.widget.Spinner;
 import com.cateye.android.entity.MapSourceFromNet;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseFragment;
-import com.cateye.vtm.util.SystemConstant;
+import com.vtm.library.utils.SystemConstant;
 import com.xw.repo.BubbleSeekBar;
 
 import org.greenrobot.eventbus.EventBus;
