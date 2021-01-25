@@ -12,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.cateye.android.entity.MapSourceFromNet;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseFragment;
+import com.tamsiree.rxkit.view.RxToast;
 import com.tencent.lbssearch.object.result.SearchResultObject;
 import com.vtm.library.tools.CatEyeMapManager;
 import com.vtm.library.utils.SystemConstant;
@@ -22,6 +24,9 @@ import com.vtm.library.utils.SystemConstant;
 import org.oscim.map.Map;
 
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +36,7 @@ import java.util.List;
 public class SearchResultListFragment extends BaseFragment {
     private Map mMap;
     private ListView lvSearchResult;
+    private SearchResultObject searchResultObject;
     private List<SearchResultObject.SearchResultData> listData;
 
     /**
@@ -56,7 +62,11 @@ public class SearchResultListFragment extends BaseFragment {
         this.mMap = CatEyeMapManager.getInstance().getMapView().map();
         if (getArguments() != null) {
             //获取搜索结果
-            listData = (List<SearchResultObject.SearchResultData>) bundle.getSerializable(SystemConstant.BUNDLE_LAYER_MANAGER_DATA);
+            String searchResultDataStr = bundle.getString(SystemConstant.BUNDLE_SEARCH_POI_RESULT_LIST);
+            searchResultObject = JSON.parseObject(searchResultDataStr, SearchResultObject.class);
+            if (searchResultObject!=null) {
+                listData = searchResultObject.data;
+            }
         }
     }
 
@@ -74,5 +84,16 @@ public class SearchResultListFragment extends BaseFragment {
                 onBackPressedSupport();
             }
         });
+        lvSearchResult = rootView.findViewById(R.id.lv_search_result);
+        // 根据listData数据，地图加载marker图层，显示列表数据
+        if (searchResultObject.count>0) {
+//            Observable.fromIterable(listData)
+//                    .subscribeOn(Schedulers.computation())
+//                    .doOnNext(null);
+        } else {
+            // 没有搜索到数据，提示用户
+            RxToast.warning("没有搜索到数据");
+            onBackPressedSupport();
+        }
     }
 }

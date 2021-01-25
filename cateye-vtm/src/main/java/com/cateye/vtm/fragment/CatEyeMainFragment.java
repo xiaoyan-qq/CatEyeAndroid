@@ -81,6 +81,7 @@ import org.oscim.android.filepicker.FilePicker;
 import org.oscim.android.theme.AssetsRenderTheme;
 import org.oscim.backend.CanvasAdapter;
 import org.oscim.backend.canvas.Color;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.core.Tag;
@@ -137,8 +138,11 @@ import io.jeo.carto.Carto;
 import io.jeo.map.Style;
 import io.jeo.vector.VectorDataset;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -1487,50 +1491,55 @@ public class CatEyeMainFragment extends BaseFragment {
                     // 解析数据，并且将数据和位置信息展示在地图上
                     if (suggestDataStr!=null) {
                         SuggestionResultObject.SuggestionData suggestOneData = JSON.parseObject(suggestDataStr, SuggestionResultObject.SuggestionData.class);
-                        // 右侧面板显示列表数据
-                        Bundle searchResultBundle = new Bundle();
-                        List<>
-                        searchResultBundle.putString();
-                        SearchResultListFragment searchResultListFragment = (SearchResultListFragment) SearchResultListFragment.newInstance();
-                        ((MainActivity) getActivity()).showSlidingLayout(0.4f, layerManagerFragment);
+                        // 使用搜索接口查询POI数据
+                        searchDataByTecentApi(suggestOneData.title);
                     }
                 }
             } else if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE) { // 用户点击获取更多
                 if (data!=null&&data.containsKey("keyword")) {
                     String keyword = data.getString("keyword");
-                    TencentLocation location = ((MainActivity) getActivity()).getCurrentLocation();
-                    // 根据keyword，使用search重新查询数据
-                    TencentSearch tencentSearch = new TencentSearch(getActivity());
-                    SearchParam.Nearby nearby = new SearchParam.Nearby(new LatLng(location.getLatitude(), location.getLongitude()), 3000);
-                    SearchParam searchParam = new SearchParam(keyword, nearby);
-                    searchParam.pageSize(20);
-                    tencentSearch.search(searchParam, new HttpResponseListener() {
-                        @Override
-                        public void onSuccess(int i, Object o) {
-                            // 可以查询出数据
-                            System.out.println(o);
-                            if (o == null) {
-                                return;
-                            }
-                            SearchResultObject obj = (SearchResultObject) o;
-                            if(obj.data == null){
-                                return;
-                            }
-                            if (obj.data.size()>0) {
-                                // 将地图定位到指定数据位置，地图级别设置为16级
-                                LatLng firstLatlng = obj.data.get(0).latLng;
-                                CatEyeMapManager.getInstance().getMapView().map().animator().animateTo(1000, new GeoPoint(firstLatlng.getLatitude(), firstLatlng.getLongitude()), 16, true);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int i, String s, Throwable throwable) {
-                            RxToast.error(s);
-                        }
-                    });
+                    searchDataByTecentApi(keyword);
                 }
             }
         }
+    }
+
+    private void searchDataByTecentApi(String keyword) {
+        TencentLocation location = ((MainActivity) getActivity()).getCurrentLocation();
+        // 根据keyword，使用search重新查询数据
+        TencentSearch tencentSearch = new TencentSearch(getActivity());
+        SearchParam.Nearby nearby = new SearchParam.Nearby(new LatLng(location.getLatitude(), location.getLongitude()), 5000);
+        SearchParam searchParam = new SearchParam(keyword, nearby);
+//        searchParam.keyword(keyword);
+        searchParam.pageSize(20);
+        tencentSearch.search(searchParam, new HttpResponseListener<SearchResultObject>() {
+            @Override
+            public void onSuccess(int i, SearchResultObject o) {
+                // 可以查询出数据
+                if (o == null) {
+                    return;
+                }
+                SearchResultObject obj = (SearchResultObject) o;
+                if(obj.data == null){
+                    return;
+                }
+                if (obj.data.size()>0) {
+                    // 跳转到左侧面板列表界面
+                    Bundle searchResultBundle = new Bundle();
+                    searchResultBundle.putString(SystemConstant.BUNDLE_SEARCH_POI_RESULT_LIST, JSON.toJSONString(obj));
+                    SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(searchResultBundle);
+                    loadRootFragment(R.id.layer_main_fragment_left, searchResultListFragment);
+                    // 将地图定位到指定数据位置，地图级别设置为16级
+                    LatLng firstLatlng = obj.data.get(0).latLng;
+                    CatEyeMapManager.getInstance().getMapView().map().animator().animateTo(1000, new GeoPoint(firstLatlng.getLatitude(), firstLatlng.getLongitude()), 16, true);
+                }
+            }
+
+            @Override
+            public void onFailure(int i, String s, Throwable throwable) {
+                RxToast.error(s);
+            }
+        });
     }
 
     /**

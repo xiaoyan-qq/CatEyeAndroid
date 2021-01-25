@@ -78,6 +78,7 @@ public class SystemConstant {
     public static final String DRAW_TILE_RECT = "DRAW_TILE_RECT";//绘制tile下载的rect对应的layer
     public static final String BUNDLE_MULTI_TIME_SELECTOR_DATA = "BUNDLE_MULTI_TIME_SELECTOR_DATA";//多时序选择所需要的数据
     public static final String LAYER_KEY_ID = "LAYER_KEY_ID";//记录图层id
+    public static final String BUNDLE_SEARCH_POI_RESULT_LIST = "BUNDLE_SEARCH_POI_RESULT_LIST";//搜索POI的列表数据
 
     public static final String TRAIL_LOCATION_RECORD = "TRAIL_LOCATION_RECORD";//用户轨迹对应的多线overlayer的名称，用于判断图层是否已添加到map上
     public static final String AIR_PLAN_MULTI_POLYGON_DRAW = "AIR_PLAN_MULTI_POLYGON_DRAW";//航区规划对应的多面overlayer的名称，用于判断该图层是否已经添加到map上
