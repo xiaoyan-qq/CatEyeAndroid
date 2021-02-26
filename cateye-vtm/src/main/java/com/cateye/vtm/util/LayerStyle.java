@@ -19,6 +19,7 @@ public class LayerStyle {
     private static Style highlightLineStyle;
     private static Style highlightPolygonStyle;
     private static MarkerSymbol geoJsonMarkerSymbol;
+    private static MarkerSymbol defaultPoiMarkerSymbol;
     private static Style geoJsonLineStyle;
     private static Style geoJsonPolygonStyle;
 
@@ -62,10 +63,18 @@ public class LayerStyle {
 
     public static MarkerSymbol getGeoJsonMarkerSymbol(Context mContext) {
         if (geoJsonMarkerSymbol == null) {
-            Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.geojson_point));
+            Bitmap bitmapPoi = drawableToBitmap(mContext.getDrawable(R.drawable.geojson_point));
             geoJsonMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
         }
         return geoJsonMarkerSymbol;
+    }
+
+    public static MarkerSymbol getDefaultPoiMarkerSymbol(Context mContext) {
+        if (defaultPoiMarkerSymbol == null) {
+            Bitmap bitmapPoi = drawableToBitmap(mContext.getDrawable(R.drawable.icon_poi_marker));
+            defaultPoiMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.BOTTOM_CENTER);
+        }
+        return defaultPoiMarkerSymbol;
     }
 
     public static Style getGeoJsonLineStyle() {
@@ -100,7 +109,7 @@ public class LayerStyle {
 
     public static MarkerSymbol getHighLightMarkerSymbol(Context mContext) {
         if (highlightMarkerSymbol == null) {
-            Bitmap bitmapPoi = drawableToBitmap(mContext.getResources().getDrawable(R.drawable.marker_focus));
+            Bitmap bitmapPoi = drawableToBitmap(mContext.getDrawable(R.drawable.marker_focus));
             highlightMarkerSymbol = new MarkerSymbol(bitmapPoi, MarkerSymbol.HotspotPlace.CENTER);
         }
         return highlightMarkerSymbol;

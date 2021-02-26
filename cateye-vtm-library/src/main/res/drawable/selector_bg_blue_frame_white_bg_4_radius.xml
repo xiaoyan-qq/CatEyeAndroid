@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#BFBFBF" >
+    android:color="#58FAD0" >
     <item>
         <selector>
             <item android:state_enabled="false" android:drawable="@drawable/drawable_bg_gray_frame_gray_bg_4_radius"></item>

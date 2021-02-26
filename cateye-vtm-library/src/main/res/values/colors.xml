@@ -57,4 +57,5 @@
     </integer-array>
 
     <color name="black_semi_transparent">#B2000000</color>
+    <color name="ripple">#607D8B</color>
 </resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ripple_bg"
+    android:padding="@dimen/bootstrap_well_default_padding"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/img_item_search_poi_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        android:paddingRight="@dimen/button_padding_default"
+        android:src="@drawable/icon_poi_pointer"></ImageView>
+    <TextView
+        android:id="@+id/tv_item_search_poi_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintLeft_toRightOf="@id/img_item_search_poi_result"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tv_item_search_poi_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat"
+        app:layout_constraintLeft_toRightOf="@id/img_item_search_poi_result"
+        app:layout_constraintTop_toBottomOf="@id/tv_item_search_poi_name" />
+    <TextView
+        android:id="@+id/tv_item_search_poi_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/img_item_search_poi_result"
+        app:layout_constraintTop_toBottomOf="@id/tv_item_search_poi_address" />
+    <TextView
+        android:id="@+id/tv_item_search_poi_kindType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/img_item_search_poi_result"
+        app:layout_constraintTop_toBottomOf="@id/tv_item_search_poi_contact" />
+</androidx.constraintlayout.widget.ConstraintLayout>

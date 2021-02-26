@@ -22,6 +22,7 @@ import com.cateye.android.vtm.MainActivity;
 import com.cateye.android.vtm.R;
 import com.cateye.vtm.fragment.base.BaseFragment;
 import com.github.lazylibrary.util.StringUtils;
+import com.litesuits.common.utils.InputMethodUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okrx2.adapter.ObservableResponse;
 import com.tamsiree.rxkit.view.RxToast;
@@ -86,19 +87,36 @@ public class SearchLocationFragment extends BaseFragment {
                     if (listData.get(position).get("obj")!=null) {
                         // 用户点击指定数据，直接在地图上用mark标识选定的POI数据
                         SuggestionResultObject.SuggestionData suggestionData = (SuggestionResultObject.SuggestionData) listData.get(position).get("obj");
-                        Bundle bundle = new Bundle();
-                        bundle.putString("suggestData", JSON.toJSONString(suggestionData));
-                        setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE, bundle);
-                        pop();
-                    } else {
-                        // 用户点击获取更多，则使用keyword获取更多推荐数据，在地图上展示获取到的POI数据
-                        String keyWord = edt_search_location.getText().toString();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("keyword", keyWord);
-                        setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE, bundle);
-                        pop();
+                        edt_search_location.setText(suggestionData.title);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("suggestData", JSON.toJSONString(suggestionData));
+//                        setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE, bundle);
+//                        pop();
                     }
+//                    else {
+//                        // 用户点击获取更多，则使用keyword获取更多推荐数据，在地图上展示获取到的POI数据
+//                        String keyWord = edt_search_location.getText().toString();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("keyword", keyWord);
+//                        setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE, bundle);
+//                        pop();
+//                    }
                 }
+            }
+        });
+        img_search_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.isEmpty(edt_search_location.getText().toString().trim())) {
+                    RxToast.warning("搜索内容不能为空！");
+                    return;
+                }
+                String searchText = edt_search_location.getText().toString();
+                Bundle bundle = new Bundle();
+                bundle.putString("keyword", searchText);
+                setFragmentResult(SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE, bundle);
+                InputMethodUtils.hideSoftInput(getActivity());
+                pop();
             }
         });
         // 首先获取当前位置的城市
@@ -143,11 +161,11 @@ public class SearchLocationFragment extends BaseFragment {
                                     map.put("obj", suggestionData);
                                     listData.add(map);
                                 }
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("title", "获取更多+");
-                                map.put("address", "点击获取更多");
-                                map.put("obj", null);
-                                listData.add(map);
+//                                Map<String, Object> map = new HashMap<>();
+//                                map.put("title", "获取更多+");
+//                                map.put("address", "点击获取更多");
+//                                map.put("obj", null);
+//                                listData.add(map);
                             }
                             suggestAdapter.notifyDataSetChanged();
                         }

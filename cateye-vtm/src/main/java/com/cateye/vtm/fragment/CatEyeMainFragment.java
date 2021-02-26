@@ -3,6 +3,7 @@ package com.cateye.vtm.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -193,6 +196,7 @@ public class CatEyeMainFragment extends BaseFragment {
     private String sTravelTime/*开始记录轨迹的时间*/, eTravelTime/*结束记录轨迹的时间*/;
     private SimpleDateFormat travelSdf;//轨迹时间的格式
     private Disposable travelDisposable;
+    private PolygonLayer drawRectTileLayer; // 缓存地图时的绘制图层
 
     public enum MAIN_FRAGMENT_OPERATE {
         MAIN, CONTOUR, AIR_PLAN;
@@ -1067,7 +1071,8 @@ public class CatEyeMainFragment extends BaseFragment {
             String cacheFile = mTileSource.getUrl()
                     .toString()
                     .replaceFirst("https?://", "")
-                    .replaceAll("/", "-");
+                    .replaceAll("/", "-")
+                    .replace(":","@");
 
 //            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             TileCache mCache = new TileCache(mContext, null, cacheFile);
@@ -1092,7 +1097,8 @@ public class CatEyeMainFragment extends BaseFragment {
             String cacheFile = mTileSource.getUrl()
                     .toString()
                     .replaceFirst("https?://", "")
-                    .replaceAll("/", "-");
+                    .replaceAll("/", "-")
+                    .replace(":","@");;
 
 //            TileCache mCache = new TileCache(mContext, SystemConstant.CACHE_FILE_PATH, cacheFile);
             TileCache mCache = new TileCache(mContext, null, cacheFile);
@@ -1390,11 +1396,25 @@ public class CatEyeMainFragment extends BaseFragment {
             case SystemConstant.MSG_WHAT_REDRAW_USER_DRAW_DATA:
                 redrawUserData();
                 break;
-            case TileDownloader.MSG_DOWNLOAD_TILE_FINISH:
-                PolygonLayer drawRectTileLayer = (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
+            case SystemConstant.MSG_DOWNLOAD_TILE_FINISH:
+                drawRectTileLayer = (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
                 if (drawRectTileLayer != null) {
                     mMap.layers().remove(drawRectTileLayer);
                     mMap.updateMap(true);
+                    drawRectTileLayer = null;
+                }
+                break;
+            case SystemConstant.MSG_DOWNLOAD_TILE_HIDE:
+                drawRectTileLayer = (PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT);
+                if (drawRectTileLayer != null) {
+                    mMap.layers().remove(drawRectTileLayer);
+                    mMap.updateMap();
+                }
+                break;
+            case SystemConstant.MSG_DOWNLOAD_TILE_REOPEN:
+                if (drawRectTileLayer != null&&(PolygonLayer) OverlayerManager.getInstance(mMap).getLayerByName(SystemConstant.DRAW_TILE_RECT)==null) {
+                    mMap.layers().add(drawRectTileLayer, LAYER_GROUP_ENUM.OPERTOR_GROUP.orderIndex);
+                    mMap.updateMap();
                 }
                 break;
             case SystemConstant.MSG_WHAT_REFRSH_MAP_LAYERS:
@@ -1485,7 +1505,7 @@ public class CatEyeMainFragment extends BaseFragment {
     public void onFragmentResult(int requestCode, int resultCode, Bundle data) {
         super.onFragmentResult(requestCode, resultCode, data);
         if (requestCode == SystemConstant.REQUEST_CODE_SEARCH_LOCATION) {
-            if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE) { // 用户选中其中一条数据
+            /*if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_SELECT_ONE) { // 用户选中其中一条数据
                 if (data!=null&&data.containsKey("suggestData")) {
                     String suggestDataStr = data.getString("suggestData");
                     // 解析数据，并且将数据和位置信息展示在地图上
@@ -1495,12 +1515,13 @@ public class CatEyeMainFragment extends BaseFragment {
                         searchDataByTecentApi(suggestOneData.title);
                     }
                 }
-            } else if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE) { // 用户点击获取更多
-                if (data!=null&&data.containsKey("keyword")) {
-                    String keyword = data.getString("keyword");
-                    searchDataByTecentApi(keyword);
+            } else*/
+                if (resultCode == SystemConstant.RESULT_CODE_SEARCH_LOCATION_GET_MORE) { // 用户点击获取更多
+                    if (data != null && data.containsKey("keyword")) {
+                        String keyword = data.getString("keyword");
+                        searchDataByTecentApi(keyword);
+                    }
                 }
-            }
         }
     }
 
@@ -1513,6 +1534,7 @@ public class CatEyeMainFragment extends BaseFragment {
 //        searchParam.keyword(keyword);
         searchParam.pageSize(20);
         tencentSearch.search(searchParam, new HttpResponseListener<SearchResultObject>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onSuccess(int i, SearchResultObject o) {
                 // 可以查询出数据
@@ -1528,10 +1550,10 @@ public class CatEyeMainFragment extends BaseFragment {
                     Bundle searchResultBundle = new Bundle();
                     searchResultBundle.putString(SystemConstant.BUNDLE_SEARCH_POI_RESULT_LIST, JSON.toJSONString(obj));
                     SearchResultListFragment searchResultListFragment = SearchResultListFragment.newInstance(searchResultBundle);
-                    loadRootFragment(R.id.layer_main_fragment_left, searchResultListFragment);
-                    // 将地图定位到指定数据位置，地图级别设置为16级
-                    LatLng firstLatlng = obj.data.get(0).latLng;
-                    CatEyeMapManager.getInstance().getMapView().map().animator().animateTo(1000, new GeoPoint(firstLatlng.getLatitude(), firstLatlng.getLongitude()), 16, true);
+                    ((MainActivity)getActivity()).showSlidingLayout(0.4f,searchResultListFragment);
+//                    // 将地图定位到指定数据位置，地图级别设置为16级
+//                    LatLng firstLatlng = obj.data.get(0).latLng;
+//                    CatEyeMapManager.getInstance().getMapView().map().animator().animateTo(1000, new GeoPoint(firstLatlng.getLatitude(), firstLatlng.getLongitude()), 16, true);
                 }
             }
 

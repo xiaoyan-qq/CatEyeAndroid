@@ -108,8 +108,10 @@ public class TileCache implements ITileCache {
         if (dbg)
             log.debug("open cache {}, {}", cacheDirectory, dbName);
 
-        if (cacheDirectory != null)
-            dbName = new File(cacheDirectory, dbName).getAbsolutePath();
+        if (cacheDirectory != null){
+            File dbFile = new File(cacheDirectory, dbName);
+            dbName = dbFile.getAbsolutePath();
+        }
         dbHelper = new SQLiteHelper(context, dbName);
 
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)

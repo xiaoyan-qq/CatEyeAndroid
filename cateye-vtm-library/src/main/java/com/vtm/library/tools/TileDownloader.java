@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.vtm.library.R;
+import com.vtm.library.utils.SystemConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.oscim.backend.CanvasAdapter;
@@ -147,6 +149,10 @@ public class TileDownloader {
     public void showDialog() {
         if (dialog!=null) {
             dialog.show();
+            // 通知主界面，重新显示下载区域的绘制框
+            Message msg = Message.obtain();
+            msg.what = SystemConstant.MSG_DOWNLOAD_TILE_REOPEN;
+            EventBus.getDefault().post(msg);
         }
     }
 
@@ -196,16 +202,17 @@ public class TileDownloader {
             }
         }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io());
 
-        Flowable<Long> delayConsumer = Flowable.interval(50, TimeUnit.MILLISECONDS).observeOn(Schedulers.io());
+        Flowable<Long> delayConsumer = Flowable.interval(80, TimeUnit.MILLISECONDS).observeOn(Schedulers.io());
 
-        Flowable.zip(tileDownloadFlowable, delayConsumer, new BiFunction<Tile, Long, Tile>() {
-
-            @NonNull
-            @Override
-            public Tile apply(@NonNull Tile tile, @NonNull Long aLong) throws Exception {
-                return tile;
-            }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Tile>() {
+//        Flowable.zip(tileDownloadFlowable, delayConsumer, new BiFunction<Tile, Long, Tile>() {
+//
+//            @NonNull
+//            @Override
+//            public Tile apply(@NonNull Tile tile, @NonNull Long aLong) throws Exception {
+//                return tile;
+//            }
+//        })
+        tileDownloadFlowable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Tile>() {
             @Override
             public void onSubscribe(Subscription d) {
                 subscription = d;
@@ -225,7 +232,7 @@ public class TileDownloader {
                 bbtn_mini.setEnabled(true);
                 bbtn_ok.setEnabled(false);
 
-                d.request(1);
+                d.request(50);
                 builder = createProgressNotificationBuilder(mContext, 0, pb_download.getMax());
             }
 
@@ -244,10 +251,9 @@ public class TileDownloader {
                     }
                 }
                 if (notificationManager!=null) {
-                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                    notificationManager.notify(SystemConstant.MSG_DOWNLOAD_TILE_FINISH, builder.build());
                 }
-
-                subscription.request(1);
+                subscription.request(5);
             }
 
             @Override
@@ -265,7 +271,7 @@ public class TileDownloader {
                     builder.setContentText("下载完成!");
                 }
                 if (notificationManager!=null) {
-                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                    notificationManager.notify(SystemConstant.MSG_DOWNLOAD_TILE_FINISH, builder.build());
                 }
 
                 // 结束下载后，择缓存地图按钮置为可用，直到下载完成后才可以进行下一次下载
@@ -385,30 +391,37 @@ public class TileDownloader {
                     builder.setContentText("下载完成!");
                 }
                 if (notificationManager!=null) {
-                    notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
-                    notificationManager.cancel(MSG_DOWNLOAD_TILE_FINISH);
+                    notificationManager.notify(SystemConstant.MSG_DOWNLOAD_TILE_FINISH, builder.build());
+                    notificationManager.cancel(SystemConstant.MSG_DOWNLOAD_TILE_FINISH);
                 }
 
                 // 通知主界面，清除下载区域的绘制框
                 Message msg = Message.obtain();
-                msg.what = MSG_DOWNLOAD_TILE_FINISH;
+                msg.what = SystemConstant.MSG_DOWNLOAD_TILE_FINISH;
                 EventBus.getDefault().post(msg);
-
+            }
+        };
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
                 if (receiver != null) {
                     mContext.unregisterReceiver(receiver);
                 }
             }
-        };
+        });
         bbtn_ok.setOnClickListener(dissmissClickListener);
         bbtn_mini.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 隐藏对话框
                 dialog.hide();
+                // 通知主界面，隐藏下载区域的绘制框
+                Message msg = Message.obtain();
+                msg.what = SystemConstant.MSG_DOWNLOAD_TILE_HIDE;
+                EventBus.getDefault().post(msg);
             }
         });
     }
-
-    public static final int MSG_DOWNLOAD_TILE_FINISH = 0x101;
 
     private NotificationCompat.Builder createProgressNotificationBuilder(Context mContext, int progress, int max) {
         notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -429,12 +442,12 @@ public class TileDownloader {
         Intent tileDownloaderIntent = new Intent("catEye_tile_download");
         tileDownloaderIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         tileDownloaderIntent.setPackage(mContext.getPackageName());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, SystemConstant.MSG_DOWNLOAD_TILE_FINISH, tileDownloaderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
 //        builder.setFullScreenIntent(pendingIntent, false);
 
         builder.setProgress(max,progress,false);
-        notificationManager.notify(MSG_DOWNLOAD_TILE_FINISH, builder.build());
+        notificationManager.notify(SystemConstant.MSG_DOWNLOAD_TILE_FINISH, builder.build());
         return builder;
     }
 }

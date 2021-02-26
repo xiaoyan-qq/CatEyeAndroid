@@ -26,6 +26,7 @@ public class SystemConstant {
     public static final int MSG_WHAT_DRAW_TILE_DOWNLOAD_RECT_FINISH = 0x1008;//完成绘制地图下载的rect，重新显示地图上的其他按钮控件
     public static final int MSG_WHAT_DRAW_PHOTO_FINISH = 0x1009;//完成绘制地图下载的rect，重新显示地图上的其他按钮控件
 
+
     public static final int MSG_WHAT_DRAW_POINT = 0x1011;//用户绘制点结束
     public static final int MSG_WHAT_DRAW_LINE = 0x1012;//用户绘制线结束
     public static final int MSG_WHAT_DRAW_POLYGON = 0x1013;//用户绘制面结束
@@ -35,6 +36,10 @@ public class SystemConstant {
     public static final int MSG_WHAT_REFRSH_MAP_LAYERS = 0x1016;//重新绘制用户绘制的数据
 
     public static final int MSG_WHAT_TILE_DOWNLAOD_ENABLE = 0x1017;//设置下载tile数据按钮的功能是否可用
+
+    public static final int MSG_DOWNLOAD_TILE_HIDE = 0x1018; // 框选缓存地图图层隐藏
+    public static final int MSG_DOWNLOAD_TILE_REOPEN = 0x1019; // 框选缓存地图图层重新显示
+    public static final int MSG_DOWNLOAD_TILE_FINISH = 0x1020; // 框选缓存地图流程结束
 
     public static final String LAYER_NAME_DRAW_POINT = "LAYER_NAME_DRAW_POINT";//显示用户绘制的点图层的名称
     public static final String LAYER_NAME_DRAW_LINE = "LAYER_NAME_DRAW_LINE";//显示用户绘制线图层的名称
